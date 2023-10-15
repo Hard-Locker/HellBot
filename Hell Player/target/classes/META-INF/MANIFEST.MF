@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 19
+Class-Path: dependency-jars/slf4j-api-1.7.36.jar dependency-jars/spring-
+ context-6.0.12.jar dependency-jars/spring-aop-6.0.12.jar dependency-jar
+ s/spring-core-6.0.12.jar dependency-jars/spring-jcl-6.0.12.jar dependen
+ cy-jars/spring-expression-6.0.12.jar dependency-jars/spring-beans-6.0.1
+ 2.jar dependency-jars/spring-boot-starter-3.1.4.jar dependency-jars/spr
+ ing-boot-3.1.4.jar dependency-jars/spring-boot-autoconfigure-3.1.4.jar 
+ dependency-jars/spring-boot-starter-logging-3.1.4.jar dependency-jars/l
+ ogback-classic-1.4.11.jar dependency-jars/logback-core-1.4.11.jar depen
+ dency-jars/log4j-to-slf4j-2.20.0.jar dependency-jars/log4j-api-2.20.0.j
+ ar dependency-jars/jul-to-slf4j-2.0.9.jar dependency-jars/jakarta.annot
+ ation-api-2.1.1.jar dependency-jars/snakeyaml-1.33.jar
+Main-Class: foxminded.nikitazolin.school.SchoolApp
+Created-By: Maven Integration for Eclipse
+
