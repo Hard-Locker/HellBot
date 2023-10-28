@@ -1,10 +1,9 @@
-package halot.nikitazolin.bot.slashCommands.status;
+package halot.nikitazolin.bot.slashCommand.model;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import halot.nikitazolin.bot.slashCommands.manager.SlashCommand;
 
 import java.util.List;
 

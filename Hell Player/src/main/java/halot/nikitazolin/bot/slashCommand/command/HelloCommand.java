@@ -1,9 +1,9 @@
-package halot.nikitazolin.bot.slashCommands.commands;
+package halot.nikitazolin.bot.slashCommand.command;
 
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.slashCommands.manager.SlashCommand;
-import halot.nikitazolin.bot.slashCommands.status.SlashCommandRecord;
+import halot.nikitazolin.bot.slashCommand.model.SlashCommand;
+import halot.nikitazolin.bot.slashCommand.model.SlashCommandRecord;
 import halot.nikitazolin.bot.util.MessageUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;

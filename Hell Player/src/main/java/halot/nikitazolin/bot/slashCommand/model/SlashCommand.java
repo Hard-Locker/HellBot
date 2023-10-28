@@ -1,8 +1,7 @@
-package halot.nikitazolin.bot.slashCommands.manager;
+package halot.nikitazolin.bot.slashCommand.model;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import halot.nikitazolin.bot.slashCommands.status.SlashCommandRecord;
 
 public abstract class SlashCommand {
 

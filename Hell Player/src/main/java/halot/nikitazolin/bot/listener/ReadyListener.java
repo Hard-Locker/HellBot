@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.listeners;
+package halot.nikitazolin.bot.listener;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;

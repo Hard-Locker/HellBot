@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import halot.nikitazolin.bot.HellPlayer;
 import halot.nikitazolin.bot.JdaService;
-import halot.nikitazolin.bot.slashCommands.manager.CommandRegistry;
+import halot.nikitazolin.bot.slashCommand.manager.CommandRegistry;
 
 @SpringBootApplication
 public class HellPlayer {
@@ -16,10 +16,6 @@ public class HellPlayer {
   private static CommandRegistry commandRegistry;
 
   public static void main(String[] args) {
-//    if (args.length < 1) {
-//      System.out.println("Enter your bot's token!");
-//      System.exit(1);
-//    }
 
     jdaService = new JdaService();
     commandRegistry = new CommandRegistry();

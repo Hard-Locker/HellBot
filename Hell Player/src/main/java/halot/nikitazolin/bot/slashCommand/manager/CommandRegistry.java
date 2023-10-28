@@ -1,12 +1,13 @@
-package halot.nikitazolin.bot.slashCommands.manager;
+package halot.nikitazolin.bot.slashCommand.manager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import halot.nikitazolin.bot.HellPlayer;
-import halot.nikitazolin.bot.slashCommands.commands.HelloCommand;
-import halot.nikitazolin.bot.slashCommands.commands.HelpCommand;
+import halot.nikitazolin.bot.slashCommand.command.HelloCommand;
+import halot.nikitazolin.bot.slashCommand.command.PingCommand;
+import halot.nikitazolin.bot.slashCommand.model.SlashCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -22,7 +23,7 @@ public class CommandRegistry {
 
   private void registerCommands() {
     jda.ifPresentOrElse(jda -> {
-      jda.updateCommands().addCommands(create(new HelloCommand()), create(new HelpCommand())).queue();
+      jda.updateCommands().addCommands(create(new HelloCommand()), create(new PingCommand())).queue();
     }, () -> System.out.println("JDA is not present!"));
   }
 
