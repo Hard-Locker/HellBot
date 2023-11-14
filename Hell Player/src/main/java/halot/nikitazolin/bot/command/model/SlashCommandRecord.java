@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.slashCommand.model;
+package halot.nikitazolin.bot.command.model;
 
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;

@@ -1,13 +1,13 @@
-package halot.nikitazolin.bot.slashCommand.manager;
+package halot.nikitazolin.bot.command.manager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import halot.nikitazolin.bot.HellPlayer;
-import halot.nikitazolin.bot.slashCommand.command.HelloCommand;
-import halot.nikitazolin.bot.slashCommand.command.PingCommand;
-import halot.nikitazolin.bot.slashCommand.model.SlashCommand;
+import halot.nikitazolin.bot.command.model.SlashCommand;
+import halot.nikitazolin.bot.command.slash.HelloCommand;
+import halot.nikitazolin.bot.command.slash.PingCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;

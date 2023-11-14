@@ -1,10 +1,10 @@
-package halot.nikitazolin.bot.slashCommand.manager;
+package halot.nikitazolin.bot.command.manager;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import halot.nikitazolin.bot.HellPlayer;
-import halot.nikitazolin.bot.slashCommand.model.SlashCommand;
-import halot.nikitazolin.bot.slashCommand.model.SlashCommandRecord;
+import halot.nikitazolin.bot.command.model.SlashCommand;
+import halot.nikitazolin.bot.command.model.SlashCommandRecord;
 import halot.nikitazolin.bot.util.MessageUtils;
 
 import java.util.Optional;

@@ -16,8 +16,8 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import halot.nikitazolin.bot.command.manager.SlashCommandHandler;
 import halot.nikitazolin.bot.listener.ReadyListener;
-import halot.nikitazolin.bot.slashCommand.manager.SlashCommandHandler;
 
 @Component
 public class JdaService {

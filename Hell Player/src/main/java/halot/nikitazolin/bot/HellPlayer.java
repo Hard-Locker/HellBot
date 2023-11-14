@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 
 import halot.nikitazolin.bot.HellPlayer;
 import halot.nikitazolin.bot.JdaService;
-import halot.nikitazolin.bot.slashCommand.manager.CommandRegistry;
+import halot.nikitazolin.bot.command.manager.CommandRegistry;
 
 @SpringBootApplication
 public class HellPlayer {

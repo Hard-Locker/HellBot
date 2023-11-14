@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.slashCommand.model;
+package halot.nikitazolin.bot.command.model;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
