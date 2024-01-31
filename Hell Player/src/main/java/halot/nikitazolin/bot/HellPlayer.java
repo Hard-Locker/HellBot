@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import halot.nikitazolin.bot.HellPlayer;
 import halot.nikitazolin.bot.JdaService;
 import halot.nikitazolin.bot.command.manager.CommandRegistry;
+import lombok.Getter;
 
 @SpringBootApplication
 public class HellPlayer {
@@ -30,11 +31,11 @@ public class HellPlayer {
     return instance;
   }
 
-  public JdaService getJdaService() {
+  public static JdaService getJdaService() {
     return jdaService;
   }
 
-  public CommandRegistry getCommandRegistry() {
+  public static CommandRegistry getCommandRegistry() {
     return commandRegistry;
   }
 }
