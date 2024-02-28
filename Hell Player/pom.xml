@@ -1,16 +1,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
-  <artifactId>hell-player</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Hell Player</name>
+  <artifactId>hell-bot</artifactId>
+  <version>0.0.6</version>
+  <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
+  
+  <repositories>
+    <repository>
+        <id>jitpack</id>
+        <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
   
   <dependencies>
     <dependency>
       <groupId>net.dv8tion</groupId>
       <artifactId>JDA</artifactId>
-      <version>5.0.0-beta.18</version>
+      <version>5.0.0-beta.20</version>
+    </dependency>
+    
+    <!-- https://mvnrepository.com/artifact/dev.arbjerg/lavaplayer -->
+    <dependency>
+      <groupId>dev.arbjerg</groupId>
+      <artifactId>lavaplayer</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.typesafe</groupId>
+      <artifactId>config</artifactId>
+      <version>1.4.3</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.17.2</version>
     </dependency>
     
     <!-- Test -->
@@ -108,7 +134,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-      <version>3.2.1</version>
+      <version>3.2.2</version>
     </dependency>
     
     <!--
@@ -122,7 +148,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
-      <version>3.2.1</version>
+      <version>3.2.2</version>
     </dependency>
 
     <!--
@@ -136,7 +162,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>3.2.1</version>
+      <version>3.2.2</version>
       <scope>test</scope>
     </dependency>
     <!-- //////////////// -->
@@ -183,8 +209,8 @@
             </goals>
             <configuration>
               <outputDirectory>
-          ${project.build.directory}/dependency-jars/
-        </outputDirectory>
+                ${project.build.directory}/dependency-jars/
+              </outputDirectory>
             </configuration>
           </execution>
         </executions>

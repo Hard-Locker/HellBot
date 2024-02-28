@@ -9,7 +9,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 @Configuration
 @ComponentScan(basePackages = "halot.nikitazolin.bot")
-public class HellPlayerConfig {
+public class HellBotConfig {
 
   @Bean
   DataSource dataSource() {

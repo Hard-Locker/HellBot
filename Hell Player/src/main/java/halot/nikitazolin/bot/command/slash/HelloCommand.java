@@ -20,6 +20,11 @@ public class HelloCommand extends SlashCommand {
   public String description() {
     return "Greetings";
   }
+  
+  @Override
+  public String requiredRole() {
+    return null;
+  }
 
   @Override
   public Permission neededPermission() {

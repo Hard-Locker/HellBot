@@ -20,6 +20,11 @@ public class PingCommand extends SlashCommand {
   public String description() {
     return "Wanna check ping?";
   }
+  
+  @Override
+  public String requiredRole() {
+    return null;
+  }
 
   @Override
   public Permission neededPermission() {

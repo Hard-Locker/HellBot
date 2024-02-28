@@ -1,7 +1,7 @@
 package halot.nikitazolin.bot.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import halot.nikitazolin.bot.HellPlayer;
+import halot.nikitazolin.bot.HellBot;
 
 import java.awt.*;
 import java.time.Instant;
@@ -40,8 +40,8 @@ public final class MessageUtils {
   public static EmbedBuilder createSuccessEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_SUCCESS);
-    embedBuilder.setFooter(HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
-        HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
     embedBuilder.setTimestamp(Instant.now());
     embedBuilder.setDescription(message);
     return embedBuilder;
@@ -69,8 +69,8 @@ public final class MessageUtils {
   public static EmbedBuilder createErrorEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_ERROR);
-    embedBuilder.setFooter(HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
-        HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
     embedBuilder.setTimestamp(Instant.now());
     embedBuilder.setDescription(message);
     return embedBuilder;
@@ -85,8 +85,8 @@ public final class MessageUtils {
   public static EmbedBuilder createInfoEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
-    embedBuilder.setFooter(HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
-        HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
     embedBuilder.setTimestamp(Instant.now());
     return embedBuilder;
   }
@@ -101,8 +101,8 @@ public final class MessageUtils {
   public static EmbedBuilder createInfoEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
-    embedBuilder.setFooter(HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
-        HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
     embedBuilder.setTimestamp(Instant.now());
     embedBuilder.setDescription(message);
     return embedBuilder;
@@ -120,8 +120,8 @@ public final class MessageUtils {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
     embedBuilder.setTitle(title);
-    embedBuilder.setFooter(HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
-        HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
     embedBuilder.setTimestamp(Instant.now());
     embedBuilder.setDescription(message);
     return embedBuilder;
@@ -149,8 +149,8 @@ public final class MessageUtils {
   public static EmbedBuilder createAltInfoEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO_ALT);
-    embedBuilder.setFooter(HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
-        HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
     embedBuilder.setTimestamp(Instant.now());
     embedBuilder.setDescription(message);
     return embedBuilder;
@@ -178,8 +178,8 @@ public final class MessageUtils {
   public static EmbedBuilder createWarningEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_WARNING);
-    embedBuilder.setFooter(HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
-        HellPlayer.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getInstance().getJdaService().getJda().get().getSelfUser().getAvatarUrl());
     embedBuilder.setTimestamp(Instant.now());
     embedBuilder.setDescription(message);
     return embedBuilder;

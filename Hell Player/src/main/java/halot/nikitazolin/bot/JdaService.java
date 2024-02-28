@@ -3,23 +3,23 @@ package halot.nikitazolin.bot;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
+import halot.nikitazolin.bot.command.manager.SlashCommandHandler;
+import halot.nikitazolin.bot.listener.ReadyListener;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import halot.nikitazolin.bot.command.manager.SlashCommandHandler;
-import halot.nikitazolin.bot.listener.ReadyListener;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 @Component
+@Slf4j
 public class JdaService {
 
   private String BOT_TOKEN;
@@ -33,7 +33,7 @@ public class JdaService {
     try {
       readTokenFromFile();
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("Error read token: ", e);
     }
 
     start(Collections.emptyList());
@@ -41,12 +41,16 @@ public class JdaService {
 
   private void start(List<GatewayIntent> gatewayIntents) {
     try {
-      jda = JDABuilder.createDefault(BOT_TOKEN).setActivity(Activity.watching("на твою мамку"))
-          .enableIntents(gatewayIntents).addEventListeners(new SlashCommandHandler(), new ReadyListener()).build();
+      jda = JDABuilder.createDefault(BOT_TOKEN)
+          .setActivity(Activity.watching("на твою мамку"))
+          .enableIntents(gatewayIntents)
+          .addEventListeners(new SlashCommandHandler(), new ReadyListener())
+          .enableCache(CacheFlag.VOICE_STATE)
+          .build();
 
       jda.awaitReady();
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      log.error("Interrupt: ", e);
     }
   }
 
