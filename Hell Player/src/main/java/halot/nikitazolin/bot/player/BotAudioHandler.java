@@ -9,9 +9,11 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class BotAudioHandler extends AudioEventAdapter implements AudioSendHandler {
   

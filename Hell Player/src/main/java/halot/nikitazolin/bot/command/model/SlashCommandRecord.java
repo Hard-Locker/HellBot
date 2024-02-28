@@ -10,6 +10,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
-public record SlashCommandRecord(SlashCommand slashCommand, SlashCommandInteractionEvent event, Member sender, TextChannel textChannel, List<OptionMapping> options) {
+public record SlashCommandRecord(SlashCommand slashCommand, SlashCommandInteractionEvent slashCommandEvent, Member member, TextChannel textChannel, List<OptionMapping> options) {
 
 }

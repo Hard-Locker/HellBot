@@ -25,10 +25,6 @@ public class JdaService {
   private String BOT_TOKEN;
   private static JDA jda;
 
-  private void readTokenFromFile() throws IOException {
-    BOT_TOKEN = new String(Files.readAllBytes(Paths.get("src/main/resources/bot-token.txt"))).trim();
-  }
-
   public JdaService() {
     try {
       readTokenFromFile();
@@ -52,6 +48,10 @@ public class JdaService {
     } catch (InterruptedException e) {
       log.error("Interrupt: ", e);
     }
+  }
+  
+  private void readTokenFromFile() throws IOException {
+    BOT_TOKEN = new String(Files.readAllBytes(Paths.get("src/main/resources/bot-token.txt"))).trim();
   }
 
   public Optional<JDA> getJda() {

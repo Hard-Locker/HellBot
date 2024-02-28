@@ -45,12 +45,9 @@ public class PingCommand extends SlashCommand {
   public void execute(SlashCommandRecord info) {
     final long time = System.currentTimeMillis();
 
-    info.event().replyEmbeds(MessageUtils.createInfoEmbed("Getting Response Time...").build()).setEphemeral(true)
+    info.slashCommandEvent().replyEmbeds(MessageUtils.createInfoEmbed("Getting Response Time...").build()).setEphemeral(true)
         .queue(response -> {
-          response.editOriginalEmbeds(
-              MessageUtils.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build())
-              .queue();
-        }, failure -> info.event().replyEmbeds(MessageUtils.createErrorEmbed("Failed to get response time!").build())
-            .queue());
+          response.editOriginalEmbeds(MessageUtils.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
+        }, failure -> info.slashCommandEvent().replyEmbeds(MessageUtils.createErrorEmbed("Failed to get response time!").build()).queue());
   }
 }

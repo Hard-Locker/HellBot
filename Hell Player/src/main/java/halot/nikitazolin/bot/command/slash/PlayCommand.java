@@ -1,5 +1,7 @@
 package halot.nikitazolin.bot.command.slash;
 
+import org.springframework.stereotype.Component;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -8,22 +10,15 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
+import halot.nikitazolin.bot.command.model.SlashCommand;
+import halot.nikitazolin.bot.command.model.SlashCommandRecord;
+import halot.nikitazolin.bot.player.BotAudioHandler;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
-import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.managers.AudioManager;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import halot.nikitazolin.bot.command.model.SlashCommand;
-import halot.nikitazolin.bot.command.model.SlashCommandRecord;
-import halot.nikitazolin.bot.player.BotAudioHandler;
-import halot.nikitazolin.bot.util.MessageUtils;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Component
 public class PlayCommand extends SlashCommand {
@@ -60,11 +55,8 @@ public class PlayCommand extends SlashCommand {
 
   @Override
   public void execute(SlashCommandRecord info) {
-    AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-    AudioSourceManagers.registerRemoteSources(playerManager);
-    
-    Guild guild = info.event().getGuild();
-    Member member = info.event().getMember();
+    Guild guild = info.slashCommandEvent().getGuild();
+    Member member = info.slashCommandEvent().getMember();
 
     if (guild == null || member == null) {
       return;
@@ -73,10 +65,12 @@ public class PlayCommand extends SlashCommand {
     VoiceChannel voiceChannel = guild.getVoiceChannelsByName("General", true).get(0);
     
     if (voiceChannel == null) {
-      info.event().reply("You need to be in a voice channel to use this command.").queue();
+      info.slashCommandEvent().reply("You need to be in a voice channel to use this command.").queue();
       return;
     }
     
+    AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+    AudioSourceManagers.registerRemoteSources(playerManager);
 //    AudioManager audioManager = guild.getAudioManager();
 //    audioManager.openAudioConnection(voiceChannel);
 //    AudioPlayer player = playerManager.createPlayer();
@@ -87,7 +81,7 @@ public class PlayCommand extends SlashCommand {
     BotAudioHandler audioHandler = new BotAudioHandler(player);
     guild.getAudioManager().setSendingHandler(audioHandler);
 
-    System.out.println("Status: " + guild.getAudioManager().getConnectionStatus());
+//    System.out.println("Status: " + guild.getAudioManager().getConnectionStatus());
     
     String trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
 
@@ -95,7 +89,7 @@ public class PlayCommand extends SlashCommand {
       @Override
       public void trackLoaded(AudioTrack track) {
         player.playTrack(track);
-        info.event().reply("Now playing: " + track.getInfo().title).queue();
+        info.slashCommandEvent().reply("Now playing: " + track.getInfo().title).queue();
       }
 
       @Override
@@ -104,12 +98,12 @@ public class PlayCommand extends SlashCommand {
 
       @Override
       public void noMatches() {
-        info.event().reply("Track not found by URL: " + trackUrl).queue();
+        info.slashCommandEvent().reply("Track not found by URL: " + trackUrl).queue();
       }
 
       @Override
       public void loadFailed(FriendlyException exception) {
-        info.event().reply("Could not play: " + exception.getMessage()).queue();
+        info.slashCommandEvent().reply("Could not play: " + exception.getMessage()).queue();
       }
     });
   }

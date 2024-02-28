@@ -20,12 +20,12 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 @Service
 @Getter
 @Slf4j
-public class CommandRegistry {
+public class CommandRegistrator {
 
-  private final Optional<JDA> jda = HellBot.getInstance().getJdaService().getJda();
+  private final Optional<JDA> jda = HellBot.getJdaService().getJda();
   private List<SlashCommand> activeCommands = new ArrayList<>();
-  
-  public CommandRegistry() {
+
+  public CommandRegistrator() {
     registerCommands();
   }
 
@@ -41,17 +41,17 @@ public class CommandRegistry {
     }, () -> System.out.println("JDA is not present!"));
   }
 
-  private CommandData create(SlashCommand command) {
-    this.activeCommands.add(command);
+  private CommandData create(SlashCommand slashCommand) {
+    this.activeCommands.add(slashCommand);
     
-    if (command.options().length > 0) {
-      log.info("Registering command " + command.name() + " with " + command.options().length + " options!");
+    if (slashCommand.options().length > 0) {
+      log.info("Registering command " + slashCommand.name() + " with " + slashCommand.options().length + " options!");
       
-      return Commands.slash(command.name(), command.description()).addOptions(command.options()).setGuildOnly(command.guildOnly());
+      return Commands.slash(slashCommand.name(), slashCommand.description()).addOptions(slashCommand.options()).setGuildOnly(slashCommand.guildOnly());
     } else {
-      log.warn("Registering command " + command.name() + " with no options!");
+      log.warn("Registering command " + slashCommand.name() + " with no options!");
       
-      return Commands.slash(command.name(), command.description()).setGuildOnly(command.guildOnly());
+      return Commands.slash(slashCommand.name(), slashCommand.description()).setGuildOnly(slashCommand.guildOnly());
     }
   }
 }

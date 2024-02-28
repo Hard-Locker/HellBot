@@ -43,6 +43,6 @@ public class HelloCommand extends SlashCommand {
 
   @Override
   public void execute(SlashCommandRecord info) {
-    info.event().replyEmbeds(MessageUtils.createInfoEmbed("Gamarjoba genacvale!").build()).queue();
+    info.slashCommandEvent().replyEmbeds(MessageUtils.createInfoEmbed("Gamarjoba genacvale!").build()).queue();
   }
 }

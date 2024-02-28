@@ -16,19 +16,27 @@ public class SlashCommandHandler extends ListenerAdapter {
 
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-    if (event.getGuild() == null)
+    if (event.getGuild() == null) {
       return;
-    if (event.getUser().isBot())
+    }
+
+    if (event.getUser().isBot()) {
       return;
-    if (event.getMember() == null)
+    }
+
+    if (event.getMember() == null) {
       return;
+    }
 
     Optional<SlashCommand> command = getCommand(event.getName());
-    if (command.isEmpty())
+    
+    if (command.isEmpty()) {
       return;
+    }
 
     if (command.get().neededPermission() != null && !event.getMember().hasPermission(command.get().neededPermission())) {
       event.replyEmbeds(MessageUtils.createErrorEmbed("You don't have the permission to execute this command!").build()).setEphemeral(true).queue();
+      
       return;
     }
 
@@ -37,9 +45,6 @@ public class SlashCommandHandler extends ListenerAdapter {
   }
 
   private Optional<SlashCommand> getCommand(String name) {
-    return HellBot.getInstance()
-        .getCommandRegistry()
-        .getActiveCommands()
-        .stream().filter(command -> command.name().equalsIgnoreCase(name)).findFirst();
+    return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.name().equalsIgnoreCase(name)).findFirst();
   }
 }
