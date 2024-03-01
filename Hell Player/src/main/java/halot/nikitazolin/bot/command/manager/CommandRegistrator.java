@@ -11,6 +11,8 @@ import halot.nikitazolin.bot.command.model.SlashCommand;
 import halot.nikitazolin.bot.command.slash.HelloCommand;
 import halot.nikitazolin.bot.command.slash.PingCommand;
 import halot.nikitazolin.bot.command.slash.PlayCommand;
+import halot.nikitazolin.bot.command.slash.ShutdownCommand;
+import halot.nikitazolin.bot.command.slash.StopCommand;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
@@ -35,7 +37,9 @@ public class CommandRegistrator {
         .addCommands(
             create(new HelloCommand()), 
             create(new PingCommand()), 
-            create(new PlayCommand())
+            create(new PlayCommand()),
+            create(new StopCommand()),
+            create(new ShutdownCommand())
             )
         .queue();
     }, () -> System.out.println("JDA is not present!"));
