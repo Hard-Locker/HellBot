@@ -17,12 +17,12 @@ import net.dv8tion.jda.api.managers.AudioManager;
 @Slf4j
 public class BotAudioService {
 
-  private final Guild guild;
+  private final Guild initialGuild;
   private final BotPlayerManager audioSendHandler = new BotPlayerManager();
   private AudioManager audioManager;
 
   public BotAudioService(Guild guild) {
-    this.guild = guild;
+    this.initialGuild = guild;
 
     audioManager = guild.getAudioManager();
     setUpAudioSendHandler(audioManager);
@@ -31,7 +31,7 @@ public class BotAudioService {
   private void setUpAudioSendHandler(AudioManager audioManager) {
     if (audioManager.getSendingHandler() == null) {
       audioManager.setSendingHandler(audioSendHandler);
-      log.debug("Set sending handler for guild: " + guild.getId());
+      log.debug("Set sending handler for guild: " + initialGuild.getId());
     }
   }
 
@@ -50,22 +50,26 @@ public class BotAudioService {
     Guild guild = event.getGuild();
     Member member = event.getMember();
     User user = event.getMember().getUser();
-    VoiceChannel voiceChannel;
+    VoiceChannel userVoiceChannel;
+    VoiceChannel afkVoiceChannel = guild.getAfkChannel();
 
     if (guild == null || member == null) {
       log.error("Not found member or guild");
-
       return null;
     }
 
     try {
-      voiceChannel = member.getVoiceState().getChannel().asVoiceChannel();
+      userVoiceChannel = member.getVoiceState().getChannel().asVoiceChannel();
 
-      return voiceChannel;
+      if (afkVoiceChannel != null && afkVoiceChannel.equals(userVoiceChannel)) {
+        event.replyEmbeds(MessageUtil.createErrorEmbed(user.getName() + ", this command cannot be used in the AFK channel.").build()).queue();
+        return null;
+      }
+      
+      return userVoiceChannel;
     } catch (NullPointerException e) {
-      event.replyEmbeds(MessageUtil.createInfoEmbed(user.getName() + " need to be in a voice channel to use music command.").build()).queue();
+      event.replyEmbeds(MessageUtil.createErrorEmbed(user.getName() + ", you need to be in voice channel to use music command.").build()).queue();
       log.warn("User must to be in a voice channel to use music command.");
-
       return null;
     }
   }
@@ -76,6 +80,7 @@ public class BotAudioService {
   }
 
   public void rebootPlayer() {
+    stopAudioSending();
     audioSendHandler.shutdownPlayer();
     audioSendHandler.createPlayer();
   }

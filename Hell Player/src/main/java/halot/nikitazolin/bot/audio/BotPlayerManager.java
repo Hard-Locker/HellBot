@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.audio.AudioSendHandler;
 @Slf4j
 public class BotPlayerManager implements AudioSendHandler {
   
-  private final AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
+  private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
   

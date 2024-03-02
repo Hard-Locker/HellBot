@@ -10,6 +10,7 @@ import halot.nikitazolin.bot.HellBot;
 import halot.nikitazolin.bot.command.model.SlashCommand;
 import halot.nikitazolin.bot.command.slash.HelloCommand;
 import halot.nikitazolin.bot.command.slash.PingCommand;
+import halot.nikitazolin.bot.command.slash.RebootCommand;
 import halot.nikitazolin.bot.command.slash.ShutdownCommand;
 import halot.nikitazolin.bot.command.slash.music.PlayCommand;
 import halot.nikitazolin.bot.command.slash.music.StopCommand;
@@ -39,6 +40,7 @@ public class CommandRegistrator {
             create(new PingCommand()), 
             create(new PlayCommand()),
             create(new StopCommand()),
+            create(new RebootCommand()),
             create(new ShutdownCommand())
             )
         .queue();
