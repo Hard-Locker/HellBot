@@ -5,22 +5,31 @@ import java.nio.ByteBuffer;
 import org.springframework.stereotype.Component;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
 @Component
 @Getter
 @Slf4j
-@RequiredArgsConstructor
-public class BotAudioHandler extends AudioEventAdapter implements AudioSendHandler {
+public class BotPlayerManager implements AudioSendHandler {
   
-  private final AudioPlayer audioPlayer;
+  private final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+  private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
+  
+  public BotPlayerManager() {
+    AudioSourceManagers.registerRemoteSources(playerManager);
+    AudioSourceManagers.registerLocalSource(playerManager);
+    audioPlayer = playerManager.createPlayer();
+    
+    log.info("Created BotPlayerManager for implementation AudioSendHandler");
+  }
 
   @Override
   public boolean canProvide() {

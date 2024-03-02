@@ -4,27 +4,21 @@ import org.springframework.stereotype.Component;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import halot.nikitazolin.bot.command.model.SlashCommand;
 import halot.nikitazolin.bot.command.model.SlashCommandRecord;
-import halot.nikitazolin.bot.player.BotAudioHandler;
+import halot.nikitazolin.bot.player.BotAudioService;
+import halot.nikitazolin.bot.player.BotPlayerManager;
 import halot.nikitazolin.bot.util.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.managers.AudioManager;
 
 @Component
 @Slf4j
@@ -64,46 +58,22 @@ public class PlayCommand extends SlashCommand {
   public void execute(SlashCommandRecord info) {
     SlashCommandInteractionEvent event = info.slashCommandEvent();
     Guild guild = event.getGuild();
-    Member member = event.getMember();
-    User user = event.getMember().getUser();
-    VoiceChannel voiceChannel;
-
-    if (guild == null || member == null) {
-      return;
-    }
-
-    try {
-      voiceChannel = member.getVoiceState().getChannel().asVoiceChannel();
-    } catch (NullPointerException e) {
-      event.replyEmbeds(MessageUtils.createInfoEmbed(user.getName() + " need to be in a voice channel to use music command.").build()).queue();
-      log.warn("User must to be in a voice channel to use music command.");
-
-      return;
-    }
-
-    AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-    AudioSourceManagers.registerRemoteSources(playerManager);
-    AudioSourceManagers.registerLocalSource(playerManager);
-
-    AudioManager audioManager = guild.getAudioManager();
-    audioManager.openAudioConnection(voiceChannel);
-
-    AudioPlayer player = playerManager.createPlayer();
-
-    BotAudioHandler audioHandler = new BotAudioHandler(player);
-    player.addListener(audioHandler);
-    audioManager.setSendingHandler(audioHandler);
-
+    BotPlayerManager audioHandler = new BotPlayerManager();
+    AudioPlayer audioPlayer = audioHandler.getAudioPlayer();
+    BotAudioService botAudioService = new BotAudioService(guild, audioHandler);
+    
     String trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-
-    playerManager.loadItem(trackUrl, new AResultHandler(event));
-
+    
+    botAudioService.connectToVoiceChannel(event);
+    audioHandler.getPlayerManager().loadItem(trackUrl, new AResultHandler(event, audioPlayer));
+    event.replyEmbeds(MessageUtils.createInfoEmbed("Play: " + trackUrl).build()).queue();
   }
 
   @RequiredArgsConstructor
   class AResultHandler implements AudioLoadResultHandler {
-    
+
     private final SlashCommandInteractionEvent event;
+    private final AudioPlayer audioPlayer;
 
     @Override
     public void trackLoaded(AudioTrack track) {
@@ -126,9 +96,6 @@ public class PlayCommand extends SlashCommand {
     }
 
     private void loadSingle(AudioTrack track, AudioPlaylist playlist) {
-      BotAudioHandler audioHandler = (BotAudioHandler) event.getGuild().getAudioManager().getSendingHandler();
-      AudioPlayer audioPlayer = audioHandler.getAudioPlayer();
-      
       audioPlayer.playTrack(track);
 //      int pos = handler.addTrack(new QueuedTrack(track, event.getAuthor())) + 1;
 //      String addMsg = FormatUtil.filter(event.getClient().getSuccess() + " Добавлен **" + track.getInfo().title + "** (`" + FormatUtil.formatTime(track.getDuration()) + "`) " + (pos == 0 ? "чтобы начать играть" : " чтобы добавить в очередь на позиции " + pos));
