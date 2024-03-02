@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.command.model.SlashCommand;
 import halot.nikitazolin.bot.command.model.SlashCommandRecord;
-import halot.nikitazolin.bot.util.MessageUtils;
+import halot.nikitazolin.bot.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -43,6 +43,6 @@ public class HelloCommand extends SlashCommand {
 
   @Override
   public void execute(SlashCommandRecord info) {
-    info.slashCommandEvent().replyEmbeds(MessageUtils.createInfoEmbed("Gamarjoba genacvale!").build()).queue();
+    info.slashCommandEvent().replyEmbeds(MessageUtil.createInfoEmbed("Gamarjoba genacvale!").build()).queue();
   }
 }

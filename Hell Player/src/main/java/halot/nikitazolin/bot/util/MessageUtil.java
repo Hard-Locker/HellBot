@@ -6,7 +6,7 @@ import halot.nikitazolin.bot.HellBot;
 import java.awt.*;
 import java.time.Instant;
 
-public final class MessageUtils {
+public final class MessageUtil {
 
   private static final Color BOT_COLOR_SUCCESS = new Color(88, 170, 137);
   private static final Color BOT_COLOR_ERROR = new Color(191, 61, 39);
@@ -14,7 +14,7 @@ public final class MessageUtils {
   private static final Color BOT_COLOR_INFO_ALT = new Color(87, 97, 133);
   private static final Color BOT_COLOR_WARNING = new Color(255, 122, 0);
 
-  private MessageUtils() {
+  private MessageUtil() {
     throw new AssertionError("No, bad! No instances of util classes!");
   }
 

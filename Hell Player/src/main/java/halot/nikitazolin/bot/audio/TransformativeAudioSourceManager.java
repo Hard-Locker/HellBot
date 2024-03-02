@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.player;
+package halot.nikitazolin.bot.audio;
 
 import java.io.IOException;
 import java.util.Collections;

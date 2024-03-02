@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.command.slash;
+package halot.nikitazolin.bot.command.slash.music;
 
 import org.springframework.stereotype.Component;
 
@@ -8,11 +8,10 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
+import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.command.model.SlashCommand;
 import halot.nikitazolin.bot.command.model.SlashCommandRecord;
-import halot.nikitazolin.bot.player.BotAudioService;
-import halot.nikitazolin.bot.player.BotPlayerManager;
-import halot.nikitazolin.bot.util.MessageUtils;
+import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -58,19 +57,20 @@ public class PlayCommand extends SlashCommand {
   public void execute(SlashCommandRecord info) {
     SlashCommandInteractionEvent event = info.slashCommandEvent();
     Guild guild = event.getGuild();
-    BotPlayerManager audioHandler = new BotPlayerManager();
-    AudioPlayer audioPlayer = audioHandler.getAudioPlayer();
-    BotAudioService botAudioService = new BotAudioService(guild, audioHandler);
+    BotAudioService botAudioService = new BotAudioService(guild);
+    AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
     
     String trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     
     botAudioService.connectToVoiceChannel(event);
-    audioHandler.getPlayerManager().loadItem(trackUrl, new AResultHandler(event, audioPlayer));
-    event.replyEmbeds(MessageUtils.createInfoEmbed("Play: " + trackUrl).build()).queue();
+    botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(event, audioPlayer));
+    event.replyEmbeds(MessageUtil.createInfoEmbed("Play: " + trackUrl).build()).queue();
+    
+    log.debug("User launched audiotrack." + " User: " + event.getUser() + " Track: " + trackUrl);
   }
 
   @RequiredArgsConstructor
-  class AResultHandler implements AudioLoadResultHandler {
+  class PlayResultHandler implements AudioLoadResultHandler {
 
     private final SlashCommandInteractionEvent event;
     private final AudioPlayer audioPlayer;

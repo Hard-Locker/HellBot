@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.command.model.SlashCommand;
 import halot.nikitazolin.bot.command.model.SlashCommandRecord;
-import halot.nikitazolin.bot.util.MessageUtils;
+import halot.nikitazolin.bot.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -45,9 +45,9 @@ public class PingCommand extends SlashCommand {
   public void execute(SlashCommandRecord info) {
     final long time = System.currentTimeMillis();
 
-    info.slashCommandEvent().replyEmbeds(MessageUtils.createInfoEmbed("Getting Response Time...").build()).setEphemeral(true)
+    info.slashCommandEvent().replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build()).setEphemeral(true)
         .queue(response -> {
-          response.editOriginalEmbeds(MessageUtils.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
-        }, failure -> info.slashCommandEvent().replyEmbeds(MessageUtils.createErrorEmbed("Failed to get response time!").build()).queue());
+          response.editOriginalEmbeds(MessageUtil.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
+        }, failure -> info.slashCommandEvent().replyEmbeds(MessageUtil.createErrorEmbed("Failed to get response time!").build()).queue());
   }
 }

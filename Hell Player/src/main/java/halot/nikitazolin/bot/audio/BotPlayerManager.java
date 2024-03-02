@@ -1,7 +1,8 @@
-package halot.nikitazolin.bot.player;
+package halot.nikitazolin.bot.audio;
 
 import java.nio.ByteBuffer;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -15,18 +16,19 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
 @Component
+@Scope("singleton")
 @Getter
 @Slf4j
 public class BotPlayerManager implements AudioSendHandler {
   
-  private final AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+  private final AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
   
   public BotPlayerManager() {
-    AudioSourceManagers.registerRemoteSources(playerManager);
-    AudioSourceManagers.registerLocalSource(playerManager);
-    audioPlayer = playerManager.createPlayer();
+    AudioSourceManagers.registerRemoteSources(audioPlayerManager);
+    AudioSourceManagers.registerLocalSource(audioPlayerManager);
+    audioPlayer = audioPlayerManager.createPlayer();
     
     log.info("Created BotPlayerManager for implementation AudioSendHandler");
   }
@@ -45,5 +47,25 @@ public class BotPlayerManager implements AudioSendHandler {
   @Override
   public boolean isOpus() {
     return true;
+  }
+  
+  protected void stopPlayingMusic() {
+    audioPlayer.stopTrack();
+  }
+  
+  protected void skipTrack() {
+    //TODO
+  }
+  
+  protected void skipTrackToPosition() {
+    //TODO
+  }
+  
+  protected void setVolume() {
+    //TODO
+  }
+  
+  protected void clearQueue() {
+    //TODO
   }
 }

@@ -1,11 +1,10 @@
-package halot.nikitazolin.bot.player;
+package halot.nikitazolin.bot.audio;
 
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.util.MessageUtils;
+import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -19,18 +18,17 @@ import net.dv8tion.jda.api.managers.AudioManager;
 public class BotAudioService {
 
   private final Guild guild;
-  private final AudioSendHandler audioSendHandler;
+  private final BotPlayerManager audioSendHandler = new BotPlayerManager();
   private AudioManager audioManager;
   
-  public BotAudioService(Guild guild, AudioSendHandler audioSendHandler) {
+  public BotAudioService(Guild guild) {
     this.guild = guild;
-    this.audioSendHandler = audioSendHandler;
     
     audioManager = guild.getAudioManager();
-    setUpAudioSendHandler();
+    setUpAudioSendHandler(audioManager);
   }
   
-  private void setUpAudioSendHandler() {
+  private void setUpAudioSendHandler(AudioManager audioManager) {
     if (audioManager.getSendingHandler() == null) {
       audioManager.setSendingHandler(audioSendHandler);
       log.debug("Set sending handler for guild: " + guild.getId());
@@ -41,6 +39,11 @@ public class BotAudioService {
     VoiceChannel voiceChannel = getVoiceChannelByUser(event);
 
     audioManager.openAudioConnection(voiceChannel);
+  }
+  
+  public void stopAudioSending() {
+    audioSendHandler.stopPlayingMusic();
+    audioManager.closeAudioConnection();
   }
 
   private VoiceChannel getVoiceChannelByUser(SlashCommandInteractionEvent event) {
@@ -60,7 +63,7 @@ public class BotAudioService {
 
       return voiceChannel;
     } catch (NullPointerException e) {
-      event.replyEmbeds(MessageUtils.createInfoEmbed(user.getName() + " need to be in a voice channel to use music command.").build()).queue();
+      event.replyEmbeds(MessageUtil.createInfoEmbed(user.getName() + " need to be in a voice channel to use music command.").build()).queue();
       log.warn("User must to be in a voice channel to use music command.");
 
       return null;
