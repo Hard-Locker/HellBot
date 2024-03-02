@@ -20,14 +20,14 @@ public class BotAudioService {
   private final Guild guild;
   private final BotPlayerManager audioSendHandler = new BotPlayerManager();
   private AudioManager audioManager;
-  
+
   public BotAudioService(Guild guild) {
     this.guild = guild;
-    
+
     audioManager = guild.getAudioManager();
     setUpAudioSendHandler(audioManager);
   }
-  
+
   private void setUpAudioSendHandler(AudioManager audioManager) {
     if (audioManager.getSendingHandler() == null) {
       audioManager.setSendingHandler(audioSendHandler);
@@ -40,7 +40,7 @@ public class BotAudioService {
 
     audioManager.openAudioConnection(voiceChannel);
   }
-  
+
   public void stopAudioSending() {
     audioSendHandler.stopPlayingMusic();
     audioManager.closeAudioConnection();
@@ -70,4 +70,13 @@ public class BotAudioService {
     }
   }
 
+  public void shutdown() {
+    stopAudioSending();
+    audioSendHandler.shutdownPlayer();
+  }
+
+  public void rebootPlayer() {
+    audioSendHandler.shutdownPlayer();
+    audioSendHandler.createPlayer();
+  }
 }

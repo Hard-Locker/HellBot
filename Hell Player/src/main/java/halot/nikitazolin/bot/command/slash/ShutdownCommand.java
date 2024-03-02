@@ -52,15 +52,13 @@ public class ShutdownCommand extends SlashCommand {
     Guild guild = event.getGuild();
     User user = event.getMember().getUser();
     BotAudioService botAudioService = new BotAudioService(guild);
-    
-    botAudioService.stopAudioSending();
-//    botAudioService.getAudioSendHandler().getAudioPlayer().destroy();
-    botAudioService.getAudioSendHandler().getAudioPlayerManager().shutdown();
-    
+
+    botAudioService.shutdown();
+
     event.reply("Shutdown...").queue();
-    
+
     log.warn("User shutdowning bot. " + "User: " + user);
-    
+
     System.exit(0);
   }
 }

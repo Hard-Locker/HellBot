@@ -26,9 +26,7 @@ public class BotPlayerManager implements AudioSendHandler {
   private AudioFrame lastFrame;
   
   public BotPlayerManager() {
-    AudioSourceManagers.registerRemoteSources(audioPlayerManager);
-    AudioSourceManagers.registerLocalSource(audioPlayerManager);
-    audioPlayer = audioPlayerManager.createPlayer();
+    createPlayer();
     
     log.info("Created BotPlayerManager for implementation AudioSendHandler");
   }
@@ -49,6 +47,12 @@ public class BotPlayerManager implements AudioSendHandler {
     return true;
   }
   
+  protected void createPlayer() {
+    AudioSourceManagers.registerRemoteSources(audioPlayerManager);
+    AudioSourceManagers.registerLocalSource(audioPlayerManager);
+    audioPlayer = audioPlayerManager.createPlayer();
+  }
+  
   protected void stopPlayingMusic() {
     audioPlayer.stopTrack();
   }
@@ -67,5 +71,10 @@ public class BotPlayerManager implements AudioSendHandler {
   
   protected void clearQueue() {
     //TODO
+  }
+  
+  protected void shutdownPlayer() {
+    audioPlayer.destroy();
+    audioPlayerManager.shutdown();
   }
 }

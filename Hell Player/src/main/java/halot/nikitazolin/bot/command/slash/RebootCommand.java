@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.command.slash.music;
+package halot.nikitazolin.bot.command.slash;
 
 import org.springframework.stereotype.Component;
 
@@ -14,16 +14,16 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Slf4j
-public class StopCommand extends SlashCommand {
+public class RebootCommand extends SlashCommand {
 
   @Override
   public String name() {
-    return "stop";
+    return "reboot";
   }
 
   @Override
   public String description() {
-    return "Stop playing music";
+    return "Reboot player";
   }
 
   @Override
@@ -53,9 +53,10 @@ public class StopCommand extends SlashCommand {
     User user = event.getMember().getUser();
     BotAudioService botAudioService = new BotAudioService(guild);
 
-    botAudioService.stopAudioSending();
-    event.reply("Player was stopped by user: " + user.getAsMention()).queue();
+    botAudioService.rebootPlayer();
 
-    log.info("Player was stopped by user: " + user);
+    event.reply("Reboot...").queue();
+
+    log.warn("User reboot bot. " + "User: " + user);
   }
 }
