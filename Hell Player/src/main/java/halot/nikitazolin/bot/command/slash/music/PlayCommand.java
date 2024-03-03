@@ -12,11 +12,17 @@ import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.command.model.SlashCommand;
 import halot.nikitazolin.bot.command.model.SlashCommandRecord;
 import halot.nikitazolin.bot.util.MessageUtil;
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -62,12 +68,37 @@ public class PlayCommand extends SlashCommand {
     
     String trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     
+//    onMessageReceived(event);
+//    String sub = info.slashCommand().onMessageReceived(null);
+//    System.out.println(sub);
+    
     botAudioService.connectToVoiceChannel(event);
     botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(event, audioPlayer));
     event.replyEmbeds(MessageUtil.createInfoEmbed("Play: " + trackUrl).build()).queue();
     
     log.debug("User launched audiotrack." + " User: " + event.getUser() + " Track: " + trackUrl);
   }
+//  
+//  @Override
+//  public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+//    User author = event.getAuthor();
+//    MessageChannelUnion channel = event.getChannel();
+//    Message message = event.getMessage();
+//
+//    if (event.isFromGuild()) {
+//      System.out.printf("[%s] [%#s] %#s: %s\n", event.getGuild().getName(), channel, author, message.getContentDisplay());
+//    } else {
+//      System.out.printf("[direct] %#s: %s\n", author, message.getContentDisplay());
+//    }
+//
+//    if (channel.getType() == ChannelType.TEXT) {
+//      System.out.println("The channel topic is " + channel.asTextChannel().getTopic());
+//    }
+//
+//    if (channel.getType().isThread()) {
+//      System.out.println("This thread is part of channel #" + channel.asThreadChannel().getParentChannel().getName());
+//    }
+//  }
 
   @RequiredArgsConstructor
   class PlayResultHandler implements AudioLoadResultHandler {

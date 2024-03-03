@@ -3,10 +3,11 @@ package halot.nikitazolin.bot.command.model;
 import org.springframework.stereotype.Component;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
-public abstract class SlashCommand {
+public abstract class SlashCommand extends ListenerAdapter {
 
   public abstract String name();
 

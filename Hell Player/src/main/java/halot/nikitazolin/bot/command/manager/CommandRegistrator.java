@@ -27,26 +27,32 @@ public class CommandRegistrator {
 
   private final Optional<JDA> jda = HellBot.getJdaService().getJda();
   private List<SlashCommand> activeCommands = new ArrayList<>();
+  private List<CommandData> commandsToRegister = new ArrayList<>();
 
   public CommandRegistrator() {
+    commandsToRegister = preparateCommands();
     registerCommands();
   }
 
   private void registerCommands() {
     jda.ifPresentOrElse(jda -> {
-      jda.updateCommands()
-        .addCommands(
-            create(new HelloCommand()), 
-            create(new PingCommand()), 
-            create(new PlayCommand()),
-            create(new StopCommand()),
-            create(new RebootCommand()),
-            create(new ShutdownCommand())
-            )
-        .queue();
+      jda.updateCommands().addCommands(commandsToRegister).queue();
     }, () -> System.out.println("JDA is not present!"));
   }
 
+  private List<CommandData> preparateCommands() {
+    List<CommandData> commands = new ArrayList<>();
+    
+    commands.add(create(new HelloCommand()));
+    commands.add(create(new PingCommand()));
+    commands.add(create(new PlayCommand()));
+    commands.add(create(new StopCommand()));
+    commands.add(create(new RebootCommand()));
+    commands.add(create(new ShutdownCommand()));
+    
+    return commands;
+  }
+  
   private CommandData create(SlashCommand slashCommand) {
     this.activeCommands.add(slashCommand);
     
