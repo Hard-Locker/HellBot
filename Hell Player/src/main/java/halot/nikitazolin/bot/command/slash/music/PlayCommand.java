@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -56,7 +57,9 @@ public class PlayCommand extends SlashCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] {};
+    return new OptionData[] {
+        new OptionData(OptionType.STRING, "link", "The reason for stopping the music", false)
+    };
   }
 
   @Override
@@ -66,11 +69,11 @@ public class PlayCommand extends SlashCommand {
     BotAudioService botAudioService = new BotAudioService(guild);
     AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
     
-    String trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
+//    String trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     
-//    onMessageReceived(event);
-//    String sub = info.slashCommand().onMessageReceived(null);
-//    System.out.println(sub);
+    String reason = event.getOption("link") != null ? event.getOption("link").getAsString() : "No link provided";
+    String trackUrl = reason;
+    System.out.println(reason);
     
     botAudioService.connectToVoiceChannel(event);
     botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(event, audioPlayer));
@@ -78,27 +81,6 @@ public class PlayCommand extends SlashCommand {
     
     log.debug("User launched audiotrack." + " User: " + event.getUser() + " Track: " + trackUrl);
   }
-//  
-//  @Override
-//  public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
-//    User author = event.getAuthor();
-//    MessageChannelUnion channel = event.getChannel();
-//    Message message = event.getMessage();
-//
-//    if (event.isFromGuild()) {
-//      System.out.printf("[%s] [%#s] %#s: %s\n", event.getGuild().getName(), channel, author, message.getContentDisplay());
-//    } else {
-//      System.out.printf("[direct] %#s: %s\n", author, message.getContentDisplay());
-//    }
-//
-//    if (channel.getType() == ChannelType.TEXT) {
-//      System.out.println("The channel topic is " + channel.asTextChannel().getTopic());
-//    }
-//
-//    if (channel.getType().isThread()) {
-//      System.out.println("This thread is part of channel #" + channel.asThreadChannel().getParentChannel().getName());
-//    }
-//  }
 
   @RequiredArgsConstructor
   class PlayResultHandler implements AudioLoadResultHandler {
