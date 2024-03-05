@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.HellBot;
-import halot.nikitazolin.bot.command.model.SlashCommand;
+import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.slash.HelloCommand;
 import halot.nikitazolin.bot.command.slash.PingCommand;
 import halot.nikitazolin.bot.command.slash.RebootCommand;
@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 public class CommandRegistrator {
 
   private final Optional<JDA> jda = HellBot.getJdaService().getJda();
-  private List<SlashCommand> activeCommands = new ArrayList<>();
+  private List<BotCommand> activeCommands = new ArrayList<>();
   private List<CommandData> commandsToRegister = new ArrayList<>();
 
   public CommandRegistrator() {
@@ -55,7 +55,7 @@ public class CommandRegistrator {
     return commands;
   }
   
-  private CommandData create(SlashCommand slashCommand) {
+  private CommandData create(BotCommand slashCommand) {
     this.activeCommands.add(slashCommand);
     
     if (slashCommand.options().length > 0) {

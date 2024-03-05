@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.HellBot;
-import halot.nikitazolin.bot.command.model.SlashCommand;
-import halot.nikitazolin.bot.command.model.SlashCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommand;
+import halot.nikitazolin.bot.command.model.BotCommandRecord;
 import halot.nikitazolin.bot.util.MessageUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -29,7 +29,7 @@ public class CommandEventHandler extends ListenerAdapter {
       return;
     }
 
-    Optional<SlashCommand> command = getCommand(slashEvent.getName());
+    Optional<BotCommand> command = getCommand(slashEvent.getName());
     
     if (command.isEmpty()) {
       return;
@@ -41,12 +41,12 @@ public class CommandEventHandler extends ListenerAdapter {
       return;
     }
 
-    SlashCommandRecord record = new SlashCommandRecord(command.get(), slashEvent, null, slashEvent.getOptions());
+    BotCommandRecord record = new BotCommandRecord(command.get(), slashEvent, null, slashEvent.getOptions());
     command.get().execute(record);
   }
 
   @Override
-  public void onMessageReceived(MessageReceivedEvent messageReceivedEvent) {
+  public void onMessageReceived(MessageReceivedEvent receivedEvent) {
 //    if (event.getAuthor().isBot()) {
 //      return;
 //    }
@@ -62,22 +62,22 @@ public class CommandEventHandler extends ListenerAdapter {
 //      }
 //    }
     
-    if (messageReceivedEvent.getAuthor().isBot() || messageReceivedEvent.isWebhookMessage()) {
+    if (receivedEvent.getAuthor().isBot() || receivedEvent.isWebhookMessage()) {
       return;
     }
 
-    String messageText = messageReceivedEvent.getMessage().getContentRaw().split("\\s+")[0];
+    String messageText = receivedEvent.getMessage().getContentRaw().split("\\s+")[0];
     
     HellBot.getCommandRegistry().getActiveCommands().stream()
         .filter(command -> command.name().equalsIgnoreCase(messageText) || command.nameAliases().contains(messageText.toLowerCase()))
         .findFirst()
         .ifPresent(command -> {
-            SlashCommandRecord record = new SlashCommandRecord(command, null, messageReceivedEvent, null);
+            BotCommandRecord record = new BotCommandRecord(command, null, receivedEvent, null);
             command.execute(record);
         });
   }
 
-  private Optional<SlashCommand> getCommand(String name) {
+  private Optional<BotCommand> getCommand(String name) {
     return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.name().equalsIgnoreCase(name)).findFirst();
   }
 }

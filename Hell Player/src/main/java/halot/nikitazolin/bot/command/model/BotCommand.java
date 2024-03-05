@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
-public abstract class SlashCommand extends ListenerAdapter {
+public abstract class BotCommand extends ListenerAdapter {
 
   public abstract String name();
   
@@ -27,5 +27,5 @@ public abstract class SlashCommand extends ListenerAdapter {
 
   public abstract OptionData[] options();
 
-  public abstract void execute(SlashCommandRecord info);
+  public abstract void execute(BotCommandRecord info);
 }

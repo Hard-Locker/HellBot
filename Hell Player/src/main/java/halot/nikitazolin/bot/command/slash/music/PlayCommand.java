@@ -9,8 +9,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
-import halot.nikitazolin.bot.command.model.SlashCommand;
-import halot.nikitazolin.bot.command.model.SlashCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommand;
+import halot.nikitazolin.bot.command.model.BotCommandRecord;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Slf4j
-public class PlayCommand extends SlashCommand {
+public class PlayCommand extends BotCommand {
 
   @Override
   public String name() {
@@ -57,7 +57,7 @@ public class PlayCommand extends SlashCommand {
   }
 
   @Override
-  public void execute(SlashCommandRecord info) {
+  public void execute(BotCommandRecord info) {
     SlashCommandInteractionEvent event = info.slashCommandEvent();
     Guild guild = event.getGuild();
     BotAudioService botAudioService = new BotAudioService(guild);
@@ -70,7 +70,7 @@ public class PlayCommand extends SlashCommand {
     System.out.println(reason);
     
     botAudioService.connectToVoiceChannel(event);
-    botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(event, audioPlayer));
+    botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(audioPlayer));
     event.replyEmbeds(MessageUtil.createInfoEmbed("Play: " + trackUrl).build()).queue();
     
     log.debug("User launched audiotrack." + " User: " + event.getUser() + " Track: " + trackUrl);
@@ -79,7 +79,6 @@ public class PlayCommand extends SlashCommand {
   @RequiredArgsConstructor
   class PlayResultHandler implements AudioLoadResultHandler {
 
-    private final SlashCommandInteractionEvent event;
     private final AudioPlayer audioPlayer;
 
     @Override

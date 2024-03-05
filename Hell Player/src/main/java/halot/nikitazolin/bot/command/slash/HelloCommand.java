@@ -2,14 +2,14 @@ package halot.nikitazolin.bot.command.slash;
 
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.command.model.SlashCommand;
-import halot.nikitazolin.bot.command.model.SlashCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommand;
+import halot.nikitazolin.bot.command.model.BotCommandRecord;
 import halot.nikitazolin.bot.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
-public class HelloCommand extends SlashCommand {
+public class HelloCommand extends BotCommand {
 
   @Override
   public String name() {
@@ -42,7 +42,7 @@ public class HelloCommand extends SlashCommand {
   }
 
   @Override
-  public void execute(SlashCommandRecord info) {
+  public void execute(BotCommandRecord info) {
     info.slashCommandEvent().replyEmbeds(MessageUtil.createInfoEmbed("Gamarjoba genacvale!").build()).queue();
   }
 }

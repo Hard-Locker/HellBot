@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
-import halot.nikitazolin.bot.command.model.SlashCommand;
-import halot.nikitazolin.bot.command.model.SlashCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommand;
+import halot.nikitazolin.bot.command.model.BotCommandRecord;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Slf4j
-public class StopCommand extends SlashCommand {
+public class StopCommand extends BotCommand {
 
   @Override
   public String name() {
@@ -54,7 +54,7 @@ public class StopCommand extends SlashCommand {
   }
 
   @Override
-  public void execute(SlashCommandRecord info) {
+  public void execute(BotCommandRecord info) {
     SlashCommandInteractionEvent event = info.slashCommandEvent();
     Guild guild = event.getGuild();
     User user = event.getMember().getUser();
