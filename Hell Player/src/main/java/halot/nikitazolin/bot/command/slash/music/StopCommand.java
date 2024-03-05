@@ -1,5 +1,7 @@
 package halot.nikitazolin.bot.command.slash.music;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
@@ -19,6 +21,11 @@ public class StopCommand extends SlashCommand {
   @Override
   public String name() {
     return "stop";
+  }
+  
+  @Override
+  public List<String> nameAliases() {
+    return List.of("stop");
   }
 
   @Override

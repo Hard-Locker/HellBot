@@ -12,17 +12,11 @@ import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.command.model.SlashCommand;
 import halot.nikitazolin.bot.command.model.SlashCommandRecord;
 import halot.nikitazolin.bot.util.MessageUtil;
-import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -58,7 +52,7 @@ public class PlayCommand extends SlashCommand {
   @Override
   public OptionData[] options() {
     return new OptionData[] {
-        new OptionData(OptionType.STRING, "link", "The reason for stopping the music", false)
+        new OptionData(OptionType.STRING, "link", "The reason for stopping the music", true)
     };
   }
 

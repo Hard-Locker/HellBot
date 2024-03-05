@@ -1,6 +1,8 @@
 package halot.nikitazolin.bot.audio;
 
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -9,6 +11,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import lombok.Getter;
@@ -24,6 +27,7 @@ public class BotPlayerManager implements AudioSendHandler {
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
+  private List<AudioTrack> queue = new LinkedList<>();
   
   public BotPlayerManager() {
     createPlayer();
@@ -70,7 +74,7 @@ public class BotPlayerManager implements AudioSendHandler {
   }
   
   protected void clearQueue() {
-    //TODO
+    queue.clear();
   }
   
   protected void shutdownPlayer() {

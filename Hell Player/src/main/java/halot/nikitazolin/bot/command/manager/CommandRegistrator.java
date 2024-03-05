@@ -36,7 +36,9 @@ public class CommandRegistrator {
 
   private void registerCommands() {
     jda.ifPresentOrElse(jda -> {
-      jda.updateCommands().addCommands(commandsToRegister).queue();
+      jda.updateCommands()
+        .addCommands(commandsToRegister)
+        .queue();
     }, () -> System.out.println("JDA is not present!"));
   }
 
