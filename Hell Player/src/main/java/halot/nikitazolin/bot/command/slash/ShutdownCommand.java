@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommandContext;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -47,8 +47,8 @@ public class ShutdownCommand extends BotCommand {
   }
 
   @Override
-  public void execute(BotCommandRecord info) {
-    SlashCommandInteractionEvent event = info.slashCommandEvent();
+  public void execute(BotCommandContext context) {
+    SlashCommandInteractionEvent event = context.getSlashCommandEvent();
     Guild guild = event.getGuild();
     User user = event.getMember().getUser();
     BotAudioService botAudioService = new BotAudioService(guild);

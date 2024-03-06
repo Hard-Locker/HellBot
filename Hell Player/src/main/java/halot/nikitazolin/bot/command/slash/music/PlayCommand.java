@@ -10,7 +10,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,16 +57,17 @@ public class PlayCommand extends BotCommand {
   }
 
   @Override
-  public void execute(BotCommandRecord info) {
-    SlashCommandInteractionEvent event = info.slashCommandEvent();
+  public void execute(BotCommandContext context) {
+    SlashCommandInteractionEvent event = context.getSlashCommandEvent();
     Guild guild = event.getGuild();
     BotAudioService botAudioService = new BotAudioService(guild);
     AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
     
-//    String trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
+    String trackUrl;
+//    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     
     String reason = event.getOption("link") != null ? event.getOption("link").getAsString() : "No link provided";
-    String trackUrl = reason;
+    trackUrl = reason;
     System.out.println(reason);
     
     botAudioService.connectToVoiceChannel(event);

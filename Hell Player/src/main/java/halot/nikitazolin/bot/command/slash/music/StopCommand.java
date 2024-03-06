@@ -6,12 +6,13 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommandContext;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -54,14 +55,28 @@ public class StopCommand extends BotCommand {
   }
 
   @Override
-  public void execute(BotCommandRecord info) {
-    SlashCommandInteractionEvent event = info.slashCommandEvent();
-    Guild guild = event.getGuild();
-    User user = event.getMember().getUser();
+  public void execute(BotCommandContext context) {
+    System.out.println("Execute stop command");
+    
+    SlashCommandInteractionEvent slashEvent = context.getSlashCommandEvent();
+//    MessageReceivedEvent messageEvent = context.getMessageReceivedEvent();
+//    Guild guild = null;
+//    
+//    System.out.println(slashEvent.getGuild());
+//    System.out.println(messageEvent.getGuild());
+//    
+//    if(slashEvent.getGuild() != null) {
+//      guild = slashEvent.getGuild();
+//    }else if(messageEvent.getGuild() != null) {
+//      guild = messageEvent.getGuild();
+//    }
+    
+    Guild guild = slashEvent.getGuild();
+    User user = slashEvent.getMember().getUser();
     BotAudioService botAudioService = new BotAudioService(guild);
 
     botAudioService.stopAudioSending();
-    event.reply("Player was stopped by user: " + user.getAsMention()).queue();
+    slashEvent.reply("Player was stopped by user: " + user.getAsMention()).queue();
 
     log.info("Player was stopped by user: " + user);
   }

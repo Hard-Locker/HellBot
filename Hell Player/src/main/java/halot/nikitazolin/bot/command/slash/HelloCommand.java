@@ -3,7 +3,7 @@ package halot.nikitazolin.bot.command.slash;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -42,7 +42,7 @@ public class HelloCommand extends BotCommand {
   }
 
   @Override
-  public void execute(BotCommandRecord info) {
-    info.slashCommandEvent().replyEmbeds(MessageUtil.createInfoEmbed("Gamarjoba genacvale!").build()).queue();
+  public void execute(BotCommandContext context) {
+    context.getSlashCommandEvent().replyEmbeds(MessageUtil.createInfoEmbed("Gamarjoba genacvale!").build()).queue();
   }
 }

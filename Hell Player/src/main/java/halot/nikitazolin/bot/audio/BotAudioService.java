@@ -42,6 +42,8 @@ public class BotAudioService {
   }
 
   public void stopAudioSending() {
+    System.out.println("Execute stopAudioSending");
+    
     audioSendHandler.stopPlayingMusic();
     audioManager.closeAudioConnection();
   }

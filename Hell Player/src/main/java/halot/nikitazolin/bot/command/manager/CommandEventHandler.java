@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.HellBot;
 import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 @Component
 public class CommandEventHandler extends ListenerAdapter {
-
+  
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
     if (slashEvent.getGuild() == null) {
@@ -41,39 +41,27 @@ public class CommandEventHandler extends ListenerAdapter {
       return;
     }
 
-    BotCommandRecord record = new BotCommandRecord(command.get(), slashEvent, null, slashEvent.getOptions());
-    command.get().execute(record);
+    BotCommandContext context = new BotCommandContext(command.get(), slashEvent, null, slashEvent.getOptions());
+    command.get().execute(context);
   }
 
   @Override
-  public void onMessageReceived(MessageReceivedEvent receivedEvent) {
-//    if (event.getAuthor().isBot()) {
-//      return;
-//    }
-//
-//    String message = event.getMessage().getContentDisplay();
-//
-//    if (message.startsWith("!")) {
-//      String commandName = message.substring(1).split(" ")[0];
-//
-//      Optional<SlashCommand> command = getCommand(commandName);
-//      if (command.isEmpty()) {
-//        return;
-//      }
-//    }
-    
-    if (receivedEvent.getAuthor().isBot() || receivedEvent.isWebhookMessage()) {
+  public void onMessageReceived(MessageReceivedEvent messageEvent) {
+    if (messageEvent.getAuthor().isBot() || messageEvent.isWebhookMessage()) {
       return;
     }
 
-    String messageText = receivedEvent.getMessage().getContentRaw().split("\\s+")[0];
+//    String messageText = messageEvent.getMessage().getContentRaw().split("\\s+")[0];
+    String messageText = messageEvent.getMessage().getContentRaw();
+    
+    System.out.println(messageText);
     
     HellBot.getCommandRegistry().getActiveCommands().stream()
-        .filter(command -> command.name().equalsIgnoreCase(messageText) || command.nameAliases().contains(messageText.toLowerCase()))
+        .filter(command -> command.nameAliases().contains(messageText.toLowerCase()))
         .findFirst()
         .ifPresent(command -> {
-            BotCommandRecord record = new BotCommandRecord(command, null, receivedEvent, null);
-            command.execute(record);
+            BotCommandContext context = new BotCommandContext(command, null, messageEvent, null);
+            command.execute(context);
         });
   }
 

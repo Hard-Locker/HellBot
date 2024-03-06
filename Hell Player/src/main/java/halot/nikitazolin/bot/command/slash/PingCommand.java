@@ -3,7 +3,7 @@ package halot.nikitazolin.bot.command.slash;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandRecord;
+import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -20,7 +20,7 @@ public class PingCommand extends BotCommand {
   public String description() {
     return "Wanna check ping?";
   }
-  
+
   @Override
   public String requiredRole() {
     return null;
@@ -42,12 +42,14 @@ public class PingCommand extends BotCommand {
   }
 
   @Override
-  public void execute(BotCommandRecord info) {
+  public void execute(BotCommandContext context) {
     final long time = System.currentTimeMillis();
 
-    info.slashCommandEvent().replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build()).setEphemeral(true)
-        .queue(response -> {
+    context.getSlashCommandEvent()
+      .replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build())
+      .setEphemeral(true)
+      .queue(response -> {
           response.editOriginalEmbeds(MessageUtil.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
-        }, failure -> info.slashCommandEvent().replyEmbeds(MessageUtil.createErrorEmbed("Failed to get response time!").build()).queue());
+        }, failure -> context.getSlashCommandEvent().replyEmbeds(MessageUtil.createErrorEmbed("Failed to get response time!").build()).queue());
   }
 }
