@@ -56,28 +56,14 @@ public class StopCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    System.out.println("Execute stop command");
-    
-    SlashCommandInteractionEvent slashEvent = context.getSlashCommandEvent();
-//    MessageReceivedEvent messageEvent = context.getMessageReceivedEvent();
-//    Guild guild = null;
-//    
-//    System.out.println(slashEvent.getGuild());
-//    System.out.println(messageEvent.getGuild());
-//    
-//    if(slashEvent.getGuild() != null) {
-//      guild = slashEvent.getGuild();
-//    }else if(messageEvent.getGuild() != null) {
-//      guild = messageEvent.getGuild();
-//    }
-    
-    Guild guild = slashEvent.getGuild();
-    User user = slashEvent.getMember().getUser();
+    Guild guild = context.getGuild();
+//    User user = context.getUser();
+//    User user = slashEvent.getMember().getUser();
     BotAudioService botAudioService = new BotAudioService(guild);
 
     botAudioService.stopAudioSending();
-    slashEvent.reply("Player was stopped by user: " + user.getAsMention()).queue();
-
-    log.info("Player was stopped by user: " + user);
+//    slashEvent.reply("Player was stopped by user: " + user.getAsMention()).queue();
+    
+//    log.info("Player was stopped by user: " + user);
   }
 }

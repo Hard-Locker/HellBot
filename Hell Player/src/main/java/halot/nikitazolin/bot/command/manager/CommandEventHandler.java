@@ -29,7 +29,7 @@ public class CommandEventHandler extends ListenerAdapter {
       return;
     }
 
-    Optional<BotCommand> command = getCommand(slashEvent.getName());
+    Optional<BotCommand> command = getSlashCommand(slashEvent.getName());
     
     if (command.isEmpty()) {
       return;
@@ -45,6 +45,7 @@ public class CommandEventHandler extends ListenerAdapter {
     command.get().execute(context);
   }
 
+  //TODO
   @Override
   public void onMessageReceived(MessageReceivedEvent messageEvent) {
     if (messageEvent.getAuthor().isBot() || messageEvent.isWebhookMessage()) {
@@ -53,19 +54,20 @@ public class CommandEventHandler extends ListenerAdapter {
 
 //    String messageText = messageEvent.getMessage().getContentRaw().split("\\s+")[0];
     String messageText = messageEvent.getMessage().getContentRaw();
-    
     System.out.println(messageText);
     
-    HellBot.getCommandRegistry().getActiveCommands().stream()
-        .filter(command -> command.nameAliases().contains(messageText.toLowerCase()))
-        .findFirst()
-        .ifPresent(command -> {
-            BotCommandContext context = new BotCommandContext(command, null, messageEvent, null);
-            command.execute(context);
-        });
+    Optional<BotCommand> command = getMessageCommand(messageText);
+    System.out.println(command.get());
+    
+    BotCommandContext context = new BotCommandContext(command.get(), null, messageEvent, null);
+    command.get().execute(context);
   }
 
-  private Optional<BotCommand> getCommand(String name) {
+  private Optional<BotCommand> getMessageCommand(String name) {
+    return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.nameAliases().contains(name)).findFirst();
+  }
+  
+  private Optional<BotCommand> getSlashCommand(String name) {
     return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.name().equalsIgnoreCase(name)).findFirst();
   }
 }

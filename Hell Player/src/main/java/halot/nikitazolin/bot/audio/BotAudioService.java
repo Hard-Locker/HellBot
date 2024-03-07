@@ -2,6 +2,7 @@ package halot.nikitazolin.bot.audio;
 
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +36,8 @@ public class BotAudioService {
     }
   }
 
-  public void connectToVoiceChannel(SlashCommandInteractionEvent event) {
-    VoiceChannel voiceChannel = getVoiceChannelByUser(event);
+  public void connectToVoiceChannel(BotCommandContext context) {
+    VoiceChannel voiceChannel = getVoiceChannelByUser(context);
 
     audioManager.openAudioConnection(voiceChannel);
   }
@@ -48,8 +49,11 @@ public class BotAudioService {
     audioManager.closeAudioConnection();
   }
 
-  private VoiceChannel getVoiceChannelByUser(SlashCommandInteractionEvent event) {
-    Guild guild = event.getGuild();
+  //TODO Remove event
+  private VoiceChannel getVoiceChannelByUser(BotCommandContext context) {
+    SlashCommandInteractionEvent event = context.getSlashCommandEvent();
+    
+    Guild guild = context.getGuild();
     Member member = event.getMember();
     User user = event.getMember().getUser();
     VoiceChannel userVoiceChannel;

@@ -27,17 +27,17 @@ public class CommandRegistrator {
 
   private final Optional<JDA> jda = HellBot.getJdaService().getJda();
   private List<BotCommand> activeCommands = new ArrayList<>();
-  private List<CommandData> commandsToRegister = new ArrayList<>();
+  private List<CommandData> commandsToRegistration = new ArrayList<>();
 
   public CommandRegistrator() {
-    commandsToRegister = preparateCommands();
+    commandsToRegistration = preparateCommands();
     registerCommands();
   }
 
   private void registerCommands() {
     jda.ifPresentOrElse(jda -> {
       jda.updateCommands()
-        .addCommands(commandsToRegister)
+        .addCommands(commandsToRegistration)
         .queue();
     }, () -> System.out.println("JDA is not present!"));
   }

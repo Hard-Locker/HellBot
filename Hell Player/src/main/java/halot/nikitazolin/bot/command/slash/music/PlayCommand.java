@@ -58,23 +58,23 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    SlashCommandInteractionEvent event = context.getSlashCommandEvent();
-    Guild guild = event.getGuild();
+    SlashCommandInteractionEvent slashEvent = context.getSlashCommandEvent();
+    Guild guild = context.getGuild();
     BotAudioService botAudioService = new BotAudioService(guild);
     AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
     
     String trackUrl;
 //    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     
-    String reason = event.getOption("link") != null ? event.getOption("link").getAsString() : "No link provided";
+    String reason = slashEvent.getOption("link") != null ? slashEvent.getOption("link").getAsString() : "No link provided";
     trackUrl = reason;
     System.out.println(reason);
     
-    botAudioService.connectToVoiceChannel(event);
+    botAudioService.connectToVoiceChannel(context);
     botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(audioPlayer));
-    event.replyEmbeds(MessageUtil.createInfoEmbed("Play: " + trackUrl).build()).queue();
+    slashEvent.replyEmbeds(MessageUtil.createInfoEmbed("Play: " + trackUrl).build()).queue();
     
-    log.debug("User launched audiotrack." + " User: " + event.getUser() + " Track: " + trackUrl);
+    log.debug("User launched audiotrack." + " User: " + slashEvent.getUser() + " Track: " + trackUrl);
   }
 
   @RequiredArgsConstructor
