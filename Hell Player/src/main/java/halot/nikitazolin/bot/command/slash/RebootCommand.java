@@ -49,8 +49,8 @@ public class RebootCommand extends BotCommand {
   @Override
   public void execute(BotCommandContext context) {
     SlashCommandInteractionEvent event = context.getSlashCommandEvent();
-    Guild guild = event.getGuild();
-    User user = event.getMember().getUser();
+    Guild guild = context.getGuild();
+    User user = context.getUser();
     BotAudioService botAudioService = new BotAudioService(guild);
 
     botAudioService.rebootPlayer();

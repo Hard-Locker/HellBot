@@ -57,7 +57,7 @@ public class CommandEventHandler extends ListenerAdapter {
     System.out.println(messageText);
     
     Optional<BotCommand> command = getMessageCommand(messageText);
-    System.out.println(command.get());
+//    System.out.println(command.get());
     
     BotCommandContext context = new BotCommandContext(command.get(), null, messageEvent, null);
     command.get().execute(context);

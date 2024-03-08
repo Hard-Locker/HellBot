@@ -52,7 +52,7 @@ public class PlayCommand extends BotCommand {
   @Override
   public OptionData[] options() {
     return new OptionData[] {
-        new OptionData(OptionType.STRING, "link", "The reason for stopping the music", true)
+        new OptionData(OptionType.STRING, "link", "The reason for stopping the music", false)
     };
   }
 
@@ -64,11 +64,11 @@ public class PlayCommand extends BotCommand {
     AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
     
     String trackUrl;
-//    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-    
-    String reason = slashEvent.getOption("link") != null ? slashEvent.getOption("link").getAsString() : "No link provided";
-    trackUrl = reason;
-    System.out.println(reason);
+    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
+//    
+//    String reason = slashEvent.getOption("link") != null ? slashEvent.getOption("link").getAsString() : "No link provided";
+//    trackUrl = reason;
+//    System.out.println(reason);
     
     botAudioService.connectToVoiceChannel(context);
     botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(audioPlayer));

@@ -11,8 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -57,13 +55,12 @@ public class StopCommand extends BotCommand {
   @Override
   public void execute(BotCommandContext context) {
     Guild guild = context.getGuild();
-//    User user = context.getUser();
-//    User user = slashEvent.getMember().getUser();
+    User user = context.getUser();
     BotAudioService botAudioService = new BotAudioService(guild);
 
     botAudioService.stopAudioSending();
-//    slashEvent.reply("Player was stopped by user: " + user.getAsMention()).queue();
+//    context.getSlashCommandEvent().reply("Player was stopped by user: " + user.getAsMention()).queue();
     
-//    log.info("Player was stopped by user: " + user);
+    log.info("Player was stopped by user: " + user);
   }
 }

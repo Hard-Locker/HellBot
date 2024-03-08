@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -20,6 +22,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 @Getter
 @ToString
 @EqualsAndHashCode
+@Slf4j
 public class BotCommandContext {
 
   private final BotCommand botCommand;
@@ -30,6 +33,7 @@ public class BotCommandContext {
   private Guild guild;
   private User user;
   private Member member;
+  private TextChannel textChannel;
 
   public BotCommandContext(BotCommand botCommand, SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent, List<OptionMapping> options) {
     super();
@@ -39,19 +43,21 @@ public class BotCommandContext {
     this.options = options;
 
     guild = fillGuild(slashCommandEvent, messageReceivedEvent);
+    user = fillUser(slashCommandEvent, messageReceivedEvent);
+    member = fillMember(slashCommandEvent, messageReceivedEvent);
   }
   
   public void messageSender() {
     
   }
-
+  
   private Guild fillGuild(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {
     List<Supplier<Guild>> guildSuppliers = new ArrayList<>();
 
     if (slashCommandEvent != null) {
       guildSuppliers.add(() -> slashCommandEvent.getGuild());
     }
-    
+
     if (messageReceivedEvent != null) {
       guildSuppliers.add(() -> messageReceivedEvent.getGuild());
     }
@@ -64,6 +70,53 @@ public class BotCommandContext {
       }
     }
 
+    log.error("Guild is not found");
+    return null;
+  }
+
+  private User fillUser(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {
+    List<Supplier<User>> userSuppliers = new ArrayList<>();
+
+    if (slashCommandEvent != null) {
+      userSuppliers.add(() -> slashCommandEvent.getUser());
+    }
+
+    if (messageReceivedEvent != null) {
+      userSuppliers.add(() -> messageReceivedEvent.getAuthor());
+    }
+
+    for (Supplier<User> supplier : userSuppliers) {
+      User user = supplier.get();
+
+      if (user != null) {
+        return user;
+      }
+    }
+
+    log.error("User is not found");
+    return null;
+  }
+
+  private Member fillMember(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {
+    List<Supplier<Member>> memberSuppliers = new ArrayList<>();
+
+    if (slashCommandEvent != null) {
+      memberSuppliers.add(() -> slashCommandEvent.getMember());
+    }
+
+    if (messageReceivedEvent != null) {
+      memberSuppliers.add(() -> messageReceivedEvent.getMember());
+    }
+
+    for (Supplier<Member> supplier : memberSuppliers) {
+      Member member = supplier.get();
+
+      if (member != null) {
+        return member;
+      }
+    }
+
+    log.error("Member is not found");
     return null;
   }
 

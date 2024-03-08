@@ -43,8 +43,6 @@ public class BotAudioService {
   }
 
   public void stopAudioSending() {
-    System.out.println("Execute stopAudioSending");
-    
     audioSendHandler.stopPlayingMusic();
     audioManager.closeAudioConnection();
   }
@@ -54,8 +52,8 @@ public class BotAudioService {
     SlashCommandInteractionEvent event = context.getSlashCommandEvent();
     
     Guild guild = context.getGuild();
-    Member member = event.getMember();
-    User user = event.getMember().getUser();
+    Member member = context.getMember();
+    User user = context.getUser();
     VoiceChannel userVoiceChannel;
     VoiceChannel afkVoiceChannel = guild.getAfkChannel();
 
