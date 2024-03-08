@@ -10,13 +10,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Getter
@@ -45,10 +49,27 @@ public class BotCommandContext {
     guild = fillGuild(slashCommandEvent, messageReceivedEvent);
     user = fillUser(slashCommandEvent, messageReceivedEvent);
     member = fillMember(slashCommandEvent, messageReceivedEvent);
+    textChannel = fillTextChannel(slashCommandEvent, messageReceivedEvent);
+    
+//    System.out.println("");
+  }
+
+  public void sendText(CharSequence text) {
+    textChannel.sendMessage(text).queue();
+  }
+
+  public void sendMessage(MessageCreateData messageCreateData) {
+    textChannel.sendMessage(messageCreateData).queue();
+  }
+
+  public void sendMessageEmbed(List<MessageEmbed> messageEmbed) {
+    textChannel.sendMessageEmbeds(messageEmbed).queue();
   }
   
-  public void messageSender() {
-    
+  public void sendMessageEmbed(EmbedBuilder embedBuilder) {
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
+
+    textChannel.sendMessage(messageCreateData).queue();
   }
   
   private Guild fillGuild(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {
@@ -120,4 +141,26 @@ public class BotCommandContext {
     return null;
   }
 
+  private TextChannel fillTextChannel(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {
+    List<Supplier<TextChannel>> textChannelSuppliers = new ArrayList<>();
+
+    if (slashCommandEvent != null) {
+      textChannelSuppliers.add(() -> slashCommandEvent.getChannel().asTextChannel());
+    }
+
+    if (messageReceivedEvent != null) {
+      textChannelSuppliers.add(() -> messageReceivedEvent.getChannel().asTextChannel());
+    }
+
+    for (Supplier<TextChannel> supplier : textChannelSuppliers) {
+      TextChannel textChannel = supplier.get();
+
+      if (textChannel != null) {
+        return textChannel;
+      }
+    }
+
+    log.error("TextChannel is not found");
+    return null;
+  }
 }

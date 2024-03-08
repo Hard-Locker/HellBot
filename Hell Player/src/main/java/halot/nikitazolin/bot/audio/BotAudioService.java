@@ -57,11 +57,6 @@ public class BotAudioService {
     VoiceChannel userVoiceChannel;
     VoiceChannel afkVoiceChannel = guild.getAfkChannel();
 
-    if (guild == null || member == null) {
-      log.error("Not found member or guild");
-      return null;
-    }
-
     try {
       userVoiceChannel = member.getVoiceState().getChannel().asVoiceChannel();
 

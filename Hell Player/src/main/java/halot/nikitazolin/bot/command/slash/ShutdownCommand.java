@@ -49,15 +49,15 @@ public class ShutdownCommand extends BotCommand {
   @Override
   public void execute(BotCommandContext context) {
     SlashCommandInteractionEvent event = context.getSlashCommandEvent();
-    Guild guild = event.getGuild();
-    User user = event.getMember().getUser();
+    Guild guild = context.getGuild();
+    User user = context.getUser();
     BotAudioService botAudioService = new BotAudioService(guild);
 
     botAudioService.shutdown();
 
     event.reply("Shutdown...").queue();
 
-    log.warn("User shutdowning bot. " + "User: " + user);
+    log.warn("User shutdown bot. " + "User: " + user);
 
     System.exit(0);
   }

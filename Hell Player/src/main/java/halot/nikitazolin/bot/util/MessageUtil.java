@@ -22,7 +22,6 @@ public final class MessageUtil {
    * Creates a success embed with the usual format used by the bot
    *
    * @return {@link EmbedBuilder}
-   * @since 1.0
    */
   public static EmbedBuilder createSuccessEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -35,13 +34,12 @@ public final class MessageUtil {
    * message in the embed
    *
    * @return {@link EmbedBuilder}
-   * @since 1.0
    */
   public static EmbedBuilder createSuccessEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_SUCCESS);
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(), HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
-    embedBuilder.setTimestamp(Instant.now());
+    setCommonFooter(embedBuilder);
+    setTimestamp(embedBuilder);
     embedBuilder.setDescription(message);
     return embedBuilder;
   }
@@ -50,7 +48,6 @@ public final class MessageUtil {
    * Creates a error embed with the usual format used by the bot
    *
    * @return {@link EmbedBuilder}
-   * @since 1.0
    */
   public static EmbedBuilder createErrorEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -63,13 +60,12 @@ public final class MessageUtil {
    * message in the embed
    *
    * @return {@link EmbedBuilder}
-   * @since 1.1
    */
   public static EmbedBuilder createErrorEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_ERROR);
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(), HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
-    embedBuilder.setTimestamp(Instant.now());
+    setCommonFooter(embedBuilder);
+    setTimestamp(embedBuilder);
     embedBuilder.setDescription(message);
     return embedBuilder;
   }
@@ -78,13 +74,12 @@ public final class MessageUtil {
    * Creates a info embed with the usual format used by the bot
    *
    * @return {@link EmbedBuilder}
-   * @since 1.0
    */
   public static EmbedBuilder createInfoEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(), HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
-    embedBuilder.setTimestamp(Instant.now());
+    setCommonFooter(embedBuilder);
+    setTimestamp(embedBuilder);
     return embedBuilder;
   }
 
@@ -93,13 +88,12 @@ public final class MessageUtil {
    * in the embed
    *
    * @return {@link EmbedBuilder}
-   * @since 1.1
    */
   public static EmbedBuilder createInfoEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(), HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
-    embedBuilder.setTimestamp(Instant.now());
+    setCommonFooter(embedBuilder);
+    setTimestamp(embedBuilder);
     embedBuilder.setDescription(message);
     return embedBuilder;
   }
@@ -116,8 +110,8 @@ public final class MessageUtil {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
     embedBuilder.setTitle(title);
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(), HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
-    embedBuilder.setTimestamp(Instant.now());
+    setCommonFooter(embedBuilder);
+    setTimestamp(embedBuilder);
     embedBuilder.setDescription(message);
     return embedBuilder;
   }
@@ -126,7 +120,6 @@ public final class MessageUtil {
    * Creates a alt info embed with the usual format used by the bot
    *
    * @return Embed
-   * @since 1.0
    */
   public static EmbedBuilder createAltInfoEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -139,13 +132,12 @@ public final class MessageUtil {
    * message in the embed
    *
    * @return Embed
-   * @since 1.1
    */
   public static EmbedBuilder createAltInfoEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO_ALT);
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(), HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
-    embedBuilder.setTimestamp(Instant.now());
+    setCommonFooter(embedBuilder);
+    setTimestamp(embedBuilder);
     embedBuilder.setDescription(message);
     return embedBuilder;
   }
@@ -154,7 +146,6 @@ public final class MessageUtil {
    * Creates a warning info embed with the usual format used by the bot
    *
    * @return Embed
-   * @since 1.0
    */
   public static EmbedBuilder createWarningEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -167,13 +158,12 @@ public final class MessageUtil {
    * message in the embed
    *
    * @return Embed
-   * @since 1.1
    */
   public static EmbedBuilder createWarningEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_WARNING);
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(), HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
-    embedBuilder.setTimestamp(Instant.now());
+    setCommonFooter(embedBuilder);
+    setTimestamp(embedBuilder);
     embedBuilder.setDescription(message);
     return embedBuilder;
   }
@@ -188,4 +178,12 @@ public final class MessageUtil {
     embedBuilder.setDescription(message);
   }
 
+  private static void setCommonFooter(EmbedBuilder embedBuilder) {
+    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+  }
+
+  private static void setTimestamp(EmbedBuilder embedBuilder) {
+    embedBuilder.setTimestamp(Instant.now());
+  }
 }

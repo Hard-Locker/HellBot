@@ -63,8 +63,8 @@ public class CommandEventHandler extends ListenerAdapter {
     command.get().execute(context);
   }
 
-  private Optional<BotCommand> getMessageCommand(String name) {
-    return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.nameAliases().contains(name)).findFirst();
+  private Optional<BotCommand> getMessageCommand(String nameAliases) {
+    return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.nameAliases().contains(nameAliases)).findFirst();
   }
   
   private Optional<BotCommand> getSlashCommand(String name) {
