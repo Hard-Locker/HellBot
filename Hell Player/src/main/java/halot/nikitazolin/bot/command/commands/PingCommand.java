@@ -1,4 +1,6 @@
-package halot.nikitazolin.bot.command.slash;
+package halot.nikitazolin.bot.command.commands;
+
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,17 @@ public class PingCommand extends BotCommand {
   public String name() {
     return "ping";
   }
+  
+  @Override
+  public List<String> nameAliases() {
+    return List.of("ping");
+  }
 
+  @Override
+  public List<String> commandPrefixes() {
+    return List.of("!", "1");
+  }
+  
   @Override
   public String description() {
     return "Wanna check ping?";

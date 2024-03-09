@@ -1,4 +1,6 @@
-package halot.nikitazolin.bot.command.slash.music;
+package halot.nikitazolin.bot.command.commands.music;
+
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,16 @@ public class PlayCommand extends BotCommand {
     return "play";
   }
 
+  @Override
+  public List<String> nameAliases() {
+    return List.of("play", "1");
+  }
+
+  @Override
+  public List<String> commandPrefixes() {
+    return List.of("!", "1");
+  }
+  
   @Override
   public String description() {
     return "Start playing music from link";
@@ -127,4 +139,5 @@ public class PlayCommand extends BotCommand {
 //      }
     }
   }
+
 }

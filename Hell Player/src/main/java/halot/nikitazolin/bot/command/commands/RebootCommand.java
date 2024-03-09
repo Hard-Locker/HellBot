@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.command.slash.music;
+package halot.nikitazolin.bot.command.commands;
 
 import java.util.List;
 
@@ -7,31 +7,35 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Slf4j
-public class StopCommand extends BotCommand {
+public class RebootCommand extends BotCommand {
 
   @Override
   public String name() {
-    return "stop";
+    return "reboot";
   }
   
   @Override
   public List<String> nameAliases() {
-    return List.of("stop");
+    return List.of("reboot");
   }
 
   @Override
+  public List<String> commandPrefixes() {
+    return List.of("!", "1");
+  }
+  
+  @Override
   public String description() {
-    return "Stop playing music";
+    return "Reboot player";
   }
 
   @Override
@@ -56,15 +60,16 @@ public class StopCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
+//    SlashCommandInteractionEvent event = context.getSlashCommandEvent();
     Guild guild = context.getGuild();
     User user = context.getUser();
     BotAudioService botAudioService = new BotAudioService(guild);
 
-    botAudioService.stopAudioSending();
-    
-    EmbedBuilder embed = MessageUtil.createWarningEmbed("Player was stopped by user: " + user.getAsMention());
-    context.sendMessageEmbed(embed);
-    
-    log.info("Player was stopped by user: " + user);
+    botAudioService.rebootPlayer();
+
+    context.sendText("Reboot...");
+//    event.reply("Reboot...").queue();
+
+    log.warn("User reboot bot. " + "User: " + user);
   }
 }

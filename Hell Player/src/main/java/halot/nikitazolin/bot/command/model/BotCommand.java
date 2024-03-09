@@ -13,9 +13,9 @@ public abstract class BotCommand extends ListenerAdapter {
 
   public abstract String name();
   
-  public List<String> nameAliases() {
-    return List.of();
-  }
+  public abstract List<String> nameAliases();
+  
+  public abstract List<String> commandPrefixes();
 
   public abstract String description();
 
