@@ -11,6 +11,7 @@ import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -23,15 +24,7 @@ public class CommandEventHandler extends ListenerAdapter {
   
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
-    if (slashEvent.getGuild() == null) {
-      return;
-    }
-
-    if (slashEvent.getUser().isBot()) {
-      return;
-    }
-
-    if (slashEvent.getMember() == null) {
+    if (slashEvent.getGuild() == null || slashEvent.getUser().isBot() || slashEvent.getMember() == null) {
       return;
     }
 
@@ -43,7 +36,6 @@ public class CommandEventHandler extends ListenerAdapter {
 
     if (command.get().neededPermission() != null && !slashEvent.getMember().hasPermission(command.get().neededPermission())) {
       slashEvent.replyEmbeds(MessageUtil.createErrorEmbed("You don't have the permission to execute this command!").build()).setEphemeral(true).queue();
-      
       return;
     }
 
@@ -59,24 +51,30 @@ public class CommandEventHandler extends ListenerAdapter {
     }
 
     String message = messageEvent.getMessage().getContentRaw();
-    String[] messageParts = messageEvent.getMessage().getContentRaw().split(" ");
-    String commandText = messageParts[0];
-    List<OptionMapping> options;
+    String[] messageParts = message.trim().split(" ", 2);
+    String commandName = messageParts[0];
+    List<OptionMapping> options = new ArrayList<>();
 
-    System.out.println("message: " + message);
-    System.out.println("messageParts: " + Arrays.toString(messageParts));
-    System.out.println("commandText: " + commandText);
+//    System.out.println("message: " + message);
+//    System.out.println("messageParts: " + Arrays.toString(messageParts));
+//    System.out.println("commandText: " + commandName);
 
-    Optional<BotCommand> command = getCommandByReceivedMessage(commandText);
-//    System.out.println(command.get());
+    Optional<BotCommand> command = getCommandByReceivedMessage(commandName);
 
-    BotCommandContext context = new BotCommandContext(command.get(), null, messageEvent, null);
+    if (command.isEmpty()) {
+      return;
+    }
+
+    if (command.get().neededPermission() != null && !messageEvent.getMember().hasPermission(command.get().neededPermission())) {
+      messageEvent.getChannel().asTextChannel().sendMessage("You don't have the permission to execute this command!").queue();
+      return;
+    }
+
+    BotCommandContext context = new BotCommandContext(command.get(), null, messageEvent, options);
     command.get().execute(context);
   }
 
   private Optional<BotCommand> getCommandByReceivedMessage(String commandText) {
-    System.out.println("Call getCommandByReceivedMessage with args: " + commandText);
-
     List<BotCommand> commands = HellBot.getCommandRegistry().getActiveCommands();
 
     for (BotCommand command : commands) {

@@ -1,6 +1,7 @@
 package halot.nikitazolin.bot.command.commands.music;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -65,7 +67,7 @@ public class PlayCommand extends BotCommand {
   @Override
   public OptionData[] options() {
     return new OptionData[] {
-        new OptionData(OptionType.STRING, "link", "The reason for stopping the music", false)
+        new OptionData(OptionType.STRING, "link", "URL with audio", false)
     };
   }
 
@@ -77,11 +79,26 @@ public class PlayCommand extends BotCommand {
     AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
     
     String trackUrl;
-    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-//    
+//    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
+    
+    List<OptionMapping> options = context.getOptions();
+    OptionMapping option;
+//    options.stream().filter(opt -> opt.getName().equals("link"));
+//    List<String> opt = option.ge;
+    
+    String reason = null;
+    
+    for (OptionMapping opt : options) {
+      if (opt.getName().equals("link")) {
+        option = opt;
+        
+        reason = opt.getAsString();
+      }
+    }
+    
 //    String reason = slashEvent.getOption("link") != null ? slashEvent.getOption("link").getAsString() : "No link provided";
-//    trackUrl = reason;
-//    System.out.println(reason);
+    trackUrl = reason;
+    System.out.println(reason);
     
     botAudioService.connectToVoiceChannel(context);
     botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(audioPlayer));

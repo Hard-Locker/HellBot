@@ -1,44 +1,52 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
   <artifactId>hell-bot</artifactId>
   <version>0.0.6</version>
   <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
-  
+
   <repositories>
     <repository>
-        <id>jitpack</id>
-        <url>https://jitpack.io</url>
+      <id>jitpack</id>
+      <url>https://jitpack.io</url>
     </repository>
   </repositories>
-  
+
   <dependencies>
     <dependency>
       <groupId>net.dv8tion</groupId>
       <artifactId>JDA</artifactId>
       <version>5.0.0-beta.20</version>
     </dependency>
-    
+
     <!-- https://mvnrepository.com/artifact/dev.arbjerg/lavaplayer -->
     <dependency>
       <groupId>dev.arbjerg</groupId>
       <artifactId>lavaplayer</artifactId>
       <version>2.0.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-    
+
     <dependency>
       <groupId>com.typesafe</groupId>
       <artifactId>config</artifactId>
       <version>1.4.3</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
       <version>1.17.2</version>
     </dependency>
-    
+
     <!-- Test -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -46,28 +54,28 @@
       <version>5.10.1</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>5.10.1</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>5.8.0</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
       <version>1.19.3</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
@@ -75,7 +83,7 @@
       <scope>test</scope>
     </dependency>
     <!-- //////////////// -->
-    
+
     <!-- LOG -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -89,54 +97,54 @@
       <version>1.4.14</version>
     </dependency>
     <!-- //////////////// -->
-    
+
     <!-- db -->
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>42.7.1</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
       <version>10.4.1</version>
     </dependency>
     <!-- //////////////// -->
-    
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.30</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- Spring Framework -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <version>6.1.2</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <version>6.1.2</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
       <version>6.1.2</version>
     </dependency>
-    
+
     <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
       <version>3.2.2</version>
     </dependency>
-    
+
     <!--
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -144,7 +152,7 @@
       <version>3.2.1</version>
     </dependency>
     -->
-    
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -158,7 +166,7 @@
       <version>3.2.1</version>
     </dependency>
     -->
-    
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -166,11 +174,11 @@
       <scope>test</scope>
     </dependency>
     <!-- //////////////// -->
-    
+
   </dependencies>
   <build>
     <plugins>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -180,7 +188,7 @@
           <target>21</target>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -195,7 +203,7 @@
           </archive>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -215,7 +223,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -224,7 +232,7 @@
           <skipTests>false</skipTests>
         </configuration>
       </plugin>
-      
+
     </plugins>
   </build>
 </project>
