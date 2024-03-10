@@ -16,6 +16,7 @@ import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -70,7 +71,7 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    SlashCommandInteractionEvent slashEvent = context.getSlashCommandEvent();
+//    SlashCommandInteractionEvent slashEvent = context.getSlashCommandEvent();
     Guild guild = context.getGuild();
     BotAudioService botAudioService = new BotAudioService(guild);
     AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
@@ -84,9 +85,12 @@ public class PlayCommand extends BotCommand {
     
     botAudioService.connectToVoiceChannel(context);
     botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(audioPlayer));
-    slashEvent.replyEmbeds(MessageUtil.createInfoEmbed("Play: " + trackUrl).build()).queue();
     
-    log.debug("User launched audiotrack." + " User: " + slashEvent.getUser() + " Track: " + trackUrl);
+    EmbedBuilder embed = MessageUtil.createSuccessEmbed("Play: " + trackUrl);
+    context.sendMessageEmbed(embed);
+//    slashEvent.replyEmbeds(MessageUtil.createInfoEmbed("Play: " + trackUrl).build()).queue();
+    
+    log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + trackUrl);
   }
 
   @RequiredArgsConstructor

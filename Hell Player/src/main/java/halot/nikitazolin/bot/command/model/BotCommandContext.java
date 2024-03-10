@@ -62,8 +62,8 @@ public class BotCommandContext {
     textChannel.sendMessage(messageCreateData).queue();
   }
 
-  public void sendMessageEmbed(List<MessageEmbed> messageEmbed) {
-    textChannel.sendMessageEmbeds(messageEmbed).queue();
+  public void sendMessagesEmbed(List<MessageEmbed> messagesEmbed) {
+    textChannel.sendMessageEmbeds(messagesEmbed).queue();
   }
   
   public void sendMessageEmbed(EmbedBuilder embedBuilder) {

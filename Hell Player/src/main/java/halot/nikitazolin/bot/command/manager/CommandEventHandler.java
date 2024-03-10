@@ -1,5 +1,6 @@
 package halot.nikitazolin.bot.command.manager;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -8,11 +9,16 @@ import halot.nikitazolin.bot.HellBot;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Arrays;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 @Component
+@Slf4j
 public class CommandEventHandler extends ListenerAdapter {
   
   @Override
@@ -52,19 +58,46 @@ public class CommandEventHandler extends ListenerAdapter {
       return;
     }
 
-//    String messageText = messageEvent.getMessage().getContentRaw().split("\\s+")[0];
-    String messageText = messageEvent.getMessage().getContentRaw();
-    System.out.println(messageText);
-    
-    Optional<BotCommand> command = getMessageCommand(messageText);
+    String message = messageEvent.getMessage().getContentRaw();
+    String[] messageParts = messageEvent.getMessage().getContentRaw().split(" ");
+    String commandText = messageParts[0];
+    List<OptionMapping> options;
+
+    System.out.println("message: " + message);
+    System.out.println("messageParts: " + Arrays.toString(messageParts));
+    System.out.println("commandText: " + commandText);
+
+    Optional<BotCommand> command = getCommandByReceivedMessage(commandText);
 //    System.out.println(command.get());
-    
+
     BotCommandContext context = new BotCommandContext(command.get(), null, messageEvent, null);
     command.get().execute(context);
   }
 
-  private Optional<BotCommand> getMessageCommand(String nameAliases) {
-    return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.nameAliases().contains(nameAliases)).findFirst();
+  private Optional<BotCommand> getCommandByReceivedMessage(String commandText) {
+    System.out.println("Call getCommandByReceivedMessage with args: " + commandText);
+
+    List<BotCommand> commands = HellBot.getCommandRegistry().getActiveCommands();
+
+    for (BotCommand command : commands) {
+      List<String> prefixes = command.commandPrefixes();
+      List<String> names = command.nameAliases();
+
+      for (String prefix : prefixes) {
+        for (String name : names) {
+
+          String fullCommand = prefix + name;
+
+          if (fullCommand.equals(commandText)) {
+            log.debug("User call command: " + commandText);
+            return Optional.of(command);
+          }
+        }
+      }
+    }
+
+    log.debug("Not found command: " + commandText);
+    return Optional.empty();
   }
   
   private Optional<BotCommand> getSlashCommand(String name) {
