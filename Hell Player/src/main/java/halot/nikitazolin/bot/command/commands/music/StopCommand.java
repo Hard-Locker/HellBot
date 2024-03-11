@@ -11,8 +11,6 @@ import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -23,10 +21,10 @@ public class StopCommand extends BotCommand {
   public String name() {
     return "stop";
   }
-  
+
   @Override
   public List<String> nameAliases() {
-    return List.of("stop");
+    return List.of("stop", "999");
   }
 
   @Override
@@ -61,15 +59,13 @@ public class StopCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    Guild guild = context.getGuild();
-    User user = context.getUser();
-    BotAudioService botAudioService = new BotAudioService(guild);
+    BotAudioService botAudioService = new BotAudioService(context.getGuild());
 
     botAudioService.stopAudioSending();
-    
-    EmbedBuilder embed = MessageUtil.createWarningEmbed("Player was stopped by user: " + user.getAsMention());
+
+    EmbedBuilder embed = MessageUtil.createWarningEmbed("Player was stopped by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);
-    
-    log.info("Player was stopped by user: " + user);
+
+    log.info("Player was stopped by user: " + context.getUser());
   }
 }

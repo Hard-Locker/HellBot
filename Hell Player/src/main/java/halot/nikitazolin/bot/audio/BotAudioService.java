@@ -6,11 +6,9 @@ import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 @Component
@@ -47,27 +45,24 @@ public class BotAudioService {
     audioManager.closeAudioConnection();
   }
 
-  //TODO Remove event
   private VoiceChannel getVoiceChannelByUser(BotCommandContext context) {
-    SlashCommandInteractionEvent event = context.getSlashCommandEvent();
-    
-    Guild guild = context.getGuild();
-    Member member = context.getMember();
-    User user = context.getUser();
     VoiceChannel userVoiceChannel;
-    VoiceChannel afkVoiceChannel = guild.getAfkChannel();
+    VoiceChannel afkVoiceChannel = context.getGuild().getAfkChannel();
 
     try {
-      userVoiceChannel = member.getVoiceState().getChannel().asVoiceChannel();
+      userVoiceChannel = context.getMember().getVoiceState().getChannel().asVoiceChannel();
 
       if (afkVoiceChannel != null && afkVoiceChannel.equals(userVoiceChannel)) {
-        event.replyEmbeds(MessageUtil.createErrorEmbed(user.getName() + ", this command cannot be used in the AFK channel.").build()).queue();
+        EmbedBuilder embed = MessageUtil.createErrorEmbed(context.getUser().getAsMention() + ", this command cannot be used in the AFK channel.");
+        context.sendMessageEmbed(embed);
         return null;
       }
-      
+
       return userVoiceChannel;
     } catch (NullPointerException e) {
-      event.replyEmbeds(MessageUtil.createErrorEmbed(user.getName() + ", you need to be in voice channel to use music command.").build()).queue();
+      EmbedBuilder embed = MessageUtil.createErrorEmbed(context.getUser().getAsMention() + ", you need to be in voice channel to use music command.");
+      context.sendMessageEmbed(embed);
+
       log.warn("User must to be in a voice channel to use music command.");
       return null;
     }

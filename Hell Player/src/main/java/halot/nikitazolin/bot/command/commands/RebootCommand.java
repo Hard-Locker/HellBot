@@ -9,9 +9,6 @@ import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -60,16 +57,13 @@ public class RebootCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-//    SlashCommandInteractionEvent event = context.getSlashCommandEvent();
-    Guild guild = context.getGuild();
-    User user = context.getUser();
-    BotAudioService botAudioService = new BotAudioService(guild);
+    BotAudioService botAudioService = new BotAudioService(context.getGuild());
 
     botAudioService.rebootPlayer();
 
     context.sendText("Reboot...");
 //    event.reply("Reboot...").queue();
 
-    log.warn("User reboot bot. " + "User: " + user);
+    log.warn("User reboot bot. " + "User: " + context.getUser());
   }
 }

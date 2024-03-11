@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -32,19 +31,19 @@ public class BotCommandContext {
   private final BotCommand botCommand;
   private final SlashCommandInteractionEvent slashCommandEvent;
   private final MessageReceivedEvent messageReceivedEvent;
-  private final List<OptionMapping> options;
+  private final CommandArguments argumentMapper;
 
   private Guild guild;
   private User user;
   private Member member;
   private TextChannel textChannel;
 
-  public BotCommandContext(BotCommand botCommand, SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent, List<OptionMapping> options) {
+  public BotCommandContext(BotCommand botCommand, SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent, CommandArguments argumentMapper) {
     super();
     this.botCommand = botCommand;
     this.slashCommandEvent = slashCommandEvent;
     this.messageReceivedEvent = messageReceivedEvent;
-    this.options = options;
+    this.argumentMapper = argumentMapper;
 
     guild = fillGuild(slashCommandEvent, messageReceivedEvent);
     user = fillUser(slashCommandEvent, messageReceivedEvent);

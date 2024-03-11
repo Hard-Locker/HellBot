@@ -1,7 +1,6 @@
 package halot.nikitazolin.bot.command.commands.music;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -19,9 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -43,7 +39,7 @@ public class PlayCommand extends BotCommand {
   public List<String> commandPrefixes() {
     return List.of("!", "1");
   }
-  
+
   @Override
   public String description() {
     return "Start playing music from link";
@@ -66,39 +62,26 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] {
-        new OptionData(OptionType.STRING, "link", "URL with audio", false)
-    };
+    return new OptionData[] { new OptionData(OptionType.STRING, "link", "URL with content", false) };
   }
 
   @Override
   public void execute(BotCommandContext context) {
-//    SlashCommandInteractionEvent slashEvent = context.getSlashCommandEvent();
-    Guild guild = context.getGuild();
-    BotAudioService botAudioService = new BotAudioService(guild);
+    BotAudioService botAudioService = new BotAudioService(context.getGuild());
     AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
     
     String trackUrl;
 //    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
+    trackUrl = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
+//    trackUrl = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
+//    trackUrl = "https://www.youtube.com/watch?v=kS-Mob5Ha64";
+//    trackUrl = "https://www.youtube.com/watch?v=9vQHhdCsKfg";
     
-    List<OptionMapping> options = context.getOptions();
-    OptionMapping option;
-//    options.stream().filter(opt -> opt.getName().equals("link"));
-//    List<String> opt = option.ge;
-    
-    String reason = null;
-    
-    for (OptionMapping opt : options) {
-      if (opt.getName().equals("link")) {
-        option = opt;
-        
-        reason = opt.getAsString();
-      }
-    }
-    
-//    String reason = slashEvent.getOption("link") != null ? slashEvent.getOption("link").getAsString() : "No link provided";
-    trackUrl = reason;
-    System.out.println(reason);
+//    List<String> strings = context.getArgumentMapper().getString();
+//    String reason = strings.getFirst();
+//    String reason = context.getSlashCommandEvent().getOption("link") != null ? context.getSlashCommandEvent().getOption("link").getAsString() : "No link provided";
+//    trackUrl = reason;
+//    System.out.println(reason);
     
     botAudioService.connectToVoiceChannel(context);
     botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(audioPlayer));

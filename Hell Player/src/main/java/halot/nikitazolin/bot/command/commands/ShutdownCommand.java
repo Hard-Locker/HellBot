@@ -9,8 +9,6 @@ import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -21,7 +19,7 @@ public class ShutdownCommand extends BotCommand {
   public String name() {
     return "shutdown";
   }
-  
+
   @Override
   public List<String> nameAliases() {
     return List.of("shutdown");
@@ -31,7 +29,7 @@ public class ShutdownCommand extends BotCommand {
   public List<String> commandPrefixes() {
     return List.of("!", "1");
   }
-  
+
   @Override
   public String description() {
     return "Shutdown bot";
@@ -59,15 +57,13 @@ public class ShutdownCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    Guild guild = context.getGuild();
-    User user = context.getUser();
-    BotAudioService botAudioService = new BotAudioService(guild);
+    BotAudioService botAudioService = new BotAudioService(context.getGuild());
 
     botAudioService.shutdown();
 
     context.sendText("Shutdown...");
 
-    log.warn("User shutdown bot. " + "User: " + user);
+    log.warn("User shutdown bot. " + "User: " + context.getUser());
 
     System.exit(0);
   }
