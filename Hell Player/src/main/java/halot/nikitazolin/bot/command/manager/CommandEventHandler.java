@@ -2,16 +2,15 @@ package halot.nikitazolin.bot.command.manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.HellBot;
-import halot.nikitazolin.bot.command.model.CommandArguments;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
+import halot.nikitazolin.bot.command.model.CommandArguments;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
@@ -43,14 +42,14 @@ public class CommandEventHandler extends ListenerAdapter {
     }
 
     List<String> stringArgs = new ArrayList<>();
-    List<Integer> integerArgs = new ArrayList<>();
+//    List<Integer> integerArgs = new ArrayList<>();
     List<Attachment> attachmentArgs = new ArrayList<>();
     stringArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.STRING).map(option -> option.getAsString()).toList();
-    integerArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.INTEGER).map(option -> option.getAsInt()).toList();
+//    integerArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.INTEGER).map(option -> option.getAsInt()).toList();
     attachmentArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.ATTACHMENT).map(option -> option.getAsAttachment()).toList();
-    CommandArguments argumentMapper = new CommandArguments(stringArgs, integerArgs, attachmentArgs);
+    CommandArguments commandArguments = new CommandArguments(stringArgs, attachmentArgs);
 
-    BotCommandContext context = new BotCommandContext(command.get(), slashEvent, null, argumentMapper);
+    BotCommandContext context = new BotCommandContext(command.get(), slashEvent, null, commandArguments);
     command.get().execute(context);
   }
 
@@ -62,14 +61,19 @@ public class CommandEventHandler extends ListenerAdapter {
 
     Message message = messageEvent.getMessage();
     String[] messageParts = message.getContentRaw().trim().split(" ", 2);
-    LinkedList<String> messagePartsList = new LinkedList<>(Arrays.asList(messageParts));
-    String commandName = messagePartsList.getFirst();
-    messagePartsList.removeFirst();
+    List<String> arguments = new ArrayList<>();
 
-    System.out.println("message: " + message);
+    if(messageParts.length > 1) {
+      String[] parts = messageParts[1].split("\\n");
+      arguments.addAll(Arrays.asList(parts));
+    }
+
+//    System.out.println("message: " + message);
     System.out.println("messageParts: " + Arrays.toString(messageParts));
-    System.out.println("commandName: " + commandName);
+    System.out.println("arguments: " + arguments);
+//    System.out.println("commandName: " + commandName);
 
+    String commandName = messageParts[0];
     Optional<BotCommand> command = getCommandByReceivedMessage(commandName);
 
     if (command.isEmpty()) {
@@ -82,13 +86,12 @@ public class CommandEventHandler extends ListenerAdapter {
     }
 
     List<String> stringArgs = new ArrayList<>();
-    List<Integer> integerArgs = new ArrayList<>();
     List<Attachment> attachmentArgs = new ArrayList<>();
-    stringArgs = messagePartsList;
+    stringArgs = arguments;
     attachmentArgs = message.getAttachments();
-    CommandArguments argumentMapper = new CommandArguments(stringArgs, integerArgs, attachmentArgs);
+    CommandArguments commandArguments = new CommandArguments(stringArgs, attachmentArgs);
 
-    BotCommandContext context = new BotCommandContext(command.get(), null, messageEvent, argumentMapper);
+    BotCommandContext context = new BotCommandContext(command.get(), null, messageEvent, commandArguments);
     command.get().execute(context);
   }
 

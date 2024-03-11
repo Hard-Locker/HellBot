@@ -72,15 +72,12 @@ public class PlayCommand extends BotCommand {
     
     String trackUrl;
 //    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-    trackUrl = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
+//    trackUrl = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
 //    trackUrl = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
-//    trackUrl = "https://www.youtube.com/watch?v=kS-Mob5Ha64";
-//    trackUrl = "https://www.youtube.com/watch?v=9vQHhdCsKfg";
     
-//    List<String> strings = context.getArgumentMapper().getString();
-//    String reason = strings.getFirst();
-//    String reason = context.getSlashCommandEvent().getOption("link") != null ? context.getSlashCommandEvent().getOption("link").getAsString() : "No link provided";
-//    trackUrl = reason;
+    List<String> links = context.getArgumentMapper().getString();
+    String reason = links.getFirst();
+    trackUrl = reason;
 //    System.out.println(reason);
     
     botAudioService.connectToVoiceChannel(context);

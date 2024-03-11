@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.Message.Attachment;
 public class CommandArguments {
   
   private final List<String> string;
-  private final List<Integer> integer;
+//  private final List<Integer> integer;
   private final List<Attachment> attachment;
 
 }
