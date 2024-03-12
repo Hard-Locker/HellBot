@@ -11,6 +11,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
@@ -54,6 +55,7 @@ public class BotPlayerManager implements AudioSendHandler {
   protected void createPlayer() {
     AudioSourceManagers.registerRemoteSources(audioPlayerManager);
     AudioSourceManagers.registerLocalSource(audioPlayerManager);
+//    audioPlayerManager.source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);
     audioPlayer = audioPlayerManager.createPlayer();
   }
   

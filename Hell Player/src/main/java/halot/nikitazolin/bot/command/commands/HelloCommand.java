@@ -59,7 +59,5 @@ public class HelloCommand extends BotCommand {
     EmbedBuilder embed = MessageUtil.createInfoEmbed("Gamarjoba genacvale!");
     
     context.sendMessageEmbed(embed);
-    
-//    context.getSlashCommandEvent().replyEmbeds(MessageUtil.createInfoEmbed("Gamarjoba genacvale!").build()).queue();
   }
 }

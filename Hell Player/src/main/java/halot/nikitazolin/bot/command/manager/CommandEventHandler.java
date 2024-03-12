@@ -40,7 +40,9 @@ public class CommandEventHandler extends ListenerAdapter {
       slashEvent.replyEmbeds(MessageUtil.createErrorEmbed("You don't have the permission to execute this command!").build()).setEphemeral(true).queue();
       return;
     }
-
+    
+    slashEvent.deferReply().queue();
+    
     List<String> stringArgs = new ArrayList<>();
 //    List<Integer> integerArgs = new ArrayList<>();
     List<Attachment> attachmentArgs = new ArrayList<>();
@@ -50,6 +52,8 @@ public class CommandEventHandler extends ListenerAdapter {
     CommandArguments commandArguments = new CommandArguments(stringArgs, attachmentArgs);
 
     BotCommandContext context = new BotCommandContext(command.get(), slashEvent, null, commandArguments);
+    
+    slashEvent.getHook().deleteOriginal().queue();
     command.get().execute(context);
   }
 
@@ -67,11 +71,6 @@ public class CommandEventHandler extends ListenerAdapter {
       String[] parts = messageParts[1].split("\\n");
       arguments.addAll(Arrays.asList(parts));
     }
-
-//    System.out.println("message: " + message);
-    System.out.println("messageParts: " + Arrays.toString(messageParts));
-    System.out.println("arguments: " + arguments);
-//    System.out.println("commandName: " + commandName);
 
     String commandName = messageParts[0];
     Optional<BotCommand> command = getCommandByReceivedMessage(commandName);

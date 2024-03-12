@@ -55,17 +55,17 @@ public class CommandRegistrator {
     return commands;
   }
   
-  private CommandData create(BotCommand slashCommand) {
-    this.activeCommands.add(slashCommand);
+  private CommandData create(BotCommand botCommand) {
+    this.activeCommands.add(botCommand);
     
-    if (slashCommand.options().length > 0) {
-      log.info("Registering command " + slashCommand.name() + " with " + slashCommand.options().length + " options!");
+    if (botCommand.options().length > 0) {
+      log.info("Registering command " + botCommand.name() + " with " + botCommand.options().length + " options!");
       
-      return Commands.slash(slashCommand.name(), slashCommand.description()).addOptions(slashCommand.options()).setGuildOnly(slashCommand.guildOnly());
+      return Commands.slash(botCommand.name(), botCommand.description()).addOptions(botCommand.options()).setGuildOnly(botCommand.guildOnly());
     } else {
-      log.warn("Registering command " + slashCommand.name() + " with no options!");
+      log.warn("Registering command " + botCommand.name() + " with no options!");
       
-      return Commands.slash(slashCommand.name(), slashCommand.description()).setGuildOnly(slashCommand.guildOnly());
+      return Commands.slash(botCommand.name(), botCommand.description()).setGuildOnly(botCommand.guildOnly());
     }
   }
 }

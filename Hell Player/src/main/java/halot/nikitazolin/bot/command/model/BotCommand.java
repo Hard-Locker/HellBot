@@ -27,5 +27,5 @@ public abstract class BotCommand extends ListenerAdapter {
 
   public abstract OptionData[] options();
 
-  public abstract void execute(BotCommandContext info);
+  public abstract void execute(BotCommandContext context);
 }

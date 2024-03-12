@@ -85,7 +85,6 @@ public class PlayCommand extends BotCommand {
     
     EmbedBuilder embed = MessageUtil.createSuccessEmbed("Play: " + trackUrl);
     context.sendMessageEmbed(embed);
-//    slashEvent.replyEmbeds(MessageUtil.createInfoEmbed("Play: " + trackUrl).build()).queue();
     
     log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + trackUrl);
   }
