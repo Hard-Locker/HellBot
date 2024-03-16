@@ -7,11 +7,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.HellBot;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.command.model.CommandArguments;
 import halot.nikitazolin.bot.util.MessageUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -22,8 +22,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class CommandEventHandler extends ListenerAdapter {
-
+  
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
     if (slashEvent.getGuild() == null || slashEvent.getUser().isBot() || slashEvent.getMember() == null) {
@@ -44,10 +45,8 @@ public class CommandEventHandler extends ListenerAdapter {
     slashEvent.deferReply().queue();
     
     List<String> stringArgs = new ArrayList<>();
-//    List<Integer> integerArgs = new ArrayList<>();
     List<Attachment> attachmentArgs = new ArrayList<>();
     stringArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.STRING).map(option -> option.getAsString()).toList();
-//    integerArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.INTEGER).map(option -> option.getAsInt()).toList();
     attachmentArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.ATTACHMENT).map(option -> option.getAsAttachment()).toList();
     CommandArguments commandArguments = new CommandArguments(stringArgs, attachmentArgs);
 
@@ -95,7 +94,9 @@ public class CommandEventHandler extends ListenerAdapter {
   }
 
   private Optional<BotCommand> getCommandByReceivedMessage(String commandName) {
-    List<BotCommand> commands = HellBot.getCommandRegistry().getActiveCommands();
+    CommandRegistrator commandRegistrator = new CommandRegistrator();
+    List<BotCommand> commands = commandRegistrator.getActiveCommands();
+//    List<BotCommand> commands = HellBot.getCommandRegistry().getActiveCommands();
 
     for (BotCommand command : commands) {
       List<String> prefixes = command.commandPrefixes();
@@ -119,6 +120,8 @@ public class CommandEventHandler extends ListenerAdapter {
   }
 
   private Optional<BotCommand> getSlashCommand(String commandName) {
-    return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.name().equalsIgnoreCase(commandName)).findFirst();
+    CommandRegistrator commandRegistrator = new CommandRegistrator();
+    return commandRegistrator.getActiveCommands().stream().filter(command -> command.name().equalsIgnoreCase(commandName)).findFirst();
+//    return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.name().equalsIgnoreCase(commandName)).findFirst();
   }
 }

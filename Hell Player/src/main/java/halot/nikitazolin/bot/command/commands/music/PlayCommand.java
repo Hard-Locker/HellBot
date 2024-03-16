@@ -2,15 +2,15 @@ package halot.nikitazolin.bot.command.commands.music;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
+import halot.nikitazolin.bot.audio.BotPlayerManager;
+import halot.nikitazolin.bot.audio.FillQueueHandler;
+import halot.nikitazolin.bot.audio.IPlayerManager;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class PlayCommand extends BotCommand {
 
   @Override
@@ -65,79 +66,61 @@ public class PlayCommand extends BotCommand {
     return new OptionData[] { new OptionData(OptionType.STRING, "link", "URL with content", false) };
   }
 
+//  private final BotAudioService botAudioService;
+//  private final IPlayerManager botPlayerManager;
+  
   @Override
   public void execute(BotCommandContext context) {
+    IPlayerManager botPlayerManager = new BotPlayerManager();
     BotAudioService botAudioService = new BotAudioService(context.getGuild());
-    AudioPlayer audioPlayer = botAudioService.getAudioSendHandler().getAudioPlayer();
+
+    AudioPlayer audioPlayer = botPlayerManager.getAudioPlayer();
+
+    String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
+    String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
+    String url3 = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
     
-    String trackUrl;
-//    trackUrl = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-//    trackUrl = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
-//    trackUrl = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
+    List<String> links = List.of(url1, url2, url3);
+    System.out.println("links size: " + links.size());
     
-    List<String> links = context.getArgumentMapper().getString();
-    String reason = links.getFirst();
-    trackUrl = reason;
-//    System.out.println(reason);
+    for (String trackUrl : links) {
+      botPlayerManager.getAudioPlayerManager().loadItemSync(trackUrl, new FillQueueHandler(botAudioService));
+    }
     
     botAudioService.connectToVoiceChannel(context);
-    botAudioService.getAudioSendHandler().getAudioPlayerManager().loadItem(trackUrl, new PlayResultHandler(audioPlayer));
+    botAudioService.getBotPlayerManager().startPlayingMusic();
     
-    EmbedBuilder embed = MessageUtil.createSuccessEmbed("Play: " + trackUrl);
+    EmbedBuilder embed = MessageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
     context.sendMessageEmbed(embed);
     
-    log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + trackUrl);
+    log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + audioPlayer.getPlayingTrack().getIdentifier());
   }
-
-  @RequiredArgsConstructor
-  class PlayResultHandler implements AudioLoadResultHandler {
-
-    private final AudioPlayer audioPlayer;
-
-    @Override
-    public void trackLoaded(AudioTrack track) {
-      loadSingle(track, null);
-    }
-
-    @Override
-    public void playlistLoaded(AudioPlaylist playlist) {
-
-    }
-
-    @Override
-    public void noMatches() {
-
-    }
-
-    @Override
-    public void loadFailed(FriendlyException exception) {
-
-    }
-
-    private void loadSingle(AudioTrack track, AudioPlaylist playlist) {
-      audioPlayer.playTrack(track);
-//      int pos = handler.addTrack(new QueuedTrack(track, event.getAuthor())) + 1;
-//      String addMsg = FormatUtil.filter(event.getClient().getSuccess() + " Добавлен **" + track.getInfo().title + "** (`" + FormatUtil.formatTime(track.getDuration()) + "`) " + (pos == 0 ? "чтобы начать играть" : " чтобы добавить в очередь на позиции " + pos));
-//      
-//      if (playlist == null || !event.getSelfMember().hasPermission(event.getTextChannel(), Permission.MESSAGE_ADD_REACTION)) {
-//        m.editMessage(addMsg).queue();
-//      } else {
-//        new ButtonMenu.Builder()
-//            .setText(addMsg + "\n" + event.getClient().getWarning() + " У этого трека есть плейлист из **" + playlist.getTracks().size() + "** дополнительных треков. Нажмите " + LOAD + ", чтобы начать плейлист.")
-//            .setChoices(LOAD, CANCEL).setEventWaiter(bot.getWaiter()).setTimeout(30, TimeUnit.SECONDS).setAction(re -> {
-//              if (re.getName().equals(LOAD)) {
-//                m.editMessage(addMsg + "\n" + event.getClient().getSuccess() + " Загружено **" + loadPlaylist(playlist, track) + "** дополнительных треков!").queue();
-//              } else {
-//                m.editMessage(addMsg).queue();
-//              }
-//            }).setFinalAction(m -> {
-//              try {
-//                m.clearReactions().queue();
-//              } catch (PermissionException ignore) {
-//              }
-//            }).build().display(m);
-//      }
-    }
-  }
-
+  
+//  @Override
+//  public void execute(BotCommandContext context) {
+//    BotAudioService botAudioService = new BotAudioService(context.getGuild());
+//    AudioPlayer audioPlayer = botAudioService.getBotPlayerManager().getAudioPlayer();
+//
+//    String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
+//    String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
+//    String url3 = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
+//
+////    List<String> links = context.getArgumentMapper().getString();
+//    List<String> links = List.of(url1, url2, url3);
+//    System.out.println("links size: " + links.size());
+////    String reason = links.getFirst();
+////    System.out.println(reason);
+//
+//    for (String trackUrl : links) {
+//      botAudioService.getBotPlayerManager().getAudioPlayerManager().loadItemSync(trackUrl, new FillQueueHandler(botAudioService));
+//    }
+//
+//    botAudioService.connectToVoiceChannel(context);
+//    botAudioService.getBotPlayerManager().startPlayingMusic();
+//
+//    EmbedBuilder embed = MessageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
+//    context.sendMessageEmbed(embed);
+//
+//    log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + audioPlayer.getPlayingTrack().getIdentifier());
+//  }
 }

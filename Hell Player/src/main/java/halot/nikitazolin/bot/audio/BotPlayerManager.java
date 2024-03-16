@@ -1,11 +1,8 @@
 package halot.nikitazolin.bot.audio;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -17,22 +14,31 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.audio.AudioSendHandler;
 
-@Component
-@Scope("singleton")
+//@Component
+//@Scope("singleton")
 @Getter
 @Slf4j
-public class BotPlayerManager implements AudioSendHandler {
-  
+public class BotPlayerManager implements IPlayerManager {
+
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
-  private List<AudioTrack> queue = new LinkedList<>();
+  private BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>();
+
+//  @PostConstruct
+//  public void init() {
+//    System.out.println("BotPlayerManager before createPlayer");
+//    createPlayer();
+//
+//    log.info("Created BotPlayerManager for implementation AudioSendHandler");
+//
+//    System.out.println("BotPlayerManager is initialized.");
+//  }
   
   public BotPlayerManager() {
     createPlayer();
-    
+
     log.info("Created BotPlayerManager for implementation AudioSendHandler");
   }
 
@@ -51,35 +57,51 @@ public class BotPlayerManager implements AudioSendHandler {
   public boolean isOpus() {
     return true;
   }
-  
-  protected void createPlayer() {
+
+  public void createPlayer() {
     AudioSourceManagers.registerRemoteSources(audioPlayerManager);
     AudioSourceManagers.registerLocalSource(audioPlayerManager);
-//    audioPlayerManager.source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);
+    audioPlayerManager.source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);
     audioPlayer = audioPlayerManager.createPlayer();
+    
+//    TrackScheduler trackScheduler = new TrackScheduler(audioPlayer, queue);
+//    audioPlayer.addListener(trackScheduler);
   }
-  
-  protected void stopPlayingMusic() {
+
+  public void startPlayingMusic() {
+    System.out.println("Called startPlayingMusic");
+    if ((audioPlayer.isPaused() == false) && (audioPlayer.getPlayingTrack() == null)) {
+      System.out.println("Start queue size: " + queue.size());
+      audioPlayer.playTrack(queue.poll());
+    }
+  }
+
+  public void stopPlayingMusic() {
+    queue.clear();
     audioPlayer.stopTrack();
   }
-  
-  protected void skipTrack() {
-    //TODO
+
+  public void skipTrack() {
+    System.out.println("Called skipTrack");
+    System.out.println("Before skip queue size: " + queue.size());
+    audioPlayer.stopTrack();
+    System.out.println("After skip  queue size: " + queue.size());
+//    audioPlayer.playTrack(queue.poll());
   }
-  
-  protected void skipTrackToPosition() {
-    //TODO
+
+  public void skipTracks() {
+    // TODO
   }
-  
-  protected void setVolume() {
-    //TODO
+
+  public void setVolume() {
+    // TODO
   }
-  
-  protected void clearQueue() {
+
+  public void clearQueue() {
     queue.clear();
   }
-  
-  protected void shutdownPlayer() {
+
+  public void shutdownPlayer() {
     audioPlayer.destroy();
     audioPlayerManager.shutdown();
   }

@@ -1,39 +1,60 @@
 package halot.nikitazolin.bot.audio;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.HellBot;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
-@Component
+//@Component
+//@Scope("singleton")
 @Getter
 @Slf4j
+//@RequiredArgsConstructor
 public class BotAudioService {
 
-  private final Guild initialGuild;
-  private final BotPlayerManager audioSendHandler = new BotPlayerManager();
+  private final BotPlayerManager botPlayerManager = new BotPlayerManager();
+
+//  private final IPlayerManager botPlayerManager;
   private AudioManager audioManager;
 
   public BotAudioService(Guild guild) {
-    this.initialGuild = guild;
-
     audioManager = guild.getAudioManager();
-    setUpAudioSendHandler(audioManager);
+    setUpAudioSendHandler(audioManager, guild);
   }
+  
+//  @PostConstruct
+//  public void init(BotCommandContext context) {
+//    System.out.println("BotAudioService before initialize audioManager");
+//    
+////    Guild guild = HellBot.getJdaService().getJda().get().getGuilds().getFirst();
+//    Guild guild = context.getGuild();
+//    
+//    audioManager = guild.getAudioManager();
+//    setUpAudioSendHandler(audioManager, guild);
+//
+//    System.out.println("guild: " + guild);
+//    System.out.println("BotAudioService is initialized.");
+//  }
 
-  private void setUpAudioSendHandler(AudioManager audioManager) {
+  private void setUpAudioSendHandler(AudioManager audioManager, Guild guild) {
     if (audioManager.getSendingHandler() == null) {
-      audioManager.setSendingHandler(audioSendHandler);
-      log.debug("Set sending handler for guild: " + initialGuild.getId());
+      audioManager.setSendingHandler(botPlayerManager);
+      
+      log.debug("Set sending handler for guild: " + guild.getId());
     }
   }
 
+  //TODO need to check bot voice status
   public void connectToVoiceChannel(BotCommandContext context) {
     VoiceChannel voiceChannel = getVoiceChannelByUser(context);
 
@@ -41,7 +62,7 @@ public class BotAudioService {
   }
 
   public void stopAudioSending() {
-    audioSendHandler.stopPlayingMusic();
+    botPlayerManager.stopPlayingMusic();
     audioManager.closeAudioConnection();
   }
 
@@ -70,12 +91,12 @@ public class BotAudioService {
 
   public void shutdown() {
     stopAudioSending();
-    audioSendHandler.shutdownPlayer();
+    botPlayerManager.shutdownPlayer();
   }
 
   public void rebootPlayer() {
     stopAudioSending();
-    audioSendHandler.shutdownPlayer();
-    audioSendHandler.createPlayer();
+    botPlayerManager.shutdownPlayer();
+    botPlayerManager.createPlayer();
   }
 }

@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.command.commands;
+package halot.nikitazolin.bot.command.commands.music;
 
 import java.util.List;
 
@@ -7,22 +7,24 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
+import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Slf4j
-public class ShutdownCommand extends BotCommand {
+public class SkipCommand extends BotCommand {
 
   @Override
   public String name() {
-    return "shutdown";
+    return "skip";
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("shutdown");
+    return List.of("skip", "4");
   }
 
   @Override
@@ -32,7 +34,7 @@ public class ShutdownCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Shutdown bot";
+    return "Skip current music";
   }
 
   @Override
@@ -59,11 +61,11 @@ public class ShutdownCommand extends BotCommand {
   public void execute(BotCommandContext context) {
 //    BotAudioService botAudioService = new BotAudioService();
 //
-//    botAudioService.shutdown();
-//    context.sendText("Shutdown...");
+//    botAudioService.getBotPlayerManager().skipTrack();
 //
-//    log.warn("User shutdown bot. " + "User: " + context.getUser());
+//    EmbedBuilder embed = MessageUtil.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
+//    context.sendMessageEmbed(embed);
 //
-//    System.exit(0);
+//    log.info("Track skiped by user: " + context.getUser());
   }
 }

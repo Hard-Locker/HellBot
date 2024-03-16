@@ -57,13 +57,11 @@ public class RebootCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    BotAudioService botAudioService = new BotAudioService(context.getGuild());
-
-    botAudioService.rebootPlayer();
-
-    context.sendText("Reboot...");
-//    event.reply("Reboot...").queue();
-
-    log.warn("User reboot bot. " + "User: " + context.getUser());
+//    BotAudioService botAudioService = new BotAudioService(context.getGuild());
+//
+//    botAudioService.rebootPlayer();
+//    context.sendText("Reboot...");
+//
+//    log.warn("User reboot bot. " + "User: " + context.getUser());
   }
 }

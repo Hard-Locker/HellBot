@@ -1,10 +1,10 @@
 package halot.nikitazolin.bot.util;
 
-import net.dv8tion.jda.api.EmbedBuilder;
-import halot.nikitazolin.bot.HellBot;
-
-import java.awt.*;
+import java.awt.Color;
 import java.time.Instant;
+
+import halot.nikitazolin.bot.ApplicationRunnerImpl;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 public final class MessageUtil {
 
@@ -179,8 +179,8 @@ public final class MessageUtil {
   }
 
   private static void setCommonFooter(EmbedBuilder embedBuilder) {
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(),
-        HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(ApplicationRunnerImpl.getJdaService().getJda().get().getSelfUser().getName(),
+        ApplicationRunnerImpl.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
   }
 
   private static void setTimestamp(EmbedBuilder embedBuilder) {
