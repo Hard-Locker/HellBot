@@ -3,7 +3,7 @@ package halot.nikitazolin.bot.util;
 import java.awt.Color;
 import java.time.Instant;
 
-import halot.nikitazolin.bot.ApplicationRunnerImpl;
+import halot.nikitazolin.bot.HellBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public final class MessageUtil {
@@ -18,23 +18,12 @@ public final class MessageUtil {
     throw new AssertionError("No, bad! No instances of util classes!");
   }
 
-  /**
-   * Creates a success embed with the usual format used by the bot
-   *
-   * @return {@link EmbedBuilder}
-   */
   public static EmbedBuilder createSuccessEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_SUCCESS);
     return embedBuilder;
   }
 
-  /**
-   * Creates a success embed with usual format used by the bot, including the
-   * message in the embed
-   *
-   * @return {@link EmbedBuilder}
-   */
   public static EmbedBuilder createSuccessEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_SUCCESS);
@@ -44,23 +33,12 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  /**
-   * Creates a error embed with the usual format used by the bot
-   *
-   * @return {@link EmbedBuilder}
-   */
   public static EmbedBuilder createErrorEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_ERROR);
     return embedBuilder;
   }
 
-  /**
-   * Creates a error embed with usual format used by the bot, including the
-   * message in the embed
-   *
-   * @return {@link EmbedBuilder}
-   */
   public static EmbedBuilder createErrorEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_ERROR);
@@ -70,11 +48,6 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  /**
-   * Creates a info embed with the usual format used by the bot
-   *
-   * @return {@link EmbedBuilder}
-   */
   public static EmbedBuilder createInfoEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
@@ -83,12 +56,6 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  /**
-   * Creates a info embed with usual format used by the bot, including the message
-   * in the embed
-   *
-   * @return {@link EmbedBuilder}
-   */
   public static EmbedBuilder createInfoEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
@@ -98,14 +65,6 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  /**
-   * Creates an info embed with usual format used by the bot, including the
-   * message and the title in the embed
-   *
-   * @param message message the embed shall contain
-   * @param title   title of the embed
-   * @return {@link EmbedBuilder}
-   */
   public static EmbedBuilder createInfoEmbedWithTitle(String message, String title) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
@@ -116,23 +75,12 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  /**
-   * Creates a alt info embed with the usual format used by the bot
-   *
-   * @return Embed
-   */
   public static EmbedBuilder createAltInfoEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO_ALT);
     return embedBuilder;
   }
 
-  /**
-   * Creates an alt info embed with usual format used by the bot, including the
-   * message in the embed
-   *
-   * @return Embed
-   */
   public static EmbedBuilder createAltInfoEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO_ALT);
@@ -142,23 +90,12 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  /**
-   * Creates a warning info embed with the usual format used by the bot
-   *
-   * @return Embed
-   */
   public static EmbedBuilder createWarningEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_WARNING);
     return embedBuilder;
   }
 
-  /**
-   * Creates a warning embed with usual format used by the bot, including the
-   * message in the embed
-   *
-   * @return Embed
-   */
   public static EmbedBuilder createWarningEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_WARNING);
@@ -168,19 +105,15 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  /**
-   * Sets the message for an embed
-   *
-   * @param embedBuilder embed you want to set the message for
-   * @param message      the message to set
-   */
   public static void setEmbedMessage(EmbedBuilder embedBuilder, String message) {
     embedBuilder.setDescription(message);
   }
 
   private static void setCommonFooter(EmbedBuilder embedBuilder) {
-    embedBuilder.setFooter(ApplicationRunnerImpl.getJdaService().getJda().get().getSelfUser().getName(),
-        ApplicationRunnerImpl.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    System.out.println("setCommonFooter, jdaService null?" + (HellBot.getJdaService().getJda() == null));
+    
+    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(),
+        HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
   }
 
   private static void setTimestamp(EmbedBuilder embedBuilder) {

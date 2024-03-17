@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 //@Component
-//@Scope("singleton")
+@Scope("singleton")
 @Getter
 @Slf4j
 //@RequiredArgsConstructor

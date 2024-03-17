@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
-
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.command.model.CommandArguments;
@@ -20,10 +18,11 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
-@Component
 @Slf4j
 @RequiredArgsConstructor
 public class CommandEventHandler extends ListenerAdapter {
+  
+  private final CommandSaver commandSaver;
   
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
@@ -94,9 +93,7 @@ public class CommandEventHandler extends ListenerAdapter {
   }
 
   private Optional<BotCommand> getCommandByReceivedMessage(String commandName) {
-    CommandRegistrator commandRegistrator = new CommandRegistrator();
-    List<BotCommand> commands = commandRegistrator.getActiveCommands();
-//    List<BotCommand> commands = HellBot.getCommandRegistry().getActiveCommands();
+    List<BotCommand> commands = commandSaver.getActiveCommands();
 
     for (BotCommand command : commands) {
       List<String> prefixes = command.commandPrefixes();
@@ -120,8 +117,7 @@ public class CommandEventHandler extends ListenerAdapter {
   }
 
   private Optional<BotCommand> getSlashCommand(String commandName) {
-    CommandRegistrator commandRegistrator = new CommandRegistrator();
-    return commandRegistrator.getActiveCommands().stream().filter(command -> command.name().equalsIgnoreCase(commandName)).findFirst();
-//    return HellBot.getCommandRegistry().getActiveCommands().stream().filter(command -> command.name().equalsIgnoreCase(commandName)).findFirst();
+    List<BotCommand> commands = commandSaver.getActiveCommands();
+    return commands.stream().filter(command -> command.name().equalsIgnoreCase(commandName)).findFirst();
   }
 }

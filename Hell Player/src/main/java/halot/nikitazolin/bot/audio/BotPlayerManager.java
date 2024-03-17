@@ -4,6 +4,10 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -15,8 +19,9 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-//@Component
-//@Scope("singleton")
+@Component
+@Lazy
+@Scope("singleton")
 @Getter
 @Slf4j
 public class BotPlayerManager implements IPlayerManager {

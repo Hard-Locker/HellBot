@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackages = "halot.nikitazolin.bot")
 public class HellBotConfig {
-
+  
 //  @Bean
 //  DataSource dataSource() {
 //    DriverManagerDataSource dataSource = new DriverManagerDataSource();

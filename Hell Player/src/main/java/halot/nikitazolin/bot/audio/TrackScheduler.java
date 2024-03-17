@@ -1,9 +1,5 @@
 package halot.nikitazolin.bot.audio;
 
-import java.util.concurrent.BlockingQueue;
-
-import org.springframework.stereotype.Component;
-
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEvent;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -20,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
-//  private final BotAudioService botAudioService = new BotAudioService(context.getGuild());
+//  private final BotAudioService botAudioService;
 //  private final AudioPlayer audioPlayer;
 //  private final BlockingQueue<AudioTrack> queue;
 

@@ -67,11 +67,10 @@ public class PlayCommand extends BotCommand {
   }
 
 //  private final BotAudioService botAudioService;
-//  private final IPlayerManager botPlayerManager;
+  private final IPlayerManager botPlayerManager;
   
   @Override
   public void execute(BotCommandContext context) {
-    IPlayerManager botPlayerManager = new BotPlayerManager();
     BotAudioService botAudioService = new BotAudioService(context.getGuild());
 
     AudioPlayer audioPlayer = botPlayerManager.getAudioPlayer();
