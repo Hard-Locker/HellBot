@@ -1,10 +1,13 @@
 package halot.nikitazolin.bot.audio;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.HellBot;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
+import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.util.MessageUtil;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
@@ -15,29 +18,32 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.managers.AudioManager;
 
-//@Component
+@Service
+@Lazy
 @Scope("singleton")
 @Getter
 @Slf4j
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class BotAudioService {
 
-  private final BotPlayerManager botPlayerManager = new BotPlayerManager();
-
+//  private final JdaService jdaService;
 //  private final IPlayerManager botPlayerManager;
-  private AudioManager audioManager;
 
+  private final BotPlayerManager botPlayerManager = new BotPlayerManager();
+  
   public BotAudioService(Guild guild) {
     audioManager = guild.getAudioManager();
     setUpAudioSendHandler(audioManager, guild);
   }
   
+  private AudioManager audioManager;
+  
 //  @PostConstruct
-//  public void init(BotCommandContext context) {
+//  public void init() {
 //    System.out.println("BotAudioService before initialize audioManager");
 //    
-////    Guild guild = HellBot.getJdaService().getJda().get().getGuilds().getFirst();
-//    Guild guild = context.getGuild();
+//    Guild guild = jdaService.getJda().get().getGuilds().getFirst();
+////    Guild guild = context.getGuild();
 //    
 //    audioManager = guild.getAudioManager();
 //    setUpAudioSendHandler(audioManager, guild);
@@ -74,15 +80,15 @@ public class BotAudioService {
       userVoiceChannel = context.getMember().getVoiceState().getChannel().asVoiceChannel();
 
       if (afkVoiceChannel != null && afkVoiceChannel.equals(userVoiceChannel)) {
-        EmbedBuilder embed = MessageUtil.createErrorEmbed(context.getUser().getAsMention() + ", this command cannot be used in the AFK channel.");
-        context.sendMessageEmbed(embed);
+//        EmbedBuilder embed = MessageUtil.createErrorEmbed(context.getUser().getAsMention() + ", this command cannot be used in the AFK channel.");
+//        context.sendMessageEmbed(embed);
         return null;
       }
 
       return userVoiceChannel;
     } catch (NullPointerException e) {
-      EmbedBuilder embed = MessageUtil.createErrorEmbed(context.getUser().getAsMention() + ", you need to be in voice channel to use music command.");
-      context.sendMessageEmbed(embed);
+//      EmbedBuilder embed = MessageUtil.createErrorEmbed(context.getUser().getAsMention() + ", you need to be in voice channel to use music command.");
+//      context.sendMessageEmbed(embed);
 
       log.warn("User must to be in a voice channel to use music command.");
       return null;

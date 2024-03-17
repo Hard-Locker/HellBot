@@ -8,7 +8,6 @@ import java.util.Optional;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.command.model.CommandArguments;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
@@ -37,7 +36,7 @@ public class CommandEventHandler extends ListenerAdapter {
     }
 
     if (command.get().neededPermission() != null && !slashEvent.getMember().hasPermission(command.get().neededPermission())) {
-      slashEvent.replyEmbeds(MessageUtil.createErrorEmbed("You don't have the permission to execute this command!").build()).setEphemeral(true).queue();
+      slashEvent.reply("You don't have the permission to execute this command!").setEphemeral(true).queue();
       return;
     }
     

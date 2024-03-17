@@ -56,8 +56,8 @@ public class HelloCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    EmbedBuilder embed = MessageUtil.createInfoEmbed("Gamarjoba genacvale!");
-    
-    context.sendMessageEmbed(embed);
+//    EmbedBuilder embed = MessageUtil.createInfoEmbed("Gamarjoba genacvale!");
+//    
+//    context.sendMessageEmbed(embed);
   }
 }

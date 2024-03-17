@@ -67,11 +67,13 @@ public class PlayCommand extends BotCommand {
   }
 
 //  private final BotAudioService botAudioService;
-  private final IPlayerManager botPlayerManager;
+//  private final IPlayerManager botPlayerManager;
+//  private final MessageUtil messageUtil;
   
   @Override
   public void execute(BotCommandContext context) {
     BotAudioService botAudioService = new BotAudioService(context.getGuild());
+    IPlayerManager botPlayerManager = botAudioService.getBotPlayerManager();
 
     AudioPlayer audioPlayer = botPlayerManager.getAudioPlayer();
 
@@ -89,8 +91,8 @@ public class PlayCommand extends BotCommand {
     botAudioService.connectToVoiceChannel(context);
     botAudioService.getBotPlayerManager().startPlayingMusic();
     
-    EmbedBuilder embed = MessageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
-    context.sendMessageEmbed(embed);
+//    EmbedBuilder embed = messageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
+//    context.sendMessageEmbed(embed);
     
     log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + audioPlayer.getPlayingTrack().getIdentifier());
   }

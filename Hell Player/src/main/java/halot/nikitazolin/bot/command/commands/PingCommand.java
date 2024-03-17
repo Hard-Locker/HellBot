@@ -55,13 +55,13 @@ public class PingCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    final long time = System.currentTimeMillis();
-
-    context.getSlashCommandEvent()
-      .replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build())
-      .setEphemeral(true)
-      .queue(response -> {
-          response.editOriginalEmbeds(MessageUtil.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
-        }, failure -> context.getSlashCommandEvent().replyEmbeds(MessageUtil.createErrorEmbed("Failed to get response time!").build()).queue());
+//    final long time = System.currentTimeMillis();
+//
+//    context.getSlashCommandEvent()
+//      .replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build())
+//      .setEphemeral(true)
+//      .queue(response -> {
+//          response.editOriginalEmbeds(MessageUtil.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
+//        }, failure -> context.getSlashCommandEvent().replyEmbeds(MessageUtil.createErrorEmbed("Failed to get response time!").build()).queue());
   }
 }

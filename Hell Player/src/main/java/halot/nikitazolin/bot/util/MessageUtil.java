@@ -3,10 +3,23 @@ package halot.nikitazolin.bot.util;
 import java.awt.Color;
 import java.time.Instant;
 
-import halot.nikitazolin.bot.HellBot;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import halot.nikitazolin.bot.jda.JdaService;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-public final class MessageUtil {
+@Component
+@Lazy
+@Scope("prototype")
+public class MessageUtil {
+
+  private final JdaService jdaService;
+
+  public MessageUtil(JdaService jdaService) {
+    this.jdaService = jdaService;
+  }
 
   private static final Color BOT_COLOR_SUCCESS = new Color(88, 170, 137);
   private static final Color BOT_COLOR_ERROR = new Color(191, 61, 39);
@@ -14,17 +27,17 @@ public final class MessageUtil {
   private static final Color BOT_COLOR_INFO_ALT = new Color(87, 97, 133);
   private static final Color BOT_COLOR_WARNING = new Color(255, 122, 0);
 
-  private MessageUtil() {
-    throw new AssertionError("No, bad! No instances of util classes!");
-  }
+//  private MessageUtil() {
+//    throw new AssertionError("No, bad! No instances of util classes!");
+//  }
 
-  public static EmbedBuilder createSuccessEmbed() {
+  public EmbedBuilder createSuccessEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_SUCCESS);
     return embedBuilder;
   }
 
-  public static EmbedBuilder createSuccessEmbed(String message) {
+  public EmbedBuilder createSuccessEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_SUCCESS);
     setCommonFooter(embedBuilder);
@@ -33,13 +46,13 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  public static EmbedBuilder createErrorEmbed() {
+  public EmbedBuilder createErrorEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_ERROR);
     return embedBuilder;
   }
 
-  public static EmbedBuilder createErrorEmbed(String message) {
+  public EmbedBuilder createErrorEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_ERROR);
     setCommonFooter(embedBuilder);
@@ -48,7 +61,7 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  public static EmbedBuilder createInfoEmbed() {
+  public EmbedBuilder createInfoEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
     setCommonFooter(embedBuilder);
@@ -56,7 +69,7 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  public static EmbedBuilder createInfoEmbed(String message) {
+  public EmbedBuilder createInfoEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
     setCommonFooter(embedBuilder);
@@ -65,7 +78,7 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  public static EmbedBuilder createInfoEmbedWithTitle(String message, String title) {
+  public EmbedBuilder createInfoEmbedWithTitle(String message, String title) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO);
     embedBuilder.setTitle(title);
@@ -75,13 +88,13 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  public static EmbedBuilder createAltInfoEmbed() {
+  public EmbedBuilder createAltInfoEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO_ALT);
     return embedBuilder;
   }
 
-  public static EmbedBuilder createAltInfoEmbed(String message) {
+  public EmbedBuilder createAltInfoEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_INFO_ALT);
     setCommonFooter(embedBuilder);
@@ -90,13 +103,13 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  public static EmbedBuilder createWarningEmbed() {
+  public EmbedBuilder createWarningEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_WARNING);
     return embedBuilder;
   }
 
-  public static EmbedBuilder createWarningEmbed(String message) {
+  public EmbedBuilder createWarningEmbed(String message) {
     EmbedBuilder embedBuilder = new EmbedBuilder();
     embedBuilder.setColor(BOT_COLOR_WARNING);
     setCommonFooter(embedBuilder);
@@ -105,18 +118,21 @@ public final class MessageUtil {
     return embedBuilder;
   }
 
-  public static void setEmbedMessage(EmbedBuilder embedBuilder, String message) {
+  public void setEmbedMessage(EmbedBuilder embedBuilder, String message) {
     embedBuilder.setDescription(message);
   }
 
-  private static void setCommonFooter(EmbedBuilder embedBuilder) {
-    System.out.println("setCommonFooter, jdaService null?" + (HellBot.getJdaService().getJda() == null));
+  private void setCommonFooter(EmbedBuilder embedBuilder) {
+    System.out.println("setCommonFooter, jdaService null?" + (jdaService.getJda() == null));
     
-    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(),
-        HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
+    embedBuilder.setFooter(jdaService.getJda().get().getSelfUser().getName(), jdaService.getJda().get().getSelfUser().getAvatarUrl());
+//    System.out.println("setCommonFooter, jdaService null?" + (HellBot.getJdaService().getJda() == null));
+//    
+//    embedBuilder.setFooter(HellBot.getJdaService().getJda().get().getSelfUser().getName(),
+//        HellBot.getJdaService().getJda().get().getSelfUser().getAvatarUrl());
   }
 
-  private static void setTimestamp(EmbedBuilder embedBuilder) {
+  private void setTimestamp(EmbedBuilder embedBuilder) {
     embedBuilder.setTimestamp(Instant.now());
   }
 }

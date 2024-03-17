@@ -7,23 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.audio.BotPlayerManager;
-import halot.nikitazolin.bot.audio.IPlayerManager;
-import halot.nikitazolin.bot.command.commands.HelloCommand;
-import halot.nikitazolin.bot.command.commands.PingCommand;
-import halot.nikitazolin.bot.command.commands.RebootCommand;
-import halot.nikitazolin.bot.command.commands.ShutdownCommand;
-import halot.nikitazolin.bot.command.commands.music.PlayCommand;
-import halot.nikitazolin.bot.command.commands.music.SkipCommand;
-import halot.nikitazolin.bot.command.commands.music.StopCommand;
 import halot.nikitazolin.bot.command.manager.CommandEventHandler;
-import halot.nikitazolin.bot.command.manager.CommandRegistrator;
 import halot.nikitazolin.bot.command.manager.CommandSaver;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.listener.ReadyListener;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -36,10 +29,14 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 @Component
 @Scope("singleton")
 @Slf4j
+@RequiredArgsConstructor
 public class JdaService {
 
+  @Autowired
+  private List<BotCommand> allCommands;
+  
   private String BOT_TOKEN;
-  private String status = "на твою мамку";
+  private String status = "on you";
   private final List<GatewayIntent> gatewayIntents = List.of(
       GatewayIntent.GUILD_MESSAGES,
       GatewayIntent.DIRECT_MESSAGES,
@@ -56,28 +53,23 @@ public class JdaService {
       CacheFlag.STICKER,
       CacheFlag.SCHEDULED_EVENTS
       );
-  private List<CommandData> commandsToRegistration = new ArrayList<>();
   
-  private final IPlayerManager botPlayerManager;
   private final CommandSaver commandSaver;
-  private final CommandRegistrator commandRegistrator;
+//  private final CommandRegistrator commandRegistrator;
   private JDA jda;
   
-  public JdaService(IPlayerManager botPlayerManager, CommandSaver commandSaver, CommandRegistrator commandRegistrator) {
-    this.botPlayerManager = botPlayerManager;
-    this.commandSaver = commandSaver;
-    this.commandRegistrator = commandRegistrator;
-    
+  @PostConstruct
+  public void init() {
     //Make JDA
     readTokenFromFile();
-    createJda(gatewayIntents, cacheFlags);
+    createJda();
     
     //Prepare commands
-    commandsToRegistration = preparateCommands();
-    registerCommands(getJda());
+    List<CommandData> commandsToRegistration = preparateCommands(allCommands);
+    registerCommands(getJda(), commandsToRegistration);
   }
 
-  private void createJda(List<GatewayIntent> gatewayIntents, List<CacheFlag> cacheFlags) {
+  private void createJda() {
     try {
       jda = JDABuilder.createDefault(BOT_TOKEN, gatewayIntents)
           .setActivity(Activity.watching(status))
@@ -100,7 +92,7 @@ public class JdaService {
     }
   }
   
-  private void registerCommands(Optional<JDA> jda) {
+  private void registerCommands(Optional<JDA> jda, List<CommandData> commandsToRegistration) {
     jda.ifPresentOrElse(jdaL -> {
       jdaL.updateCommands()
         .addCommands(commandsToRegistration)
@@ -108,40 +100,15 @@ public class JdaService {
     }, () -> System.out.println("JDA is not present!"));
   }
 
-  private List<CommandData> preparateCommands() {
-    System.out.println("Call preparateCommands");
-    List<CommandData> commands = new ArrayList<>();
+  private List<CommandData> preparateCommands(List<BotCommand> allCommands) {
+    List<CommandData> commandsData = new ArrayList<>();
 
-    BotCommand helloCommand = new HelloCommand();
-    BotCommand pingCommand = new PingCommand();
-    BotCommand playCommand = new PlayCommand(botPlayerManager);
-    BotCommand skipCommand = new SkipCommand();
-    BotCommand stopCommand = new StopCommand();
-    BotCommand shutdownCommand = new ShutdownCommand();
-    BotCommand rebootCommand = new RebootCommand();
-
-    commands.add(create(helloCommand));
-    commandSaver.fillActiveCommand(helloCommand);
-
-    commands.add(create(pingCommand));
-    commandSaver.fillActiveCommand(pingCommand);
-
-    commands.add(create(playCommand));
-    commandSaver.fillActiveCommand(playCommand);
-
-    commands.add(create(skipCommand));
-    commandSaver.fillActiveCommand(skipCommand);
-
-    commands.add(create(stopCommand));
-    commandSaver.fillActiveCommand(stopCommand);
-
-    commands.add(create(shutdownCommand));
-    commandSaver.fillActiveCommand(shutdownCommand);
-
-    commands.add(create(rebootCommand));
-    commandSaver.fillActiveCommand(rebootCommand);
-
-    return commands;
+    for (BotCommand command : allCommands) {
+      CommandData commandData = create(command);
+      commandsData.add(commandData);
+      commandSaver.fillActiveCommand(command);
+    }
+    return commandsData;
   }
   
   private CommandData create(BotCommand botCommand) {
