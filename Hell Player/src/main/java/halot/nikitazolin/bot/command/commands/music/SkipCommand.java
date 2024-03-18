@@ -2,21 +2,28 @@ package halot.nikitazolin.bot.command.commands.music;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.audio.BotAudioService;
+import halot.nikitazolin.bot.audio.IPlayerManager;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
+@Scope("prototype")
 @Slf4j
+@RequiredArgsConstructor
 public class SkipCommand extends BotCommand {
 
+  private final IPlayerManager botPlayerManager;
+  private final MessageUtil messageUtil;
+  
   @Override
   public String name() {
     return "skip";
@@ -59,13 +66,11 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-//    BotAudioService botAudioService = new BotAudioService();
-//
-//    botAudioService.getBotPlayerManager().skipTrack();
-//
-//    EmbedBuilder embed = MessageUtil.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
-//    context.sendMessageEmbed(embed);
-//
-//    log.info("Track skiped by user: " + context.getUser());
+    botPlayerManager.skipTrack();
+
+    EmbedBuilder embed = messageUtil.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
+    context.sendMessageEmbed(embed);
+
+    log.info("Track skiped by user: " + context.getUser());
   }
 }

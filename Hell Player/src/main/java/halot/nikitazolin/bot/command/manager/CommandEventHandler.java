@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.command.model.CommandArguments;
@@ -17,11 +19,12 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 
+@Component
 @Slf4j
 @RequiredArgsConstructor
 public class CommandEventHandler extends ListenerAdapter {
   
-  private final CommandSaver commandSaver;
+  private final CommandCollector commandSaver;
   
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {

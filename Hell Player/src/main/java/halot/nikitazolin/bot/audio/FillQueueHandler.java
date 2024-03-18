@@ -1,22 +1,29 @@
 package halot.nikitazolin.bot.audio;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
-//@RequiredArgsConstructor
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Component
+@Scope("prototype")
+@Slf4j
+@RequiredArgsConstructor
 public class FillQueueHandler implements AudioLoadResultHandler {
 
-  private final BotAudioService botAudioService;
+  private final IPlayerManager botPlayerManager;
 
-  public FillQueueHandler(BotAudioService botAudioService) {
-    this.botAudioService = botAudioService;
-  }
-  
   @Override
   public void trackLoaded(AudioTrack track) {
-    botAudioService.getBotPlayerManager().getQueue().add(track);
+    botPlayerManager.getQueue().add(track);
+
+    log.debug("Add track: " + track);
   }
 
   @Override

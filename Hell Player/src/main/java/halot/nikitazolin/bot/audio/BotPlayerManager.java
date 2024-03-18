@@ -4,9 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -19,8 +18,7 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
-@Lazy
+@Service
 @Scope("singleton")
 @Getter
 @Slf4j
@@ -30,22 +28,6 @@ public class BotPlayerManager implements IPlayerManager {
   private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
   private BlockingQueue<AudioTrack> queue = new LinkedBlockingQueue<>();
-
-//  @PostConstruct
-//  public void init() {
-//    System.out.println("BotPlayerManager before createPlayer");
-//    createPlayer();
-//
-//    log.info("Created BotPlayerManager for implementation AudioSendHandler");
-//
-//    System.out.println("BotPlayerManager is initialized.");
-//  }
-  
-  public BotPlayerManager() {
-    createPlayer();
-
-    log.info("Created BotPlayerManager for implementation AudioSendHandler");
-  }
 
   @Override
   public boolean canProvide() {
@@ -71,6 +53,8 @@ public class BotPlayerManager implements IPlayerManager {
     
 //    TrackScheduler trackScheduler = new TrackScheduler(audioPlayer, queue);
 //    audioPlayer.addListener(trackScheduler);
+    
+    log.info("Created BotPlayerManager for implementation AudioSendHandler");
   }
 
   public void startPlayingMusic() {
@@ -91,7 +75,7 @@ public class BotPlayerManager implements IPlayerManager {
     System.out.println("Before skip queue size: " + queue.size());
     audioPlayer.stopTrack();
     System.out.println("After skip  queue size: " + queue.size());
-//    audioPlayer.playTrack(queue.poll());
+    audioPlayer.playTrack(queue.poll());
   }
 
   public void skipTracks() {

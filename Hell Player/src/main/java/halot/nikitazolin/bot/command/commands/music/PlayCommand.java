@@ -2,13 +2,12 @@ package halot.nikitazolin.bot.command.commands.music;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
-import halot.nikitazolin.bot.audio.BotPlayerManager;
 import halot.nikitazolin.bot.audio.FillQueueHandler;
 import halot.nikitazolin.bot.audio.IPlayerManager;
 import halot.nikitazolin.bot.command.model.BotCommand;
@@ -22,9 +21,14 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
+@Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
 public class PlayCommand extends BotCommand {
+
+  private final IPlayerManager botPlayerManager;
+  private final BotAudioService botAudioService;
+  private final MessageUtil messageUtil;
 
   @Override
   public String name() {
@@ -66,62 +70,28 @@ public class PlayCommand extends BotCommand {
     return new OptionData[] { new OptionData(OptionType.STRING, "link", "URL with content", false) };
   }
 
-//  private final BotAudioService botAudioService;
-//  private final IPlayerManager botPlayerManager;
-//  private final MessageUtil messageUtil;
-  
   @Override
   public void execute(BotCommandContext context) {
-    BotAudioService botAudioService = new BotAudioService(context.getGuild());
-    IPlayerManager botPlayerManager = botAudioService.getBotPlayerManager();
-
     AudioPlayer audioPlayer = botPlayerManager.getAudioPlayer();
 
     String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
     String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     String url3 = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
     
+//    List<String> links = context.getArgumentMapper().getString();
     List<String> links = List.of(url1, url2, url3);
     System.out.println("links size: " + links.size());
     
     for (String trackUrl : links) {
-      botPlayerManager.getAudioPlayerManager().loadItemSync(trackUrl, new FillQueueHandler(botAudioService));
+      botPlayerManager.getAudioPlayerManager().loadItemSync(trackUrl, new FillQueueHandler(botPlayerManager));
     }
     
     botAudioService.connectToVoiceChannel(context);
     botAudioService.getBotPlayerManager().startPlayingMusic();
     
-//    EmbedBuilder embed = messageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
-//    context.sendMessageEmbed(embed);
+    EmbedBuilder embed = messageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
+    context.sendMessageEmbed(embed);
     
     log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + audioPlayer.getPlayingTrack().getIdentifier());
   }
-  
-//  @Override
-//  public void execute(BotCommandContext context) {
-//    BotAudioService botAudioService = new BotAudioService(context.getGuild());
-//    AudioPlayer audioPlayer = botAudioService.getBotPlayerManager().getAudioPlayer();
-//
-//    String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
-//    String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-//    String url3 = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
-//
-////    List<String> links = context.getArgumentMapper().getString();
-//    List<String> links = List.of(url1, url2, url3);
-//    System.out.println("links size: " + links.size());
-////    String reason = links.getFirst();
-////    System.out.println(reason);
-//
-//    for (String trackUrl : links) {
-//      botAudioService.getBotPlayerManager().getAudioPlayerManager().loadItemSync(trackUrl, new FillQueueHandler(botAudioService));
-//    }
-//
-//    botAudioService.connectToVoiceChannel(context);
-//    botAudioService.getBotPlayerManager().startPlayingMusic();
-//
-//    EmbedBuilder embed = MessageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
-//    context.sendMessageEmbed(embed);
-//
-//    log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + audioPlayer.getPlayingTrack().getIdentifier());
-//  }
 }
