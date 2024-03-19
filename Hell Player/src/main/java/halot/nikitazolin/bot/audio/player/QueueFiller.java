@@ -15,13 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class FillQueueHandler implements AudioLoadResultHandler {
+public class QueueFiller implements AudioLoadResultHandler {
 
-  private final IPlayerService botPlayerManager;
+  private final IPlayerService playerManager;
 
   @Override
   public void trackLoaded(AudioTrack track) {
-    botPlayerManager.getQueue().add(track);
+    playerManager.getQueue().add(track);
 
     log.debug("Add track: " + track);
   }

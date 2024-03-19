@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import halot.nikitazolin.bot.audio.AudioService;
-import halot.nikitazolin.bot.audio.player.FillQueueHandler;
+import halot.nikitazolin.bot.audio.player.QueueFiller;
 import halot.nikitazolin.bot.audio.player.IPlayerService;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
@@ -84,14 +84,13 @@ public class PlayCommand extends BotCommand {
 //    System.out.println("links size: " + links.size());
     
     for (String trackUrl : links) {
-      playerService.getAudioPlayerManager().loadItemSync(trackUrl, new FillQueueHandler(playerService));
+      playerService.getAudioPlayerManager().loadItemSync(trackUrl, new QueueFiller(playerService));
     }
     
     if(audioService.connectToVoiceChannel(context) == false) {
       return;
     }
     
-    audioService.connectToVoiceChannel(context);
     audioService.getPlayerService().startPlayingMusic();
     
     EmbedBuilder embed = messageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
