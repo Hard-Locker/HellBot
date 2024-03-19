@@ -16,51 +16,40 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Scope("singleton")
-//@Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class TrackScheduler extends AudioEventAdapter {
+public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
-  private AudioPlayer player;
   private IPlayerService playerService;
-  
+
   private boolean isRepeat = false;
 
-  public void preparateScheduler(IPlayerService playerService, AudioPlayer player) {
+  public void preparateScheduler(IPlayerService playerService) {
     this.playerService = playerService;
-    this.player = player;
   }
 
   @Override
   public void onEvent(AudioEvent event) {
-    // TODO Auto-generated method stub
-
+    super.onEvent(event);
   }
 
   @Override
   public void onPlayerPause(AudioPlayer player) {
-    // Player was paused
   }
 
   @Override
   public void onPlayerResume(AudioPlayer player) {
-    // Player was resumed
   }
 
   @Override
   public void onTrackStart(AudioPlayer player, AudioTrack track) {
-    System.out.println("Call onTrackStart");
-    // A track started playing
   }
 
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
     AudioPlayer audioPlayer = playerService.getAudioPlayer();
 
-    System.out.println("Call onTrackEnd");
-
     if (endReason == AudioTrackEndReason.FINISHED) {
-      System.out.println("if");
       audioPlayer.playTrack(playerService.getQueue().poll());
     }
 

@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 public class AudioService {
 
   private final MessageUtil messageUtil;
-  private final IPlayerService botPlayerService;
+  private final IPlayerService playerService;
   private AudioManager audioManager;
 
   public void registratePlayer(Guild guild) {
@@ -32,7 +32,7 @@ public class AudioService {
 
   private void setUpAudioSendHandler(AudioManager audioManager, Guild guild) {
     if (audioManager.getSendingHandler() == null) {
-      audioManager.setSendingHandler(botPlayerService);
+      audioManager.setSendingHandler(playerService);
 
       log.debug("Set sending handler for guild: " + guild.getId());
     }
@@ -53,13 +53,13 @@ public class AudioService {
   }
 
   public void stopAudioSending() {
-    botPlayerService.stopPlayingMusic();
+    playerService.stopPlayingMusic();
     audioManager.closeAudioConnection();
   }
   
   public void shutdown() {
     stopAudioSending();
-    botPlayerService.shutdownPlayer();
+    playerService.shutdownPlayer();
   }
 
   private VoiceChannel getVoiceChannelByUser(BotCommandContext context) {

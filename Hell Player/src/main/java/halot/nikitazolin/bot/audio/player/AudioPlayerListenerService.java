@@ -1,13 +1,10 @@
 package halot.nikitazolin.bot.audio.player;
 
-import java.util.Optional;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
 
 @Component
 @Scope("singleton")
@@ -15,7 +12,13 @@ import net.dv8tion.jda.api.JDA;
 @RequiredArgsConstructor
 public class AudioPlayerListenerService {
   
-  public void addListners() {
+  private final IPlayerService playerService;
+  private final TrackScheduler trackScheduler;
+  
+  public void addListeners() {
+    playerService.getAudioPlayer().addListener(trackScheduler);
+    
+    log.info("For audio player was added listener: " + trackScheduler.toString());
   }
 
 }

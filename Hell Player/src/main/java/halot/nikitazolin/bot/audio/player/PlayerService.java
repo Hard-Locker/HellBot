@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PlayerService implements IPlayerService {
 
-  private final TrackScheduler trackScheduler;
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
@@ -54,9 +53,7 @@ public class PlayerService implements IPlayerService {
     audioPlayerManager.source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);
     audioPlayer = audioPlayerManager.createPlayer();
 
-    audioPlayer.addListener(trackScheduler);
-
-    log.info("Created BotPlayerManager for implementation AudioSendHandler");
+    log.info("Created PlayerService for implementation AudioSendHandler");
   }
 
   public void startPlayingMusic() {

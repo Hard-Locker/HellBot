@@ -92,7 +92,7 @@ public class PlayCommand extends BotCommand {
     }
     
     audioService.connectToVoiceChannel(context);
-    audioService.getBotPlayerService().startPlayingMusic();
+    audioService.getPlayerService().startPlayingMusic();
     
     EmbedBuilder embed = messageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
     context.sendMessageEmbed(embed);

@@ -11,7 +11,7 @@ import halot.nikitazolin.bot.audio.player.IPlayerService;
 import halot.nikitazolin.bot.audio.player.TrackScheduler;
 import halot.nikitazolin.bot.command.manager.CommandService;
 import halot.nikitazolin.bot.jda.JdaService;
-import halot.nikitazolin.bot.listener.JdaListnerService;
+import halot.nikitazolin.bot.listener.JdaListenerService;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -22,7 +22,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
   private final JdaService jdaService;
   private final CommandService commandService;
-  private final JdaListnerService jdaListnerService;
+  private final JdaListenerService jdaListenerService;
   private final IPlayerService playerService;
   private final AudioService audioService;
   private final TrackScheduler trackScheduler;
@@ -33,14 +33,14 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     //Make base application
     jdaService.makeJda();
     commandService.addCommands();
-    jdaListnerService.addListners();
+    jdaListenerService.addListeners();
     
     //Make audio player complete instance
     //TODO Need improve guild getter. Now it potential bug
     Guild guild = jdaService.getJda().get().getGuilds().getFirst();
     playerService.createPlayer();
-    trackScheduler.preparateScheduler(playerService, playerService.getAudioPlayer());
-    audioPlayerListenerService.addListners();
+    trackScheduler.preparateScheduler(playerService);
+    audioPlayerListenerService.addListeners();
     audioService.registratePlayer(guild);
   }
 }

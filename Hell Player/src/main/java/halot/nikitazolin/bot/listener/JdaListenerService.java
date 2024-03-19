@@ -15,23 +15,23 @@ import net.dv8tion.jda.api.JDA;
 @Scope("singleton")
 @Slf4j
 @RequiredArgsConstructor
-public class JdaListnerService {
+public class JdaListenerService {
 
   private final JdaService jdaService;
   private final CommandEventHandler commandEventHandler;
 
-  public void addListners() {
+  public void addListeners() {
     Optional<JDA> jda = jdaService.getJda();
 
-    registerListners(jda);
+    registerListeners(jda);
   }
 
-  private void registerListners(Optional<JDA> jda) {
+  private void registerListeners(Optional<JDA> jda) {
     jda.ifPresentOrElse(jdaL -> {
       jdaL.addEventListener(commandEventHandler);
+      log.info("register JDA Listener: " + commandEventHandler);
 //      jdaL.addEventListener(another listener);
     }, () -> System.out.println("JDA is not present!"));
 
-    log.info("registerListner: " + commandEventHandler);
   }
 }
