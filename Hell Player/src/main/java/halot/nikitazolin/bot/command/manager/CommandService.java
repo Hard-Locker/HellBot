@@ -22,13 +22,13 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-public class CommandAdder {
+public class CommandService {
 
   @Autowired
   private List<BotCommand> allCommands;
 
   private final JdaService jdaService;
-  private final CommandCollector commandSaver;
+  private final CommandCollector commandCollector;
 
   public void addCommands() {
     Optional<JDA> jda = jdaService.getJda();
@@ -49,7 +49,7 @@ public class CommandAdder {
     for (BotCommand command : allCommands) {
       CommandData commandData = create(command);
       commandsData.add(commandData);
-      commandSaver.fillActiveCommand(command);
+      commandCollector.fillActiveCommand(command);
     }
     return commandsData;
   }

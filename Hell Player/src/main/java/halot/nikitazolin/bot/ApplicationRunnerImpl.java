@@ -5,12 +5,13 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.audio.BotAudioService;
-import halot.nikitazolin.bot.audio.IPlayerManager;
-import halot.nikitazolin.bot.audio.TrackScheduler;
-import halot.nikitazolin.bot.command.manager.CommandAdder;
+import halot.nikitazolin.bot.audio.AudioService;
+import halot.nikitazolin.bot.audio.player.AudioPlayerListenerService;
+import halot.nikitazolin.bot.audio.player.IPlayerService;
+import halot.nikitazolin.bot.audio.player.TrackScheduler;
+import halot.nikitazolin.bot.command.manager.CommandService;
 import halot.nikitazolin.bot.jda.JdaService;
-import halot.nikitazolin.bot.listener.ListnerManager;
+import halot.nikitazolin.bot.listener.JdaListnerService;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -20,24 +21,26 @@ import net.dv8tion.jda.api.entities.Guild;
 public class ApplicationRunnerImpl implements ApplicationRunner {
 
   private final JdaService jdaService;
-  private final CommandAdder commandRegistrator;
-  private final ListnerManager listnerManager;
-  private final IPlayerManager botPlayerManager;
-  private final BotAudioService botAudioService;
+  private final CommandService commandService;
+  private final JdaListnerService jdaListnerService;
+  private final IPlayerService playerService;
+  private final AudioService audioService;
   private final TrackScheduler trackScheduler;
+  private final AudioPlayerListenerService audioPlayerListenerService;
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
     //Make base application
     jdaService.makeJda();
-    commandRegistrator.addCommands();
-    listnerManager.addListners();
+    commandService.addCommands();
+    jdaListnerService.addListners();
     
     //Make audio player complete instance
     //TODO Need improve guild getter. Now it potential bug
     Guild guild = jdaService.getJda().get().getGuilds().getFirst();
-    botPlayerManager.createPlayer();
-    trackScheduler.preparateScheduler(botPlayerManager);
-    botAudioService.registratePlayer(guild);
+    playerService.createPlayer();
+    trackScheduler.preparateScheduler(playerService, playerService.getAudioPlayer());
+    audioPlayerListenerService.addListners();
+    audioService.registratePlayer(guild);
   }
 }

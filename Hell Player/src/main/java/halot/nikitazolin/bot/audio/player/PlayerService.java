@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.audio;
+package halot.nikitazolin.bot.audio.player;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-public class BotPlayerManager implements IPlayerManager {
+public class PlayerService implements IPlayerService {
 
   private final TrackScheduler trackScheduler;
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();

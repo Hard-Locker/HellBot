@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.audio.IPlayerManager;
+import halot.nikitazolin.bot.audio.player.IPlayerService;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class SkipCommand extends BotCommand {
 
-  private final IPlayerManager botPlayerManager;
+  private final IPlayerService playerService;
   private final MessageUtil messageUtil;
   
   @Override
@@ -66,7 +66,7 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    botPlayerManager.skipTrack();
+    playerService.skipTrack();
 
     EmbedBuilder embed = messageUtil.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);

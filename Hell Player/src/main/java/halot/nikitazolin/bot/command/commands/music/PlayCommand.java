@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
-import halot.nikitazolin.bot.audio.BotAudioService;
-import halot.nikitazolin.bot.audio.FillQueueHandler;
-import halot.nikitazolin.bot.audio.IPlayerManager;
+import halot.nikitazolin.bot.audio.AudioService;
+import halot.nikitazolin.bot.audio.player.FillQueueHandler;
+import halot.nikitazolin.bot.audio.player.IPlayerService;
 import halot.nikitazolin.bot.command.model.BotCommand;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
@@ -26,8 +26,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class PlayCommand extends BotCommand {
 
-  private final IPlayerManager botPlayerManager;
-  private final BotAudioService botAudioService;
+  private final IPlayerService playerService;
+  private final AudioService audioService;
   private final MessageUtil messageUtil;
 
   @Override
@@ -72,7 +72,7 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    AudioPlayer audioPlayer = botPlayerManager.getAudioPlayer();
+    AudioPlayer audioPlayer = playerService.getAudioPlayer();
 
     String url0 = "https://www.youtube.com/watch?v=apKYICJ-LTY";
     String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
@@ -84,15 +84,15 @@ public class PlayCommand extends BotCommand {
 //    System.out.println("links size: " + links.size());
     
     for (String trackUrl : links) {
-      botPlayerManager.getAudioPlayerManager().loadItemSync(trackUrl, new FillQueueHandler(botPlayerManager));
+      playerService.getAudioPlayerManager().loadItemSync(trackUrl, new FillQueueHandler(playerService));
     }
     
-    if(botAudioService.connectToVoiceChannel(context) == false) {
+    if(audioService.connectToVoiceChannel(context) == false) {
       return;
     }
     
-    botAudioService.connectToVoiceChannel(context);
-    botAudioService.getBotPlayerManager().startPlayingMusic();
+    audioService.connectToVoiceChannel(context);
+    audioService.getBotPlayerService().startPlayingMusic();
     
     EmbedBuilder embed = messageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
     context.sendMessageEmbed(embed);

@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.audio;
+package halot.nikitazolin.bot.audio.player;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -11,18 +11,24 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Scope("singleton")
+//@Scope("prototype")
 @Slf4j
-//@RequiredArgsConstructor
-public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
+@RequiredArgsConstructor
+public class TrackScheduler extends AudioEventAdapter {
 
-  private IPlayerManager botPlayerManager;
+  private AudioPlayer player;
+  private IPlayerService playerService;
+  
+  private boolean isRepeat = false;
 
-  public void preparateScheduler(IPlayerManager PlayerManager) {
-    this.botPlayerManager = PlayerManager;
+  public void preparateScheduler(IPlayerService playerService, AudioPlayer player) {
+    this.playerService = playerService;
+    this.player = player;
   }
 
   @Override
@@ -43,18 +49,19 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
 
   @Override
   public void onTrackStart(AudioPlayer player, AudioTrack track) {
+    System.out.println("Call onTrackStart");
     // A track started playing
   }
 
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-    AudioPlayer audioPlayer = botPlayerManager.getAudioPlayer();
+    AudioPlayer audioPlayer = playerService.getAudioPlayer();
 
     System.out.println("Call onTrackEnd");
 
     if (endReason == AudioTrackEndReason.FINISHED) {
       System.out.println("if");
-      audioPlayer.playTrack(botPlayerManager.getQueue().poll());
+      audioPlayer.playTrack(playerService.getQueue().poll());
     }
 
     // endReason == FINISHED: A track finished or died by an exception (mayStartNext

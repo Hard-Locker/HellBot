@@ -3,6 +3,7 @@ package halot.nikitazolin.bot.audio;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import halot.nikitazolin.bot.audio.player.IPlayerService;
 import halot.nikitazolin.bot.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.Getter;
@@ -18,10 +19,10 @@ import net.dv8tion.jda.api.managers.AudioManager;
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-public class BotAudioService {
+public class AudioService {
 
   private final MessageUtil messageUtil;
-  private final IPlayerManager botPlayerManager;
+  private final IPlayerService botPlayerService;
   private AudioManager audioManager;
 
   public void registratePlayer(Guild guild) {
@@ -31,7 +32,7 @@ public class BotAudioService {
 
   private void setUpAudioSendHandler(AudioManager audioManager, Guild guild) {
     if (audioManager.getSendingHandler() == null) {
-      audioManager.setSendingHandler(botPlayerManager);
+      audioManager.setSendingHandler(botPlayerService);
 
       log.debug("Set sending handler for guild: " + guild.getId());
     }
@@ -52,13 +53,13 @@ public class BotAudioService {
   }
 
   public void stopAudioSending() {
-    botPlayerManager.stopPlayingMusic();
+    botPlayerService.stopPlayingMusic();
     audioManager.closeAudioConnection();
   }
   
   public void shutdown() {
     stopAudioSending();
-    botPlayerManager.shutdownPlayer();
+    botPlayerService.shutdownPlayer();
   }
 
   private VoiceChannel getVoiceChannelByUser(BotCommandContext context) {

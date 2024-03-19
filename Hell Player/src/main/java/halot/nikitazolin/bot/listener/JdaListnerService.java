@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.JDA;
 @Scope("singleton")
 @Slf4j
 @RequiredArgsConstructor
-public class ListnerManager {
+public class JdaListnerService {
 
   private final JdaService jdaService;
   private final CommandEventHandler commandEventHandler;

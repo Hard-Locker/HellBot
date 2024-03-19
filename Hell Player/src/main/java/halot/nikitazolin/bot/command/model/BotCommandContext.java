@@ -28,19 +28,19 @@ public class BotCommandContext {
   private final BotCommand botCommand;
   private final SlashCommandInteractionEvent slashCommandEvent;
   private final MessageReceivedEvent messageReceivedEvent;
-  private final CommandArguments argumentMapper;
+  private final CommandArguments commandArguments;
 
   private Guild guild;
   private User user;
   private Member member;
   private TextChannel textChannel;
 
-  public BotCommandContext(BotCommand botCommand, SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent, CommandArguments argumentMapper) {
+  public BotCommandContext(BotCommand botCommand, SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent, CommandArguments commandArguments) {
     super();
     this.botCommand = botCommand;
     this.slashCommandEvent = slashCommandEvent;
     this.messageReceivedEvent = messageReceivedEvent;
-    this.argumentMapper = argumentMapper;
+    this.commandArguments = commandArguments;
 
     guild = fillGuild(slashCommandEvent, messageReceivedEvent);
     user = fillUser(slashCommandEvent, messageReceivedEvent);

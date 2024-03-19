@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.audio;
+package halot.nikitazolin.bot.audio.player;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
@@ -9,7 +9,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
-public interface IPlayerManager extends AudioSendHandler {
+public interface IPlayerService extends AudioSendHandler {
 
   boolean canProvide();
 

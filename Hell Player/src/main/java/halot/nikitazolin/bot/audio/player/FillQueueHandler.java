@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.audio;
+package halot.nikitazolin.bot.audio.player;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class FillQueueHandler implements AudioLoadResultHandler {
 
-  private final IPlayerManager botPlayerManager;
+  private final IPlayerService botPlayerManager;
 
   @Override
   public void trackLoaded(AudioTrack track) {

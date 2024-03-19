@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 @RequiredArgsConstructor
 public class CommandEventHandler extends ListenerAdapter {
   
-  private final CommandCollector commandSaver;
+  private final CommandCollector commandCollector;
   
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
@@ -95,7 +95,7 @@ public class CommandEventHandler extends ListenerAdapter {
   }
 
   private Optional<BotCommand> getCommandByReceivedMessage(String commandName) {
-    List<BotCommand> commands = commandSaver.getActiveCommands();
+    List<BotCommand> commands = commandCollector.getActiveCommands();
 
     for (BotCommand command : commands) {
       List<String> prefixes = command.commandPrefixes();
@@ -119,7 +119,7 @@ public class CommandEventHandler extends ListenerAdapter {
   }
 
   private Optional<BotCommand> getSlashCommand(String commandName) {
-    List<BotCommand> commands = commandSaver.getActiveCommands();
+    List<BotCommand> commands = commandCollector.getActiveCommands();
     return commands.stream().filter(command -> command.name().equalsIgnoreCase(commandName)).findFirst();
   }
 }
