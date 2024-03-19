@@ -16,14 +16,17 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Scope("singleton")
 @Getter
 @Slf4j
+@RequiredArgsConstructor
 public class BotPlayerManager implements IPlayerManager {
 
+  private final TrackScheduler trackScheduler;
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
@@ -50,17 +53,14 @@ public class BotPlayerManager implements IPlayerManager {
     AudioSourceManagers.registerLocalSource(audioPlayerManager);
     audioPlayerManager.source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);
     audioPlayer = audioPlayerManager.createPlayer();
-    
-//    TrackScheduler trackScheduler = new TrackScheduler(audioPlayer, queue);
-//    audioPlayer.addListener(trackScheduler);
-    
+
+    audioPlayer.addListener(trackScheduler);
+
     log.info("Created BotPlayerManager for implementation AudioSendHandler");
   }
 
   public void startPlayingMusic() {
-    System.out.println("Called startPlayingMusic");
     if ((audioPlayer.isPaused() == false) && (audioPlayer.getPlayingTrack() == null)) {
-      System.out.println("Start queue size: " + queue.size());
       audioPlayer.playTrack(queue.poll());
     }
   }
@@ -71,10 +71,7 @@ public class BotPlayerManager implements IPlayerManager {
   }
 
   public void skipTrack() {
-    System.out.println("Called skipTrack");
-    System.out.println("Before skip queue size: " + queue.size());
     audioPlayer.stopTrack();
-    System.out.println("After skip  queue size: " + queue.size());
     audioPlayer.playTrack(queue.poll());
   }
 

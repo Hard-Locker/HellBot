@@ -37,30 +37,35 @@ public class BotAudioService {
     }
   }
 
-  // TODO need to check bot voice status
-  public void connectToVoiceChannel(BotCommandContext context) {
-    VoiceChannel voiceChannel = getVoiceChannelByUser(context);
+  public boolean connectToVoiceChannel(BotCommandContext context) {
+    VoiceChannel userVoiceChannel = getVoiceChannelByUser(context);
 
-    audioManager.openAudioConnection(voiceChannel);
+    if (checkValidChannel(context, userVoiceChannel) == true) {
+      audioManager.openAudioConnection(userVoiceChannel);
+      
+      log.debug("VoiceChannel is valid. Bot connected to user VoiceChannel");
+      return true;
+    } else {
+      log.debug("VoiceChannel is invalid. Bot won't connect to VoiceChannel");
+      return false;
+    }
   }
 
   public void stopAudioSending() {
     botPlayerManager.stopPlayingMusic();
     audioManager.closeAudioConnection();
   }
+  
+  public void shutdown() {
+    stopAudioSending();
+    botPlayerManager.shutdownPlayer();
+  }
 
   private VoiceChannel getVoiceChannelByUser(BotCommandContext context) {
     VoiceChannel userVoiceChannel;
-    VoiceChannel afkVoiceChannel = context.getGuild().getAfkChannel();
 
     try {
       userVoiceChannel = context.getMember().getVoiceState().getChannel().asVoiceChannel();
-
-      if (afkVoiceChannel != null && afkVoiceChannel.equals(userVoiceChannel)) {
-        EmbedBuilder embed = messageUtil.createErrorEmbed(context.getUser().getAsMention() + ", this command cannot be used in the AFK channel.");
-        context.sendMessageEmbed(embed);
-        return null;
-      }
 
       return userVoiceChannel;
     } catch (NullPointerException e) {
@@ -71,9 +76,31 @@ public class BotAudioService {
       return null;
     }
   }
+  
+  private boolean checkValidChannel(BotCommandContext context, VoiceChannel userVoiceChannel) {
+    VoiceChannel botVoiceChannel = null;
+    VoiceChannel afkVoiceChannel = context.getGuild().getAfkChannel();
+    
+    try {
+      botVoiceChannel = context.getGuild().getSelfMember().getVoiceState().getChannel().asVoiceChannel();
+    } catch (NullPointerException e) {
+      log.debug("The bot is not in the voice channel");
+    }
 
-  public void shutdown() {
-    stopAudioSending();
-    botPlayerManager.shutdownPlayer();
+    if (afkVoiceChannel != null && afkVoiceChannel.equals(userVoiceChannel)) {
+      EmbedBuilder embed = messageUtil.createErrorEmbed(context.getUser().getAsMention() + ", this command cannot be used in the AFK channel.");
+      context.sendMessageEmbed(embed);
+
+      log.debug("User try call bot in AFK channel. User: " + context.getUser());
+      return false;
+    } else if (botVoiceChannel != null && !botVoiceChannel.equals(userVoiceChannel)) {
+      EmbedBuilder embed = messageUtil.createErrorEmbed(context.getUser().getAsMention() + ", you must be in the same voice channel as the bot to use this command.");
+      context.sendMessageEmbed(embed);
+
+      log.debug("User try call bot in different channel. User:" + context.getUser());
+      return false;
+    } else {
+      return true;
+    }
   }
 }

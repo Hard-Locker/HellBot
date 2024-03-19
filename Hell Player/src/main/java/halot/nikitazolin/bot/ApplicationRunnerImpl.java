@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.audio.BotAudioService;
 import halot.nikitazolin.bot.audio.IPlayerManager;
+import halot.nikitazolin.bot.audio.TrackScheduler;
 import halot.nikitazolin.bot.command.manager.CommandAdder;
 import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.listener.ListnerManager;
@@ -23,6 +24,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   private final ListnerManager listnerManager;
   private final IPlayerManager botPlayerManager;
   private final BotAudioService botAudioService;
+  private final TrackScheduler trackScheduler;
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
@@ -35,6 +37,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     //TODO Need improve guild getter. Now it potential bug
     Guild guild = jdaService.getJda().get().getGuilds().getFirst();
     botPlayerManager.createPlayer();
+    trackScheduler.preparateScheduler(botPlayerManager);
     botAudioService.registratePlayer(guild);
   }
 }
