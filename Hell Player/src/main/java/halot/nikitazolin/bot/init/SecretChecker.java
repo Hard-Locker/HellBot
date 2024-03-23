@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.util;
+package halot.nikitazolin.bot.init;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,13 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class SecretManager {
+public class SecretChecker {
 
   public boolean ensureSecretExists(String secretFilePath) {
     if (checkFileExists(secretFilePath)) {
       return true;
     } else {
-      return createSecretFile(secretFilePath) && writeInitialStructure(secretFilePath);
+      createSecretFile(secretFilePath);
+      writeInitialStructure(secretFilePath);
+      
+      return false;
     }
   }
 

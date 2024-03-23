@@ -1,11 +1,13 @@
 package halot.nikitazolin.bot.view;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.util.InputNumber;
+import halot.nikitazolin.bot.util.InputText;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,15 +17,41 @@ import lombok.extern.slf4j.Slf4j;
 public class ConsoleMenu {
 
   private final InputNumber inputNumber;
-  
+  private final InputText inputText;
+
   private static final String NEW_LINE = "\n";
   private static final String DOT_SPACE = ". ";
-  
-  public void showMenu() {
-    log.info("Displaying main menu");
 
-//    dbMenu();
-    botManagerMenu();
+  public void showMenu() {
+    log.info("Displaying menu");
+
+    initApiMenu();
+    youtubeMenu();
+    dbMenu();
+//    botManagerMenu();
+  }
+
+  public String initApiMenu() {
+    log.info("Displaying API authorization menu");
+    String apiKey = null;
+    System.out.println("-----Discord API-----");
+
+    do {
+      log.debug("Requesting API key input");
+      StringBuilder input = inputText.readInputString("Enter API token in next line");
+
+      if (input.isEmpty()) {
+        System.out.println("You can't skip API input");
+      } else {
+        apiKey = input.toString();
+      }
+    } while (apiKey == null);
+
+    return apiKey;
+  }
+  
+  private void youtubeMenu() {
+    
   }
 
   private void dbMenu() {

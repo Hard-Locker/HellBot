@@ -10,11 +10,11 @@ import halot.nikitazolin.bot.audio.player.AudioPlayerListenerService;
 import halot.nikitazolin.bot.audio.player.IPlayerService;
 import halot.nikitazolin.bot.audio.player.TrackScheduler;
 import halot.nikitazolin.bot.command.manager.CommandService;
+import halot.nikitazolin.bot.init.ConfigChecker;
+import halot.nikitazolin.bot.init.SecretChecker;
 import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.listener.JdaListenerService;
-import halot.nikitazolin.bot.util.ConfigChecker;
 import halot.nikitazolin.bot.util.ConfigLoader;
-import halot.nikitazolin.bot.util.SecretManager;
 import halot.nikitazolin.bot.view.ConsoleMenu;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.entities.Guild;
 @RequiredArgsConstructor
 public class ApplicationRunnerImpl implements ApplicationRunner {
 
-  private final SecretManager secretManager;
+  private final SecretChecker secretChecker;
   private final ConfigChecker configChecker;
   private final ConfigLoader configLoader;
   private final ConsoleMenu consoleMenu;
@@ -38,12 +38,8 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
-    //Authorization
-    secretManager.ensureSecretExists("secrets.yml");
-//    configLoader.loadConfig("secrets.yml");
-    
-    //Load application setting
-//    configLoader.loadConfig("config.yml");
+    checkAuthorization();
+    checkConfiguration();
     
     //Make base application
     jdaService.makeJda();
@@ -57,5 +53,19 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     trackScheduler.preparateScheduler(playerService);
     audioPlayerListenerService.addListeners();
     audioService.registratePlayer(guild);
+  }
+  
+  private void checkAuthorization() {
+    boolean secretExists = secretChecker.ensureSecretExists("secrets.yml");
+    
+    if (secretExists == false) {
+      String apiKey = consoleMenu.initApiMenu();
+    }
+//  configLoader.loadConfig("secrets.yml");
+  }
+  
+  private void checkConfiguration() {
+    configChecker.ensureConfigExists("config.yml");
+//  configLoader.loadConfig("config.yml");
   }
 }
