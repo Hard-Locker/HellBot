@@ -59,7 +59,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     boolean secretExists = secretChecker.ensureSecretExists("secrets.yml");
     
     if (secretExists == false) {
-      String apiKey = consoleMenu.initApiMenu();
+      consoleMenu.showMenu("secrets.yml");
     }
 //  configLoader.loadConfig("secrets.yml");
   }

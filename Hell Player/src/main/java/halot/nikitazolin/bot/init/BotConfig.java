@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot;
+package halot.nikitazolin.bot.init;
 
 import org.springframework.stereotype.Component;
 

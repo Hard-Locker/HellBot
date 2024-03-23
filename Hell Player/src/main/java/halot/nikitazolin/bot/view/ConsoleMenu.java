@@ -1,10 +1,14 @@
 package halot.nikitazolin.bot.view;
 
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 import halot.nikitazolin.bot.util.InputNumber;
 import halot.nikitazolin.bot.util.InputText;
@@ -12,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
 public class ConsoleMenu {
@@ -20,21 +25,25 @@ public class ConsoleMenu {
   private final InputText inputText;
 
   private static final String NEW_LINE = "\n";
-  private static final String DOT_SPACE = ". ";
 
-  public void showMenu() {
+  public void showMenu(String secretFilePath) {
     log.info("Displaying menu");
 
-    initApiMenu();
-    youtubeMenu();
-    dbMenu();
-//    botManagerMenu();
+    apiMenu(secretFilePath);
+    youtubeMenu(secretFilePath);
+    dbMenu(secretFilePath);
   }
 
-  public String initApiMenu() {
+  private void apiMenu(String secretFilePath) {
     log.info("Displaying API authorization menu");
-    String apiKey = null;
     System.out.println("-----Discord API-----");
+
+    String apiKey = getApiKeyInput();
+    saveApiKey(apiKey, secretFilePath);
+  }
+  
+  private String getApiKeyInput() {
+    String apiKey = null;
 
     do {
       log.debug("Requesting API key input");
@@ -46,70 +55,67 @@ public class ConsoleMenu {
         apiKey = input.toString();
       }
     } while (apiKey == null);
-
+    
     return apiKey;
   }
   
-  private void youtubeMenu() {
+  private void saveApiKey(String apiKey, String secretFilePath) {
+    Yaml yaml = new Yaml();
+    Map<String, Object> data;
+
+    try (FileInputStream fis = new FileInputStream(secretFilePath)) {
+      data = yaml.load(fis);
+    } catch (IOException e) {
+      log.error("Error reading the secrets file: {}", e);
+      return;
+    }
+
+    data.put("apiKey", apiKey);
+
+    DumperOptions options = new DumperOptions();
+    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+    options.setPrettyFlow(true);
+    yaml = new Yaml(options);
+
+    try (FileWriter writer = new FileWriter(secretFilePath)) {
+      yaml.dump(data, writer);
+    } catch (IOException e) {
+      log.error("Error writing the secrets file: {}", e);
+    }
+  }
+
+  private void youtubeMenu(String secretFilePath) {
+    log.info("Displaying API authorization menu");
+    System.out.println("-----YouTube authorization-----");
+
     
   }
 
-  private void dbMenu() {
-//    log.info("Displaying database refill menu");
-//
-//    int selectedOption;
-//    StringBuilder outputMenu = new StringBuilder();
-//
-//    outputMenu.append("-----Database manager-----");
-//    outputMenu.append(NEW_LINE);
-//    outputMenu.append("Do you want to use database?");
-//    outputMenu.append(NEW_LINE);
-//    outputMenu.append("1. Yes");
-//    outputMenu.append(NEW_LINE);
-//    outputMenu.append("2. No");
-//
-//    while (true) {
-//      System.out.println(outputMenu);
-//      selectedOption = inputNumber.readInputNumber("Select desired action number: ");
-//
-//      switch (selectedOption) {
-//      case 1:
-//        System.out.println("Please wait...");
-//        
-//        //Call database logic
-//        return;
-//      case 2:
-//        return;
-//
-//      default:
-//        System.err.println("Select only the items listed");
-//        break;
-//      }
-//    }
-  }
+  //TODO
+  private void dbMenu(String secretFilePath) {
+    log.info("Displaying database usage menu");
 
-  private void botManagerMenu() {
-    log.info("Displaying bot manager menu");
-    StringBuilder outputMenu = buildMainMenu();
+    int selectedOption;
+    StringBuilder outputMenu = new StringBuilder();
+    outputMenu.append("-----Database manager-----");
+    outputMenu.append(NEW_LINE);
+    outputMenu.append("Do you want to use database?");
+    outputMenu.append(NEW_LINE);
+    outputMenu.append("1. Yes");
+    outputMenu.append(NEW_LINE);
+    outputMenu.append("2. No");
 
     while (true) {
-      int selectedOption;
-
       System.out.println(outputMenu);
       selectedOption = inputNumber.readInputNumber("Select desired action number: ");
 
       switch (selectedOption) {
       case 1:
-        //Option 1
-        log.debug("option 1");
-        break;
+        System.out.println("Please wait...");
+
+        // Call database logic
+        return;
       case 2:
-        //Option 2
-        log.debug("option 2");
-        break;
-      case 0:
-        System.out.println("Goodbye!");
-        log.debug("Selected closing application");
         return;
 
       default:
@@ -117,26 +123,5 @@ public class ConsoleMenu {
         break;
       }
     }
-  }
-
-  private StringBuilder buildMainMenu() {
-    StringBuilder outputMenu = new StringBuilder();
-    Map<Integer, String> menuOption = new LinkedHashMap<>();
-
-    menuOption.put(1, "Option 1");
-    menuOption.put(2, "Option 2");
-    menuOption.put(0, "Exit");
-
-    outputMenu.append("-----Bot manager-----");
-    outputMenu.append(NEW_LINE);
-
-    for (Map.Entry<Integer, String> entry : menuOption.entrySet()) {
-      outputMenu.append(entry.getKey());
-      outputMenu.append(DOT_SPACE);
-      outputMenu.append(entry.getValue());
-      outputMenu.append(NEW_LINE);
-    }
-
-    return outputMenu;
   }
 }
