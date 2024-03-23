@@ -2,6 +2,9 @@ package halot.nikitazolin.bot.util;
 
 import java.util.Scanner;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class InputText {
 
   public StringBuilder readInputString(String inputDescription) {

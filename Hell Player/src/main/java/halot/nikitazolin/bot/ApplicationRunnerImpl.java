@@ -12,6 +12,10 @@ import halot.nikitazolin.bot.audio.player.TrackScheduler;
 import halot.nikitazolin.bot.command.manager.CommandService;
 import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.listener.JdaListenerService;
+import halot.nikitazolin.bot.util.ConfigChecker;
+import halot.nikitazolin.bot.util.ConfigLoader;
+import halot.nikitazolin.bot.util.SecretManager;
+import halot.nikitazolin.bot.view.ConsoleMenu;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -20,6 +24,10 @@ import net.dv8tion.jda.api.entities.Guild;
 @RequiredArgsConstructor
 public class ApplicationRunnerImpl implements ApplicationRunner {
 
+  private final SecretManager secretManager;
+  private final ConfigChecker configChecker;
+  private final ConfigLoader configLoader;
+  private final ConsoleMenu consoleMenu;
   private final JdaService jdaService;
   private final CommandService commandService;
   private final JdaListenerService jdaListenerService;
@@ -30,6 +38,13 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
+    //Authorization
+    secretManager.ensureSecretExists("secrets.yml");
+//    configLoader.loadConfig("secrets.yml");
+    
+    //Load application setting
+//    configLoader.loadConfig("config.yml");
+    
     //Make base application
     jdaService.makeJda();
     commandService.addCommands();
