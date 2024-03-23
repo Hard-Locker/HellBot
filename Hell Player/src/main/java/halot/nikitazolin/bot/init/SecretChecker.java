@@ -54,9 +54,9 @@ public class SecretChecker {
           + newLine
           + "youtubeAuthorization: "
           + newLine
-          + "  login: "
+          + "  youtubeLogin: "
           + newLine
-          + "  password: "
+          + "  youtubePassword: "
           + newLine
           + newLine
           + "databaseUse: "
@@ -65,9 +65,9 @@ public class SecretChecker {
           + newLine
           + "  dbUrl: "
           + newLine
-          + "  username: "
+          + "  dbUsername: "
           + newLine
-          + "  password: ";
+          + "  dbPassword: ";
 
       writer.write(initialContent);
       log.debug("Write initial structure to secrets.yml");
