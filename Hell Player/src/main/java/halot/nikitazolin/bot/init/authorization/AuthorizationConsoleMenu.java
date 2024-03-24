@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.view;
+package halot.nikitazolin.bot.init.authorization;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import halot.nikitazolin.bot.init.AuthorizationData;
 import halot.nikitazolin.bot.util.InputNumber;
 import halot.nikitazolin.bot.util.InputText;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class ConsoleMenu {
+public class AuthorizationConsoleMenu {
 
   private final InputNumber inputNumber;
   private final InputText inputText;

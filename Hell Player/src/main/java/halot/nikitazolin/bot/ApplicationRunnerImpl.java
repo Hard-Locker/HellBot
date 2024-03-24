@@ -10,12 +10,13 @@ import halot.nikitazolin.bot.audio.player.AudioPlayerListenerService;
 import halot.nikitazolin.bot.audio.player.IPlayerService;
 import halot.nikitazolin.bot.audio.player.TrackScheduler;
 import halot.nikitazolin.bot.command.manager.CommandService;
-import halot.nikitazolin.bot.init.ConfigChecker;
-import halot.nikitazolin.bot.init.AuthorizationChecker;
+import halot.nikitazolin.bot.init.authorization.AuthorizationConsoleMenu;
+import halot.nikitazolin.bot.init.authorization.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.AuthorizationFileChecker;
+import halot.nikitazolin.bot.init.authorization.AuthorizationLoader;
+import halot.nikitazolin.bot.init.config.ConfigChecker;
 import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.listener.JdaListenerService;
-import halot.nikitazolin.bot.util.YamlLoader;
-import halot.nikitazolin.bot.view.ConsoleMenu;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -24,10 +25,11 @@ import net.dv8tion.jda.api.entities.Guild;
 @RequiredArgsConstructor
 public class ApplicationRunnerImpl implements ApplicationRunner {
 
-  private final AuthorizationChecker authorizationChecker;
-  private final ConsoleMenu consoleMenu;
+  private final AuthorizationData authorizationData;
+  private final AuthorizationFileChecker authorizationFileChecker;
+  private final AuthorizationConsoleMenu authorizationConsoleMenu;
+  private final AuthorizationLoader authorizationLoader;
   private final ConfigChecker configChecker;
-  private final YamlLoader yamlLoader;
   private final JdaService jdaService;
   private final CommandService commandService;
   private final JdaListenerService jdaListenerService;
@@ -38,8 +40,8 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
-    checkAuthorization();
-    checkConfiguration();
+    authorization();
+    configuration();
     
     //Make base application
     jdaService.makeJda();
@@ -55,18 +57,40 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     audioService.registratePlayer(guild);
   }
   
-  private void checkAuthorization() {
+  private void authorization() {
     String filePath = "secrets.yml";
-    boolean secretExists = authorizationChecker.ensureFileExists(filePath);
+    boolean authorizationExists = authorizationFileChecker.ensureFileExists(filePath);
 
-    if (secretExists == false) {
-      consoleMenu.showMenu(filePath);
+    if (authorizationExists == false) {
+      authorizationConsoleMenu.showMenu(filePath);
     }
     
-    yamlLoader.loadConfig(filePath);
+    System.out.println("Before loading");
+    System.out.println("ApiKey: " + authorizationData.getDiscordApi().getApiKey());
+    System.out.println("YoutubeEnabled: " + authorizationData.getYoutube().isYoutubeEnabled());
+    System.out.println("YoutubeLogin: " + authorizationData.getYoutube().getYoutubeLogin());
+    System.out.println("YoutubePassword: " + authorizationData.getYoutube().getYoutubePassword());
+    System.out.println("DbEnabled: " + authorizationData.getDatabase().isDbEnabled());
+    System.out.println("DbName: " + authorizationData.getDatabase().getDbName());
+    System.out.println("DbUrl: " + authorizationData.getDatabase().getDbUrl());
+    System.out.println("DbUsername: " + authorizationData.getDatabase().getDbUsername());
+    System.out.println("DbPassword: " + authorizationData.getDatabase().getDbPassword());
+    
+    authorizationLoader.load(filePath);
+    
+    System.out.println("After loading");
+    System.out.println("ApiKey: " + authorizationData.getDiscordApi().getApiKey());
+    System.out.println("YoutubeEnabled: " + authorizationData.getYoutube().isYoutubeEnabled());
+    System.out.println("YoutubeLogin: " + authorizationData.getYoutube().getYoutubeLogin());
+    System.out.println("YoutubePassword: " + authorizationData.getYoutube().getYoutubePassword());
+    System.out.println("DbEnabled: " + authorizationData.getDatabase().isDbEnabled());
+    System.out.println("DbName: " + authorizationData.getDatabase().getDbName());
+    System.out.println("DbUrl: " + authorizationData.getDatabase().getDbUrl());
+    System.out.println("DbUsername: " + authorizationData.getDatabase().getDbUsername());
+    System.out.println("DbPassword: " + authorizationData.getDatabase().getDbPassword());
   }
   
-  private void checkConfiguration() {
+  private void configuration() {
     String filePath = "config.yml";
     configChecker.ensureConfigExists(filePath);
 //  yamlLoader.loadConfig(filePath);

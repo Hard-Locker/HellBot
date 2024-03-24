@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init;
+package halot.nikitazolin.bot.init.authorization;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class AuthorizationChecker {
+public class AuthorizationFileChecker {
 
   public boolean ensureFileExists(String filePath) {
     if (checkFileExists(filePath) && checkApiKey(filePath)) {
@@ -32,10 +32,10 @@ public class AuthorizationChecker {
 
     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
       while ((apiKeyInFile = reader.readLine()) != null) {
-        if (apiKeyInFile.startsWith("apiKey:")) {
+        if (apiKeyInFile.contains("apiKey:")) {
           String apiKeyValue = apiKeyInFile.substring("apiKey:".length()).trim();
 
-          return !apiKeyValue.isEmpty();
+          return (apiKeyValue.length() > 50);
         }
       }
     } catch (IOException e) {
@@ -70,18 +70,19 @@ public class AuthorizationChecker {
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
       String newLine = System.lineSeparator();
-      String initialContent = "discordApi:" + newLine
-          + "  apiKey: " + newLine
-          + "youtube:" + newLine
-          + "  youtubeEnabled: false" + newLine
-          + "  youtubeLogin: " + newLine
-          + "  youtubePassword: " + newLine
+      String initialContent = "!!halot.nikitazolin.bot.init.AuthorizationData" + newLine
           + "database:" + newLine
           + "  dbEnabled: false" + newLine
-          + "  dbName: " + newLine
-          + "  dbUrl: " + newLine
-          + "  dbUsername: " + newLine
-          + "  dbPassword: ";
+          + "  dbName: null" + newLine
+          + "  dbPassword: null" + newLine
+          + "  dbUrl: null" + newLine
+          + "  dbUsername: null" + newLine
+          + "discordApi:" + newLine
+          + "  apiKey: null" + newLine
+          + "youtube:" + newLine
+          + "  youtubeEnabled: false" + newLine
+          + "  youtubeLogin: null" + newLine
+          + "  youtubePassword: null";
 
       writer.write(initialContent);
       log.debug("Write initial structure to path: " + filePath);
