@@ -1,14 +1,13 @@
 package halot.nikitazolin.bot.view;
 
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import halot.nikitazolin.bot.init.AuthorizationData;
 import halot.nikitazolin.bot.util.InputNumber;
 import halot.nikitazolin.bot.util.InputText;
 import lombok.RequiredArgsConstructor;
@@ -21,25 +20,28 @@ public class ConsoleMenu {
 
   private final InputNumber inputNumber;
   private final InputText inputText;
+  private final AuthorizationData authorizationData;
 
   private static final String NEW_LINE = "\n";
 
   public void showMenu(String secretFilePath) {
     log.info("Displaying menu");
 
-    apiMenu(secretFilePath);
-    youtubeMenu(secretFilePath);
-    dbMenu(secretFilePath);
+    apiMenu(authorizationData, secretFilePath);
+    youtubeMenu(authorizationData, secretFilePath);
+    dbMenu(authorizationData, secretFilePath);
   }
 
-  private void apiMenu(String secretFilePath) {
+  private void apiMenu(AuthorizationData authorizationData, String secretFilePath) {
     log.info("Displaying API authorization menu");
     System.out.println("-----Discord API-----");
     String apiKey = getStringInput("Enter API token in next line:");
-    saveApiKey(apiKey, secretFilePath);
+
+    authorizationData.setApiKey(apiKey);
+    saveConfig(authorizationData, secretFilePath);
   }
 
-  private void youtubeMenu(String secretFilePath) {
+  private void youtubeMenu(AuthorizationData authorizationData, String secretFilePath) {
     log.info("Displaying YouTube authorization menu");
 
     boolean youtubeAuthorization = getUsageOptionInput("-----YouTube authorization-----",
@@ -52,10 +54,13 @@ public class ConsoleMenu {
       youtubePassword = getStringInput("Enter YouTube password in next line:");
     }
 
-    saveYoutubeInfo(youtubeAuthorization, youtubeLogin, youtubePassword, secretFilePath);
+    authorizationData.getYoutubeAuthorization().setEnabled(youtubeAuthorization);
+    authorizationData.getYoutubeAuthorization().setLogin(youtubeLogin);
+    authorizationData.getYoutubeAuthorization().setPassword(youtubePassword);
+    saveConfig(authorizationData, secretFilePath);
   }
 
-  private void dbMenu(String secretFilePath) {
+  private void dbMenu(AuthorizationData authorizationData, String secretFilePath) {
     log.info("Displaying database usage menu");
 
     boolean databaseUse = getUsageOptionInput("-----Database manager-----", "Do you want to use database?");
@@ -71,7 +76,12 @@ public class ConsoleMenu {
       dbPassword = getStringInput("Enter database password in next line:");
     }
 
-    saveDbInfo(databaseUse, dbName, dbUrl, dbUsername, dbPassword, secretFilePath);
+    authorizationData.getDatabaseUse().setEnabled(databaseUse);
+    authorizationData.getDatabaseUse().setDbName(dbName);
+    authorizationData.getDatabaseUse().setDbUrl(dbUrl);
+    authorizationData.getDatabaseUse().setDbUsername(dbUsername);
+    authorizationData.getDatabaseUse().setDbPassword(dbPassword);
+    saveConfig(authorizationData, secretFilePath);
   }
 
   private String getStringInput(String inputDescription) {
@@ -121,85 +131,14 @@ public class ConsoleMenu {
     }
   }
 
-  private void saveApiKey(String apiKey, String secretFilePath) {
-    log.info("Save API key");
-    Yaml yaml = new Yaml();
-    Map<String, Object> data;
-
-    try (FileInputStream fis = new FileInputStream(secretFilePath)) {
-      data = yaml.load(fis);
-    } catch (IOException e) {
-      log.error("Error reading the secrets file: {}", e);
-      return;
-    }
-
-    data.put("apiKey", apiKey);
-
+  private void saveConfig(AuthorizationData authorizationData, String secretFilePath) {
     DumperOptions options = new DumperOptions();
     options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
     options.setPrettyFlow(true);
-    yaml = new Yaml(options);
+    Yaml yaml = new Yaml(options);
 
     try (FileWriter writer = new FileWriter(secretFilePath)) {
-      yaml.dump(data, writer);
-    } catch (IOException e) {
-      log.error("Error writing the secrets file: {}", e);
-    }
-  }
-
-  private void saveYoutubeInfo(boolean youtubeAuthorization, String youtubeLogin, String youtubePassword,
-      String secretFilePath) {
-    Yaml yaml = new Yaml();
-    Map<String, Object> data;
-
-    try (FileInputStream fis = new FileInputStream(secretFilePath)) {
-      data = yaml.load(fis);
-    } catch (IOException e) {
-      log.error("Error reading the secrets file: {}", e);
-      return;
-    }
-
-    data.put("youtubeAuthorization", youtubeAuthorization);
-    data.put("youtubeLogin", youtubeLogin);
-    data.put("youtubePassword", youtubePassword);
-
-    DumperOptions options = new DumperOptions();
-    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    options.setPrettyFlow(true);
-    yaml = new Yaml(options);
-
-    try (FileWriter writer = new FileWriter(secretFilePath)) {
-      yaml.dump(data, writer);
-    } catch (IOException e) {
-      log.error("Error writing the secrets file: {}", e);
-    }
-  }
-
-  private void saveDbInfo(boolean databaseUse, String dbName, String dbUrl, String dbUsername, String dbPassword,
-      String secretFilePath) {
-    Yaml yaml = new Yaml();
-    Map<String, Object> data;
-
-    try (FileInputStream fis = new FileInputStream(secretFilePath)) {
-      data = yaml.load(fis);
-    } catch (IOException e) {
-      log.error("Error reading the secrets file: {}", e);
-      return;
-    }
-
-    data.put("databaseUse", databaseUse);
-    data.put("dbName", dbName);
-    data.put("dbUrl", dbUrl);
-    data.put("dbUsername", dbUsername);
-    data.put("dbPassword", dbPassword);
-
-    DumperOptions options = new DumperOptions();
-    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    options.setPrettyFlow(true);
-    yaml = new Yaml(options);
-
-    try (FileWriter writer = new FileWriter(secretFilePath)) {
-      yaml.dump(data, writer);
+      yaml.dump(authorizationData, writer);
     } catch (IOException e) {
       log.error("Error writing the secrets file: {}", e);
     }

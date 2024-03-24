@@ -59,8 +59,10 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     boolean secretExists = secretChecker.ensureSecretExists("secrets.yml");
     
     if (secretExists == false) {
+      //TODO formating save file
       consoleMenu.showMenu("secrets.yml");
     }
+    //TODO loader
 //  configLoader.loadConfig("secrets.yml");
   }
   
