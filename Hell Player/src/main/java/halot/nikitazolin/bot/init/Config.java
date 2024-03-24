@@ -1,18 +1,18 @@
 package halot.nikitazolin.bot.init;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Component
+@Scope("singleton")
 @Getter
 @ToString
 @EqualsAndHashCode
-//@RequiredArgsConstructor
-public class BotConfig {
+public class Config {
   
   private static String prefix = "1";
   private static boolean songInStatus = true;

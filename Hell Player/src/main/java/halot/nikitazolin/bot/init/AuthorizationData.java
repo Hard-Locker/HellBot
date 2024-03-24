@@ -12,22 +12,28 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthorizationData {
 
-  private String apiKey;
-  private YoutubeAuthorization youtubeAuthorization = new YoutubeAuthorization();
-  private DatabaseUse databaseUse = new DatabaseUse();
+  private DiscordApi discordApi = new DiscordApi();
+  private Youtube youtube = new Youtube();
+  private Database database = new Database();
 
   @Data
   @RequiredArgsConstructor
-  public static class YoutubeAuthorization {
-    private boolean enabled;
-    private String login;
-    private String password;
+  public class DiscordApi {
+    private String apiKey;
   }
 
   @Data
   @RequiredArgsConstructor
-  public static class DatabaseUse {
-    private boolean enabled;
+  public class Youtube {
+    private boolean youtubeEnabled;
+    private String youtubeLogin;
+    private String youtubePassword;
+  }
+
+  @Data
+  @RequiredArgsConstructor
+  public class Database {
+    private boolean dbEnabled;
     private String dbName;
     private String dbUrl;
     private String dbUsername;

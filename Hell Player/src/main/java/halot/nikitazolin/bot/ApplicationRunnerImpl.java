@@ -11,10 +11,10 @@ import halot.nikitazolin.bot.audio.player.IPlayerService;
 import halot.nikitazolin.bot.audio.player.TrackScheduler;
 import halot.nikitazolin.bot.command.manager.CommandService;
 import halot.nikitazolin.bot.init.ConfigChecker;
-import halot.nikitazolin.bot.init.SecretChecker;
+import halot.nikitazolin.bot.init.AuthorizationChecker;
 import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.listener.JdaListenerService;
-import halot.nikitazolin.bot.util.ConfigLoader;
+import halot.nikitazolin.bot.util.YamlLoader;
 import halot.nikitazolin.bot.view.ConsoleMenu;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
@@ -24,10 +24,10 @@ import net.dv8tion.jda.api.entities.Guild;
 @RequiredArgsConstructor
 public class ApplicationRunnerImpl implements ApplicationRunner {
 
-  private final SecretChecker secretChecker;
-  private final ConfigChecker configChecker;
-  private final ConfigLoader configLoader;
+  private final AuthorizationChecker authorizationChecker;
   private final ConsoleMenu consoleMenu;
+  private final ConfigChecker configChecker;
+  private final YamlLoader yamlLoader;
   private final JdaService jdaService;
   private final CommandService commandService;
   private final JdaListenerService jdaListenerService;
@@ -56,18 +56,19 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   }
   
   private void checkAuthorization() {
-    boolean secretExists = secretChecker.ensureSecretExists("secrets.yml");
-    
+    String filePath = "secrets.yml";
+    boolean secretExists = authorizationChecker.ensureFileExists(filePath);
+
     if (secretExists == false) {
-      //TODO formating save file
-      consoleMenu.showMenu("secrets.yml");
+      consoleMenu.showMenu(filePath);
     }
-    //TODO loader
-//  configLoader.loadConfig("secrets.yml");
+    
+    yamlLoader.loadConfig(filePath);
   }
   
   private void checkConfiguration() {
-    configChecker.ensureConfigExists("config.yml");
-//  configLoader.loadConfig("config.yml");
+    String filePath = "config.yml";
+    configChecker.ensureConfigExists(filePath);
+//  yamlLoader.loadConfig(filePath);
   }
 }

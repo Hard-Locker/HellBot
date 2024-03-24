@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Scope("prototype")
 @Slf4j
-public class ConfigLoader {
+public class YamlLoader {
 
   private Map<String, Object> config;
 
