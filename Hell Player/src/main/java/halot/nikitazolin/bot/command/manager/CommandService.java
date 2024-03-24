@@ -61,7 +61,7 @@ public class CommandService {
       return Commands.slash(botCommand.name(), botCommand.description()).addOptions(botCommand.options())
           .setGuildOnly(botCommand.guildOnly());
     } else {
-      log.warn("Registering command " + botCommand.name() + " with no options!");
+      log.info("Registering command " + botCommand.name() + " with no options!");
 
       return Commands.slash(botCommand.name(), botCommand.description()).setGuildOnly(botCommand.guildOnly());
     }

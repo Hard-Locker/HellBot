@@ -13,12 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ConfigChecker {
 
-  public boolean ensureConfigExists(String configFilePath) {
-    if (checkFileExists(configFilePath)) {
+  public boolean ensureFileExists(String filePath) {
+    if (checkFileExists(filePath)) {
       return true;
     } else {
-      createFile(configFilePath);
-      writeInitialStructure(configFilePath);
+      createFile(filePath);
+      writeInitialStructure(filePath);
 
       return false;
     }
@@ -34,11 +34,11 @@ public class ConfigChecker {
     try {
       File file = new File(filePath);
       file.createNewFile();
-      log.debug("Create config.yml");
+      log.debug("Create file: " + filePath);
 
       return true;
     } catch (IOException e) {
-      log.error("Error creating configs file: ", e);
+      log.error("Error creating file in path: ", filePath);
 
       return false;
     }
@@ -48,15 +48,16 @@ public class ConfigChecker {
     File file = new File(filePath);
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-      String newLine = "\n";
-      String initialContent = "apiKey: " + newLine + "youtubeAuthorization: ";
+      String newLine = System.lineSeparator();
+      String initialContent = "prefix: " + newLine
+          + "songInStatus: ";
 
       writer.write(initialContent);
-      log.debug("Write initial structure to config.yml");
+      log.debug("Write initial structure to path: " + filePath);
 
       return true;
     } catch (IOException e) {
-      log.error("Error with writing structure config.yml. Error: " + e);
+      log.error("Error writing structure to path: " + filePath);
 
       return false;
     }

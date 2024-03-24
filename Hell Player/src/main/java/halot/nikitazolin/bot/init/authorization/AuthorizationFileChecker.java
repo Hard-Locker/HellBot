@@ -39,7 +39,7 @@ public class AuthorizationFileChecker {
         }
       }
     } catch (IOException e) {
-      log.error("Error reading the secrets file: ", e);
+      log.error("Error reading structure to path: " + filePath);
     }
 
     return false;
@@ -59,7 +59,7 @@ public class AuthorizationFileChecker {
 
       return true;
     } catch (IOException e) {
-      log.error("Error creating secrets file: ", e);
+      log.error("Error creating file in path: ", filePath);
 
       return false;
     }
@@ -88,7 +88,7 @@ public class AuthorizationFileChecker {
 
       return true;
     } catch (IOException e) {
-      log.error("Error with writing structure secrets.yml. Error: " + e);
+      log.error("Error writing structure to path: " + filePath);
 
       return false;
     }

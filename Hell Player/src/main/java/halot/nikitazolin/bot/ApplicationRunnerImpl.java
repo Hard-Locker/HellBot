@@ -3,7 +3,7 @@ package halot.nikitazolin.bot;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.audio.AudioService;
 import halot.nikitazolin.bot.audio.player.AudioPlayerListenerService;
@@ -14,12 +14,13 @@ import halot.nikitazolin.bot.init.authorization.AuthorizationConsoleMenu;
 import halot.nikitazolin.bot.init.authorization.AuthorizationFileChecker;
 import halot.nikitazolin.bot.init.authorization.AuthorizationLoader;
 import halot.nikitazolin.bot.init.config.ConfigChecker;
+import halot.nikitazolin.bot.init.config.ConfigLoader;
 import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.listener.JdaListenerService;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 
-@Component
+@Service
 @Profile("development")
 @RequiredArgsConstructor
 public class ApplicationRunnerImpl implements ApplicationRunner {
@@ -28,6 +29,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   private final AuthorizationConsoleMenu authorizationConsoleMenu;
   private final AuthorizationLoader authorizationLoader;
   private final ConfigChecker configChecker;
+  private final ConfigLoader configLoader;
   private final JdaService jdaService;
   private final CommandService commandService;
   private final JdaListenerService jdaListenerService;
@@ -41,18 +43,12 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     authorization();
     configuration();
 
-    // Make base application
-    jdaService.makeJda();
-    commandService.addCommands();
-    jdaListenerService.addListeners();
+    initializeJda();
 
-    // Make audio player complete instance
     // TODO Need improve guild getter. Now it potential bug
-    Guild guild = jdaService.getJda().get().getGuilds().getFirst();
-    playerService.createPlayer();
-    trackScheduler.preparateScheduler(playerService);
-    audioPlayerListenerService.addListeners();
-    audioService.registratePlayer(guild);
+    makeAudioPlayer();
+
+    System.out.println("Ready!");
   }
 
   private void authorization() {
@@ -68,8 +64,23 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
   private void configuration() {
     String filePath = "config.yml";
-    configChecker.ensureConfigExists(filePath);
-    
-//  yamlLoader.loadConfig(filePath);
+    configChecker.ensureFileExists(filePath);
+
+    configLoader.load(filePath);
+  }
+
+  private void initializeJda() {
+    jdaService.makeJda();
+    commandService.addCommands();
+    jdaListenerService.addListeners();
+  }
+
+  private void makeAudioPlayer() {
+    // TODO Need improve guild getter. Now it potential bug
+    Guild guild = jdaService.getJda().get().getGuilds().getFirst();
+    playerService.createPlayer();
+    trackScheduler.preparateScheduler(playerService);
+    audioPlayerListenerService.addListeners();
+    audioService.registratePlayer(guild);
   }
 }
