@@ -2,6 +2,7 @@ package halot.nikitazolin.bot.init.authorization;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.DumperOptions;
@@ -133,8 +134,13 @@ public class AuthorizationConsoleMenu {
     options.setPrettyFlow(true);
     Yaml yaml = new Yaml(options);
 
-    try (FileWriter writer = new FileWriter(filePath)) {
-      yaml.dump(authorizationData, writer);
+    try (StringWriter stringWriter = new StringWriter()) {
+      yaml.dump(authorizationData, stringWriter);
+      String output = stringWriter.toString().replaceAll("^!!.*\n", "");
+
+      try (FileWriter writer = new FileWriter(filePath)) {
+        writer.write(output);
+      }
     } catch (IOException e) {
       log.error("Error writing the secrets file: {}", e);
     }

@@ -70,8 +70,7 @@ public class AuthorizationFileChecker {
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
       String newLine = System.lineSeparator();
-      String initialContent = "!!halot.nikitazolin.bot.init.AuthorizationData" + newLine
-          + "database:" + newLine
+      String initialContent = "database:" + newLine
           + "  dbEnabled: false" + newLine
           + "  dbName: null" + newLine
           + "  dbPassword: null" + newLine

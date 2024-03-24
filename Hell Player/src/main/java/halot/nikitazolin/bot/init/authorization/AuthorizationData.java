@@ -18,13 +18,13 @@ public class AuthorizationData {
 
   @Data
   @RequiredArgsConstructor
-  public class DiscordApi {
+  public static class DiscordApi {
     private String apiKey;
   }
 
   @Data
   @RequiredArgsConstructor
-  public class Youtube {
+  public static class Youtube {
     private boolean youtubeEnabled;
     private String youtubeLogin;
     private String youtubePassword;
@@ -32,7 +32,7 @@ public class AuthorizationData {
 
   @Data
   @RequiredArgsConstructor
-  public class Database {
+  public static class Database {
     private boolean dbEnabled;
     private String dbName;
     private String dbUrl;
