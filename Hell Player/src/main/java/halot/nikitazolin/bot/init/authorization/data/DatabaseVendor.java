@@ -9,14 +9,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum DatabaseVendor {
-  H2("H2 Database", new String[] { "H2", "h2", "H2 Database" }),
-  POSTGRESQL("PostgreSQL", new String[] { "PostgreSQL", "POSTGRESQL", "PG", "pg", "Postgres", "POSTGRES", "postgres" });
+  H2("H2 Database", new String[] { "H2", "h2", "H2 Database" }, "org.h2.Driver"),
+  POSTGRESQL("PostgreSQL", new String[] { "PostgreSQL", "POSTGRESQL", "PG", "pg", "Postgres", "POSTGRES", "postgres" }, "org.postgresql.Driver");
 
-  private final String displayName;
-  private final String[] identifiers;
+  private final String name;
+  private final String[] nameAliases;
+  private final String driverClassName;
 
   public static Optional<DatabaseVendor> fromString(String text) {
-    return Arrays.stream(DatabaseVendor.values()).filter(vendor -> Arrays.asList(vendor.identifiers).contains(text))
-        .findFirst();
+    return Arrays.stream(DatabaseVendor.values()).filter(vendor -> Arrays.asList(vendor.nameAliases).contains(text)).findFirst();
   }
 }

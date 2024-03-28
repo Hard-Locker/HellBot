@@ -109,13 +109,11 @@
       <version>42.7.1</version>
     </dependency>
 
-    <!--
     <dependency>
       <groupId>org.flywaydb</groupId>
       <artifactId>flyway-core</artifactId>
       <version>10.4.1</version>
     </dependency>
-    -->
     <!-- //////////////// -->
 
     <dependency>
@@ -126,13 +124,11 @@
     </dependency>
 
     <!-- Spring Framework -->
-    <!--
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <version>6.1.2</version>
     </dependency>
-    -->
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -153,29 +149,17 @@
       <version>3.2.2</version>
     </dependency>
 
-    <!--
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
       <version>3.2.1</version>
     </dependency>
-    -->
 
-    <!--
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
       <version>3.2.2</version>
     </dependency>
-    -->
-
-    <!--
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jdbc</artifactId>
-      <version>3.2.1</version>
-    </dependency>
-    -->
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

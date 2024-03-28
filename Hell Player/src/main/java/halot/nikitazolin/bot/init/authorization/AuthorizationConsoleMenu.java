@@ -151,7 +151,7 @@ public class AuthorizationConsoleMenu {
     for (int i = 0; i < vendors.length; i++) {
       outputMenu.append(i + 1);
       outputMenu.append(". ");
-      outputMenu.append(vendors[i].getDisplayName());
+      outputMenu.append(vendors[i].getName());
       outputMenu.append(newLine);
     }
 

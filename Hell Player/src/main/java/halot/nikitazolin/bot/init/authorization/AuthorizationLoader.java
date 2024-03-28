@@ -72,9 +72,8 @@ public class AuthorizationLoader {
       Map<String, Object> dbData = (Map<String, Object>) loadedDbData.get("database");
 
       if (dbData != null) {
-        String dbVendorStr = (String) dbData.get("dbVendor");
-        DatabaseVendor dbVendor = DatabaseVendor.fromString(dbVendorStr)
-            .orElseThrow(() -> new RuntimeException("Unsupported database vendor: " + dbVendorStr));
+        String dbVendorName = (String) dbData.get("dbVendor");
+        DatabaseVendor dbVendor = DatabaseVendor.fromString(dbVendorName).orElseThrow(() -> new RuntimeException("Unsupported database vendor: " + dbVendorName));
 
         Database database = new Database();
         database.setDbEnabled((Boolean) dbData.get("dbEnabled"));
