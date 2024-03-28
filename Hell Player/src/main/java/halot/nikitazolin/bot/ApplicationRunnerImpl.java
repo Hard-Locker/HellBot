@@ -43,10 +43,10 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     authorization();
     configuration();
 
-    initializeJda();
-
-    // TODO Need improve guild getter. Now it potential bug
-    makeAudioPlayer();
+//    initializeJda();
+//
+//    // TODO Need improve guild getter. Now it potential bug
+//    makeAudioPlayer();
 
     System.out.println("Ready!");
   }

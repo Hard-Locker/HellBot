@@ -76,6 +76,7 @@ public class AuthorizationFileChecker {
           + "  dbPassword: null" + newLine
           + "  dbUrl: null" + newLine
           + "  dbUsername: null" + newLine
+          + "  dbVendor: null" + newLine
           + "discordApi:" + newLine
           + "  apiKey: null" + newLine
           + "youtube:" + newLine

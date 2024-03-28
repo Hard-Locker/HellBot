@@ -1,21 +1,4 @@
 spring:
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-    url: jdbc:postgresql://localhost:5432/hellplayer
-    user: odmen
-    password: admin
-
-  datasource:
-    url: jdbc:postgresql://localhost:5432/hellplayer
-    driver-class-name: org.postgresql.Driver
-    username: odmen
-    password: admin
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
 
   profiles:
     active: development

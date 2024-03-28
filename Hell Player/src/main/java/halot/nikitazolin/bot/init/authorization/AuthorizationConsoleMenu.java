@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.data.DatabaseVendor;
 import halot.nikitazolin.bot.util.InputNumber;
 import halot.nikitazolin.bot.util.InputText;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +43,7 @@ public class AuthorizationConsoleMenu {
 
   private void youtubeMenu(AuthorizationData authorizationData, String filePath) {
     log.info("Displaying YouTube authorization menu");
-    boolean youtubeEnabled = getUsageOptionInput("-----YouTube authorization-----",
+    boolean youtubeEnabled = getTwoOptionInput("-----YouTube authorization-----",
         "Do you want log in to YouTube profile?");
     String youtubeLogin = null;
     String youtubePassword = null;
@@ -59,13 +61,18 @@ public class AuthorizationConsoleMenu {
 
   private void dbMenu(AuthorizationData authorizationData, String filePath) {
     log.info("Displaying database usage menu");
-    boolean dbEnabled = getUsageOptionInput("-----Database manager-----", "Do you want to use database?");
+    boolean dbEnabled = getTwoOptionInput("-----Database manager-----", "Do you want to use database?");
+    DatabaseVendor dbVendor = null;
     String dbName = null;
     String dbUrl = null;
     String dbUsername = null;
     String dbPassword = null;
 
     if (dbEnabled == true) {
+      dbVendor = getDbOptionInput();
+    }
+
+    if (dbVendor.equals(DatabaseVendor.POSTGRESQL)) {
       dbName = getStringInput("Enter database name in next line:");
       dbUrl = getStringInput("Enter database URL in next line (example: jdbc:postgresql://localhost:5432/dbname):");
       dbUsername = getStringInput("Enter database username in next line:");
@@ -73,6 +80,7 @@ public class AuthorizationConsoleMenu {
     }
 
     authorizationData.getDatabase().setDbEnabled(dbEnabled);
+    authorizationData.getDatabase().setDbVendor(dbVendor);
     authorizationData.getDatabase().setDbName(dbName);
     authorizationData.getDatabase().setDbUrl(dbUrl);
     authorizationData.getDatabase().setDbUsername(dbUsername);
@@ -98,7 +106,7 @@ public class AuthorizationConsoleMenu {
     return userInput;
   }
 
-  private boolean getUsageOptionInput(String optionTitle, String optionDescription) {
+  private boolean getTwoOptionInput(String optionTitle, String optionDescription) {
     log.debug("Requesting input: {}", optionDescription);
     String newLine = "\n";
     int selectedOption;
@@ -123,6 +131,39 @@ public class AuthorizationConsoleMenu {
       default:
         System.err.println("Select only the items listed");
         break;
+      }
+    }
+  }
+
+  private DatabaseVendor getDbOptionInput() {
+    log.debug("Select database vendor");
+
+    int selectedOption;
+    String newLine = System.lineSeparator();
+    StringBuilder outputMenu = new StringBuilder();
+    outputMenu.append("-----Database selector-----");
+    outputMenu.append(newLine);
+    outputMenu.append("Which database do you want to use?");
+    outputMenu.append(newLine);
+
+    DatabaseVendor[] vendors = DatabaseVendor.values();
+
+    for (int i = 0; i < vendors.length; i++) {
+      outputMenu.append(i + 1);
+      outputMenu.append(". ");
+      outputMenu.append(vendors[i].getDisplayName());
+      outputMenu.append(newLine);
+    }
+
+    System.out.println(outputMenu);
+
+    while (true) {
+      selectedOption = inputNumber.readInputNumber("Select desired action number: ");
+
+      if (selectedOption >= 1 && selectedOption <= vendors.length) {
+        return vendors[selectedOption - 1];
+      } else {
+        System.err.println("Select only the items listed");
       }
     }
   }
