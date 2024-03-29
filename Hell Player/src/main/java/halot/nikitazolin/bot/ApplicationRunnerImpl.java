@@ -63,12 +63,12 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
       authorizationConsoleMenu.showMenu(filePath);
     }
 
-//    authorizationLoader.load(filePath);
+    authorizationLoader.load(filePath);
     
     //TODO need check dbEnabled status
     dbCreator.createDatabase();
     
-//    dbDataSource.registerDataSourceBean();
+    dbDataSource.registerDataSourceBean();
   }
 
   private void configuration() {

@@ -2,17 +2,17 @@ package halot.nikitazolin.bot.init.authorization;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
 import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
 import halot.nikitazolin.bot.init.authorization.data.Database;
 import halot.nikitazolin.bot.init.authorization.data.DatabaseVendor;
+import halot.nikitazolin.bot.init.authorization.data.DiscordApi;
+import halot.nikitazolin.bot.init.authorization.data.Youtube;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,76 +24,76 @@ public class AuthorizationLoader {
   private final AuthorizationData authorizationData;
 
   public void load(String filePath) {
-    loadDiscordApi(filePath);
-    loadYoutube(filePath);
-    loadDatabase(filePath);
+    Map<String, Object> fileData = loadYamlConfiguration(filePath);
+
+    loadDiscordApi(fileData);
+    loadYoutube(fileData);
+    loadDatabase(fileData);
   }
 
-  // TODO need remove load DB and Youtube
-  private void loadDiscordApi(String filePath) {
-    TypeDescription authDataTypeDesc = new TypeDescription(AuthorizationData.class);
-    Constructor constructor = new Constructor(AuthorizationData.class, new LoaderOptions());
-    constructor.addTypeDescription(authDataTypeDesc);
-    Yaml yaml = new Yaml(constructor);
-
-    try (InputStream inputStream = new FileInputStream(filePath)) {
-      AuthorizationData loadedData = yaml.load(inputStream);
-
-      authorizationData.setDiscordApi(loadedData.getDiscordApi());
-
-      log.info("Authorization data (DiscordApi) loaded successfully from {}", filePath);
-    } catch (Exception e) {
-      log.error("Unable to load authorization data from {}: {}", filePath, e.getMessage());
-    }
-  }
-
-  //TODO need remove load API and DB
-  private void loadYoutube(String filePath) {
-    TypeDescription authDataTypeDesc = new TypeDescription(AuthorizationData.class);
-    Constructor constructor = new Constructor(AuthorizationData.class, new LoaderOptions());
-    constructor.addTypeDescription(authDataTypeDesc);
-    Yaml yaml = new Yaml(constructor);
-
-    try (InputStream inputStream = new FileInputStream(filePath)) {
-      AuthorizationData loadedData = yaml.load(inputStream);
-
-      authorizationData.setYoutube(loadedData.getYoutube());
-
-      log.info("Authorization data (Youtube) loaded successfully from {}", filePath);
-    } catch (Exception e) {
-      log.error("Unable to load authorization data from {}: {}", filePath, e.getMessage());
-    }
-  }
-
-  private void loadDatabase(String filePath) {
+  private Map<String, Object> loadYamlConfiguration(String filePath) {
     Yaml yaml = new Yaml();
 
     try (InputStream inputStream = new FileInputStream(filePath)) {
-      Map<String, Object> loadedDbData = yaml.load(inputStream);
-      @SuppressWarnings("unchecked")
-      Map<String, Object> dbData = (Map<String, Object>) loadedDbData.get("database");
+      log.info("File loaded successfully from {}", filePath);
 
-      if (dbData != null) {
-        String dbVendorName = (String) dbData.get("dbVendor");
-
-        DatabaseVendor.fromString(dbVendorName).ifPresentOrElse(dbVendor -> {
-          Database database = new Database();
-          database.setDbEnabled((Boolean) dbData.get("dbEnabled"));
-          database.setDbVendor(dbVendor);
-          database.setDbName((String) dbData.get("dbName"));
-          database.setDbUrl((String) dbData.get("dbUrl"));
-          database.setDbUsername((String) dbData.get("dbUsername"));
-          database.setDbPassword((String) dbData.get("dbPassword"));
-
-          authorizationData.setDatabase(database);
-        }, () -> {
-          log.error("Unsupported database vendor: {}", dbVendorName);
-        });
-      }
-
-      log.info("Authorization data (Database) loaded successfully from {}", filePath);
+      return yaml.load(inputStream);
     } catch (Exception e) {
-      log.error("Unable to load authorization data from {}: {}", filePath, e.getMessage());
+      log.error("Unable to load file from {}: {}", filePath, e.getMessage());
+
+      return Collections.emptyMap();
+    }
+  }
+
+  private void loadDiscordApi(Map<String, Object> config) {
+    @SuppressWarnings("unchecked")
+    Map<String, Object> discordApiConfig = (Map<String, Object>) config.get("discordApi");
+
+    if (discordApiConfig != null) {
+      DiscordApi discordApi = new DiscordApi();
+      discordApi.setApiKey((String) discordApiConfig.get("apiKey"));
+
+      authorizationData.setDiscordApi(discordApi);
+      log.info("Authorization data (DiscordApi) loaded successfully");
+    }
+  }
+
+  private void loadYoutube(Map<String, Object> config) {
+    @SuppressWarnings("unchecked")
+    Map<String, Object> youtubeConfig = (Map<String, Object>) config.get("youtube");
+
+    if (youtubeConfig != null) {
+      Youtube youtube = new Youtube();
+      youtube.setYoutubeEnabled((Boolean) youtubeConfig.get("youtubeEnabled"));
+      youtube.setYoutubeLogin((String) youtubeConfig.get("youtubeLogin"));
+      youtube.setYoutubePassword((String) youtubeConfig.get("youtubePassword"));
+
+      authorizationData.setYoutube(youtube);
+      log.info("Authorization data (Youtube) loaded successfully");
+    }
+  }
+
+  private void loadDatabase(Map<String, Object> config) {
+    @SuppressWarnings("unchecked")
+    Map<String, Object> dbConfig = (Map<String, Object>) config.get("database");
+
+    if (dbConfig != null) {
+      String dbVendorName = (String) dbConfig.get("dbVendor");
+
+      DatabaseVendor.fromString(dbVendorName).ifPresentOrElse(dbVendor -> {
+        Database database = new Database();
+        database.setDbEnabled((Boolean) dbConfig.get("dbEnabled"));
+        database.setDbVendor(dbVendor);
+        database.setDbName((String) dbConfig.get("dbName"));
+        database.setDbUrl((String) dbConfig.get("dbUrl"));
+        database.setDbUsername((String) dbConfig.get("dbUsername"));
+        database.setDbPassword((String) dbConfig.get("dbPassword"));
+
+        authorizationData.setDatabase(database);
+        log.info("Authorization data (Database) loaded successfully");
+      }, () -> {
+        log.error("Unsupported database vendor: {}", dbVendorName);
+      });
     }
   }
 }
