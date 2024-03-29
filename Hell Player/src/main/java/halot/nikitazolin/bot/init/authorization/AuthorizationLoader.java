@@ -73,17 +73,20 @@ public class AuthorizationLoader {
 
       if (dbData != null) {
         String dbVendorName = (String) dbData.get("dbVendor");
-        DatabaseVendor dbVendor = DatabaseVendor.fromString(dbVendorName).orElseThrow(() -> new RuntimeException("Unsupported database vendor: " + dbVendorName));
+        
+        DatabaseVendor.fromString(dbVendorName).ifPresentOrElse(dbVendor -> {
+          Database database = new Database();
+          database.setDbEnabled((Boolean) dbData.get("dbEnabled"));
+          database.setDbVendor(dbVendor);
+          database.setDbName((String) dbData.get("dbName"));
+          database.setDbUrl((String) dbData.get("dbUrl"));
+          database.setDbUsername((String) dbData.get("dbUsername"));
+          database.setDbPassword((String) dbData.get("dbPassword"));
 
-        Database database = new Database();
-        database.setDbEnabled((Boolean) dbData.get("dbEnabled"));
-        database.setDbVendor(dbVendor);
-        database.setDbName((String) dbData.get("dbName"));
-        database.setDbUrl((String) dbData.get("dbUrl"));
-        database.setDbUsername((String) dbData.get("dbUsername"));
-        database.setDbPassword((String) dbData.get("dbPassword"));
-
-        authorizationData.setDatabase(database);
+          authorizationData.setDatabase(database);
+        }, () -> {
+          log.error("Unsupported database vendor: {}", dbVendorName);
+        });
       }
 
       log.info("Authorization data (Database) loaded successfully from {}", filePath);

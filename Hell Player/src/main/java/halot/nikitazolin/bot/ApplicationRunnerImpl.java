@@ -17,6 +17,7 @@ import halot.nikitazolin.bot.init.config.ConfigChecker;
 import halot.nikitazolin.bot.init.config.ConfigLoader;
 import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.listener.JdaListenerService;
+import halot.nikitazolin.bot.repository.DbDataSource;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -28,6 +29,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   private final AuthorizationFileChecker authorizationFileChecker;
   private final AuthorizationConsoleMenu authorizationConsoleMenu;
   private final AuthorizationLoader authorizationLoader;
+  private final DbDataSource dbDataSource;
   private final ConfigChecker configChecker;
   private final ConfigLoader configLoader;
   private final JdaService jdaService;
@@ -60,6 +62,10 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     }
 
     authorizationLoader.load(filePath);
+    
+    //TODO need check dbEnabled status
+    
+    dbDataSource.registerDataSourceBean();
   }
 
   private void configuration() {
