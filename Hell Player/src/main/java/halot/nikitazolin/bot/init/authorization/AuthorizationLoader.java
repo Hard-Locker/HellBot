@@ -29,6 +29,7 @@ public class AuthorizationLoader {
     loadDatabase(filePath);
   }
 
+  // TODO need remove load DB and Youtube
   private void loadDiscordApi(String filePath) {
     TypeDescription authDataTypeDesc = new TypeDescription(AuthorizationData.class);
     Constructor constructor = new Constructor(AuthorizationData.class, new LoaderOptions());
@@ -46,6 +47,7 @@ public class AuthorizationLoader {
     }
   }
 
+  //TODO need remove load API and DB
   private void loadYoutube(String filePath) {
     TypeDescription authDataTypeDesc = new TypeDescription(AuthorizationData.class);
     Constructor constructor = new Constructor(AuthorizationData.class, new LoaderOptions());
@@ -73,7 +75,7 @@ public class AuthorizationLoader {
 
       if (dbData != null) {
         String dbVendorName = (String) dbData.get("dbVendor");
-        
+
         DatabaseVendor.fromString(dbVendorName).ifPresentOrElse(dbVendor -> {
           Database database = new Database();
           database.setDbEnabled((Boolean) dbData.get("dbEnabled"));
