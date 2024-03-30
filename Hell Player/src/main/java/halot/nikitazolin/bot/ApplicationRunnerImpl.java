@@ -46,6 +46,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   public void run(ApplicationArguments args) throws Exception {
     authorization();
     configuration();
+    dbPrepare();
 
 //    initializeJda();
 //
@@ -64,10 +65,12 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     }
 
     authorizationLoader.load(filePath);
-    
-    //TODO need check dbEnabled status
-    dbCreator.createDatabase();
-    
+  }
+
+  private void dbPrepare() {
+    // TODO need check dbEnabled status
+    dbCreator.createDatabase("secrets.yml");
+
     dbDataSource.registerDataSourceBean();
   }
 

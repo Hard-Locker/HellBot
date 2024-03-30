@@ -1,12 +1,6 @@
 package halot.nikitazolin.bot.init.authorization;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
 import halot.nikitazolin.bot.init.authorization.data.DatabaseVendor;
@@ -23,6 +17,7 @@ public class AuthorizationConsoleMenu {
   private final InputNumber inputNumber;
   private final InputText inputText;
   private final AuthorizationData authorizationData;
+  private final AuthorizationSaver authorizationSaver;
 
   public void showMenu(String filePath) {
     log.info("Displaying menu");
@@ -38,7 +33,8 @@ public class AuthorizationConsoleMenu {
     String apiKey = getStringInput("Enter API token in next line:");
 
     authorizationData.getDiscordApi().setApiKey(apiKey);
-    saveConfig(authorizationData, filePath);
+
+    authorizationSaver.saveToFile(filePath);
   }
 
   private void youtubeMenu(AuthorizationData authorizationData, String filePath) {
@@ -56,7 +52,8 @@ public class AuthorizationConsoleMenu {
     authorizationData.getYoutube().setYoutubeEnabled(youtubeEnabled);
     authorizationData.getYoutube().setYoutubeLogin(youtubeLogin);
     authorizationData.getYoutube().setYoutubePassword(youtubePassword);
-    saveConfig(authorizationData, filePath);
+
+    authorizationSaver.saveToFile(filePath);
   }
 
   private void dbMenu(AuthorizationData authorizationData, String filePath) {
@@ -85,7 +82,8 @@ public class AuthorizationConsoleMenu {
     authorizationData.getDatabase().setDbUrl(dbUrl);
     authorizationData.getDatabase().setDbUsername(dbUsername);
     authorizationData.getDatabase().setDbPassword(dbPassword);
-    saveConfig(authorizationData, filePath);
+
+    authorizationSaver.saveToFile(filePath);
   }
 
   private String getStringInput(String inputDescription) {
@@ -165,25 +163,6 @@ public class AuthorizationConsoleMenu {
       } else {
         System.err.println("Select only the items listed");
       }
-    }
-  }
-
-  private void saveConfig(AuthorizationData authorizationData, String filePath) {
-    log.info("Update config with path: " + filePath);
-    DumperOptions options = new DumperOptions();
-    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    options.setPrettyFlow(true);
-    Yaml yaml = new Yaml(options);
-
-    try (StringWriter stringWriter = new StringWriter()) {
-      yaml.dump(authorizationData, stringWriter);
-      String output = stringWriter.toString().replaceAll("^!!.*\n", "");
-
-      try (FileWriter writer = new FileWriter(filePath)) {
-        writer.write(output);
-      }
-    } catch (IOException e) {
-      log.error("Error writing the secrets file: {}", e);
     }
   }
 }
