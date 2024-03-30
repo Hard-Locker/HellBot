@@ -1,14 +1,12 @@
 package halot.nikitazolin.bot.jda;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
 import halot.nikitazolin.bot.listener.ReadyListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +22,9 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 @RequiredArgsConstructor
 public class JdaService {
 
-  private String BOT_TOKEN;
+  private final AuthorizationData authorizationData;
+  
+  private String token;
   private String status = "on you";
   private final List<GatewayIntent> gatewayIntents = List.of(
       GatewayIntent.GUILD_MESSAGES,
@@ -52,7 +52,7 @@ public class JdaService {
 
   private void createJda() {
     try {
-      jda = JDABuilder.createDefault(BOT_TOKEN, gatewayIntents)
+      jda = JDABuilder.createDefault(token, gatewayIntents)
           .setActivity(Activity.watching(status))
           .enableIntents(gatewayIntents)
           .addEventListeners(new ReadyListener())
@@ -60,17 +60,19 @@ public class JdaService {
           .build();
 
       jda.awaitReady();
-    } catch (InterruptedException e) {
-      log.error("Interrupt: ", e);
+    } catch (Exception e) {
+      log.error("Error with create JDA: ", e);
     }
   }
 
   private void readTokenFromFile() {
-    try {
-      BOT_TOKEN = new String(Files.readAllBytes(Paths.get("src/main/resources/bot-token.txt"))).trim();
-    } catch (IOException e) {
-      log.error("Error read token: ", e);
-    }
+    token = authorizationData.getDiscordApi().getApiKey();
+    
+//    try {
+//      token = new String(Files.readAllBytes(Paths.get("src/main/resources/bot-token.txt"))).trim();
+//    } catch (IOException e) {
+//      log.error("Error read token: ", e);
+//    }
   }
 
   public Optional<JDA> getJda() {

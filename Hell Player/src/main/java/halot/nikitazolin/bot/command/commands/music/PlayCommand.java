@@ -74,10 +74,12 @@ public class PlayCommand extends BotCommand {
   public void execute(BotCommandContext context) {
     AudioPlayer audioPlayer = playerService.getAudioPlayer();
 
-    String url0 = "https://www.youtube.com/watch?v=apKYICJ-LTY";
+//    String url0 = "https://www.youtube.com/watch?v=pfgrI39PM0o";
+    String url0 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
     String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
     String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-    String url3 = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
+    String url3 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
+//    String url3 = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
     
 //    List<String> links = context.getArgumentMapper().getString();
     List<String> links = List.of(url0, url1, url2, url3);
@@ -85,6 +87,7 @@ public class PlayCommand extends BotCommand {
     
     for (String trackUrl : links) {
       playerService.getAudioPlayerManager().loadItemSync(trackUrl, new QueueFiller(playerService));
+//      playerService.getAudioPlayerManager().loadItem(trackUrl, new QueueFiller(playerService));
     }
     
     if(audioService.connectToVoiceChannel(context) == false) {
