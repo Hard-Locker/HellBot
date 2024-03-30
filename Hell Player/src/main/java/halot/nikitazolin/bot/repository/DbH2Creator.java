@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class DbCreator {
+public class DbH2Creator {
 
   private final AuthorizationData authorizationData;
   private final AuthorizationSaver authorizationSaver;
@@ -26,16 +26,15 @@ public class DbCreator {
   private String username = "odmen";
   private String password = "admin";
 
-  public void createDatabase(String authorizationFilePath) {
+  public void ensureExistsDatabase(String authorizationFilePath) {
     try {
       Connection connection = DriverManager.getConnection(dbUrl, username, password);
-      saveAuthorizationDatabase(authorizationFilePath);
-      
       connection.close();
-      
-      log.info("Successfully create H2 database");
+
+      saveAuthorizationDatabase(authorizationFilePath);
+      log.info("Successfully ensured H2 database");
     } catch (SQLException e) {
-      log.error("Error with create embeded database: " + e);
+      log.error("Error with ensured embeded database: " + e);
     }
   }
 
@@ -45,9 +44,5 @@ public class DbCreator {
     authorizationData.setDatabase(database);
     authorizationSaver.saveToFile(filePath);
     log.info("Authorization data (Database) save successfully");
-  }
-
-  public void createTableSQL(Connection connection) {
-    String resourcePath = "db/migration/V1__CreateTable.sql";
   }
 }
