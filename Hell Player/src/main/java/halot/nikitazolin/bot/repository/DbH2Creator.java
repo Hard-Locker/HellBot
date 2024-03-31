@@ -32,7 +32,7 @@ public class DbH2Creator {
       connection.close();
 
       saveAuthorizationDatabase(authorizationFilePath);
-      log.info("Successfully ensured H2 database");
+      log.info("Successfully ensured the existence of the H2 database.");
     } catch (SQLException e) {
       log.error("Error with ensured embeded database: " + e);
     }
@@ -43,6 +43,6 @@ public class DbH2Creator {
 
     authorizationData.setDatabase(database);
     authorizationSaver.saveToFile(filePath);
-    log.info("Authorization data (Database) save successfully");
+    log.info("Authorization data (DatabaseVendor.H2) is successfully updated along the path: " + filePath);
   }
 }

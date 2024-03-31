@@ -18,7 +18,7 @@ public class DbDataSource {
   private final ApplicationContext applicationContext;
   private final AuthorizationData authorizationData;
 
-  public void registerDataSourceBean() {
+  public void registerDataSourceСonstant() {
     Database dbConfig = authorizationData.getDatabase();
 
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -27,6 +27,6 @@ public class DbDataSource {
     dataSource.setUsername(dbConfig.getDbUsername());
     dataSource.setPassword(dbConfig.getDbPassword());
 
-    ((GenericApplicationContext) applicationContext).registerBean("dataSource", DataSource.class, () -> dataSource);
+    ((GenericApplicationContext) applicationContext).registerBean("dataSourceСonstant", DataSource.class, () -> dataSource);
   }
 }

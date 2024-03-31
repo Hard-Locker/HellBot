@@ -15,6 +15,7 @@ public class DbService {
   private final AuthorizationData authorizationData;
   private final DbDataSource dbDataSource;
   private final DbH2Creator dbH2Creator;
+  private final FlywayMigrationRunner flywayMigrationRunner;
 
   public void validateDb(String filePath) {
     checkEnabledDb(filePath);
@@ -28,11 +29,11 @@ public class DbService {
         dbH2Creator.ensureExistsDatabase(filePath);
       }
 
-      dbDataSource.registerDataSourceBean();
+      dbDataSource.registerDataSourceСonstant();
     }
   }
 
   private void checkDbSchema() {
-    // TODO need use flyway
+    flywayMigrationRunner.migrateDatabaseConstant();
   }
 }

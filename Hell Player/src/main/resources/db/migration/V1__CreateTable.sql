@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS play_history CASCADE;
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   user_id BIGINT NOT NULL UNIQUE,
-  user_name VARCHAR(255)
+  username VARCHAR(255)
 );
 
 CREATE TABLE guild (
