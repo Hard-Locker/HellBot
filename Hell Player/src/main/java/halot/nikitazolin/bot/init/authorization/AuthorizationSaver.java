@@ -16,13 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthorizationSaver {
-  
+
   private final AuthorizationData authorizationData;
-  
+
   public void saveToFile(String filePath) {
     saveConfig(authorizationData, filePath);
   }
-  
+
   private void saveConfig(AuthorizationData authorizationData, String filePath) {
     log.info("Update config with path: " + filePath);
     DumperOptions options = new DumperOptions();
@@ -41,5 +41,4 @@ public class AuthorizationSaver {
       log.error("Error writing the secrets file: {}", e);
     }
   }
-
 }
