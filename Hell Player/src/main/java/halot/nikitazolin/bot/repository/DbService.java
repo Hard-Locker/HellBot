@@ -19,21 +19,22 @@ public class DbService {
 
   public void validateDb(String filePath) {
     checkEnabledDb(filePath);
-    checkDbSchema();
+    prepareTempDb();
   }
 
   private void checkEnabledDb(String filePath) {
     if (authorizationData.getDatabase().isDbEnabled() == true) {
       if (authorizationData.getDatabase().getDbVendor() == DatabaseVendor.H2) {
-        log.info("Ensure exists database");
+        log.info("Ensure exists H2 database");
         dbH2Creator.ensureExistsDatabase(filePath);
       }
 
       dbDataSource.registerDataSourceСonstant();
+      flywayMigrationRunner.migrateDatabaseConstant();
     }
   }
 
-  private void checkDbSchema() {
-    flywayMigrationRunner.migrateDatabaseConstant();
+  private void prepareTempDb() {
+    flywayMigrationRunner.migrateDatabaseTemporary();
   }
 }

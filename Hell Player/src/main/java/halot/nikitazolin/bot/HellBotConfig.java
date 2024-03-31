@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class HellBotConfig {
 
   @Bean
-  DataSource dataSource() {
+  DataSource dataSourceTemporary() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
     dataSource.setDriverClassName("org.h2.Driver");

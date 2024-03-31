@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
 import halot.nikitazolin.bot.init.authorization.data.Database;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class DbDataSource {
 
@@ -27,6 +29,9 @@ public class DbDataSource {
     dataSource.setUsername(dbConfig.getDbUsername());
     dataSource.setPassword(dbConfig.getDbPassword());
 
-    ((GenericApplicationContext) applicationContext).registerBean("dataSourceСonstant", DataSource.class, () -> dataSource);
+    ((GenericApplicationContext) applicationContext).registerBean("dataSourceСonstant", DataSource.class,
+        () -> dataSource);
+
+    log.info("Successfully register bean DataSource for constant database");
   }
 }

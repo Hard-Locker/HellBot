@@ -17,9 +17,11 @@ import halot.nikitazolin.bot.jda.JdaService;
 import halot.nikitazolin.bot.listener.JdaListenerService;
 import halot.nikitazolin.bot.repository.DbService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
 
 @Service
+@Slf4j
 @Profile("development")
 @RequiredArgsConstructor
 public class ApplicationRunnerImpl implements ApplicationRunner {
@@ -51,6 +53,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 //    makeAudioPlayer();
 
     System.out.println("Ready!");
+    log.info("Ready!");
   }
 
   private void configuration() {
