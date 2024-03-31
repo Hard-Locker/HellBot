@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
-import halot.nikitazolin.bot.discord.jda.JdaService;
+import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +27,11 @@ public class CommandService {
   @Autowired
   private List<BotCommand> allCommands;
 
-  private final JdaService jdaService;
+  private final JdaMaker jdaMaker;
   private final CommandCollector commandCollector;
 
   public void addCommands() {
-    Optional<JDA> jda = jdaService.getJda();
+    Optional<JDA> jda = jdaMaker.getJda();
 
     List<CommandData> commandsToRegistration = preparateCommands(allCommands);
     registerCommands(jda, commandsToRegistration);

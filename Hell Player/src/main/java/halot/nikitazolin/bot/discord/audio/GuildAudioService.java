@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-public class AudioService {
+public class GuildAudioService {
 
   private final MessageUtil messageUtil;
   private final IPlayerService playerService;

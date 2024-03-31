@@ -6,7 +6,7 @@ import java.time.Instant;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.jda.JdaService;
+import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 
@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 @RequiredArgsConstructor
 public class MessageUtil {
 
-  private final JdaService jdaService;
+  private final JdaMaker jdaMaker;
 
   private static final Color BOT_COLOR_SUCCESS = new Color(88, 170, 137);
   private static final Color BOT_COLOR_ERROR = new Color(191, 61, 39);
@@ -115,7 +115,7 @@ public class MessageUtil {
   }
 
   private void setCommonFooter(EmbedBuilder embedBuilder) {
-    jdaService.getJda().ifPresent(jda -> {
+    jdaMaker.getJda().ifPresent(jda -> {
       String name = jda.getSelfUser().getName();
       String avatarUrl = jda.getSelfUser().getAvatarUrl();
       embedBuilder.setFooter(name, avatarUrl);

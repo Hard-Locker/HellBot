@@ -2,6 +2,9 @@ package halot.nikitazolin.bot.init.authorization;
 
 import org.springframework.stereotype.Service;
 
+import halot.nikitazolin.bot.init.authorization.manager.AuthorizationConsoleMenu;
+import halot.nikitazolin.bot.init.authorization.manager.AuthorizationFileChecker;
+import halot.nikitazolin.bot.init.authorization.manager.AuthorizationLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

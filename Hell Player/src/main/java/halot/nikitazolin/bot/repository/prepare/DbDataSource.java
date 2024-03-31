@@ -7,8 +7,8 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
-import halot.nikitazolin.bot.init.authorization.data.Database;
+import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.model.Database;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

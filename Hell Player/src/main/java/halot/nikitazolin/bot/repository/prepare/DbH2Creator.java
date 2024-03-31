@@ -6,10 +6,10 @@ import java.sql.SQLException;
 
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.init.authorization.AuthorizationSaver;
-import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
-import halot.nikitazolin.bot.init.authorization.data.Database;
-import halot.nikitazolin.bot.init.authorization.data.DatabaseVendor;
+import halot.nikitazolin.bot.init.authorization.manager.AuthorizationSaver;
+import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.model.Database;
+import halot.nikitazolin.bot.init.authorization.model.DatabaseVendor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

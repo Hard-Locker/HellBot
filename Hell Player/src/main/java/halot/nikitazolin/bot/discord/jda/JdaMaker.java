@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.listener.ReadyListener;
-import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 @Scope("singleton")
 @Slf4j
 @RequiredArgsConstructor
-public class JdaService {
+public class JdaMaker {
 
   private final AuthorizationData authorizationData;
   
@@ -67,12 +67,6 @@ public class JdaService {
 
   private void readTokenFromFile() {
     token = authorizationData.getDiscordApi().getApiKey();
-    
-//    try {
-//      token = new String(Files.readAllBytes(Paths.get("src/main/resources/bot-token.txt"))).trim();
-//    } catch (IOException e) {
-//      log.error("Error read token: ", e);
-//    }
   }
 
   public Optional<JDA> getJda() {

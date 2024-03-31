@@ -1,9 +1,9 @@
-package halot.nikitazolin.bot.init.authorization;
+package halot.nikitazolin.bot.init.authorization.manager;
 
 import org.springframework.stereotype.Service;
 
-import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
-import halot.nikitazolin.bot.init.authorization.data.DatabaseVendor;
+import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.model.DatabaseVendor;
 import halot.nikitazolin.bot.util.InputNumber;
 import halot.nikitazolin.bot.util.InputText;
 import lombok.RequiredArgsConstructor;

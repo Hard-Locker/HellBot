@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
-import halot.nikitazolin.bot.discord.audio.AudioService;
+import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
 import halot.nikitazolin.bot.discord.audio.player.QueueFiller;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
@@ -27,7 +27,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 public class PlayCommand extends BotCommand {
 
   private final IPlayerService playerService;
-  private final AudioService audioService;
+  private final GuildAudioService guildAudioService;
   private final MessageUtil messageUtil;
 
   @Override
@@ -90,11 +90,11 @@ public class PlayCommand extends BotCommand {
 //      playerService.getAudioPlayerManager().loadItem(trackUrl, new QueueFiller(playerService));
     }
     
-    if(audioService.connectToVoiceChannel(context) == false) {
+    if(guildAudioService.connectToVoiceChannel(context) == false) {
       return;
     }
     
-    audioService.getPlayerService().startPlayingMusic();
+    guildAudioService.getPlayerService().startPlayingMusic();
     
     EmbedBuilder embed = messageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
     context.sendMessageEmbed(embed);

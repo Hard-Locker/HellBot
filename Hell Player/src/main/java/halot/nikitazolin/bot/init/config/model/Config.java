@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.config;
+package halot.nikitazolin.bot.init.config.model;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,6 +19,5 @@ public class Config {
   private static boolean stayInChannel = true;
   private static int aloneTimeUntilStop = 3000;
   private static boolean updateAlerts = false;
-  
   
 }

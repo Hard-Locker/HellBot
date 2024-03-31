@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.config;
+package halot.nikitazolin.bot.init.config.manager;
 
 import java.io.BufferedWriter;
 import java.io.File;

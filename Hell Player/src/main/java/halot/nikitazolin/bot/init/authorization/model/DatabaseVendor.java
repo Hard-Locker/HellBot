@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.authorization.data;
+package halot.nikitazolin.bot.init.authorization.model;
 
 import java.util.Arrays;
 import java.util.Optional;

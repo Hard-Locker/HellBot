@@ -2,8 +2,8 @@ package halot.nikitazolin.bot.repository;
 
 import org.springframework.stereotype.Service;
 
-import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
-import halot.nikitazolin.bot.init.authorization.data.DatabaseVendor;
+import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.model.DatabaseVendor;
 import halot.nikitazolin.bot.repository.prepare.DbDataSource;
 import halot.nikitazolin.bot.repository.prepare.DbH2Creator;
 import halot.nikitazolin.bot.repository.prepare.FlywayMigrationRunner;

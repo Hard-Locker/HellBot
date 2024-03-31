@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.authorization;
+package halot.nikitazolin.bot.init.authorization.manager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

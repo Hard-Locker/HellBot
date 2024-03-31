@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.command.manager.CommandEventHandler;
-import halot.nikitazolin.bot.discord.jda.JdaService;
+import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
@@ -17,11 +17,11 @@ import net.dv8tion.jda.api.JDA;
 @RequiredArgsConstructor
 public class JdaListenerService {
 
-  private final JdaService jdaService;
+  private final JdaMaker jdaMaker;
   private final CommandEventHandler commandEventHandler;
 
   public void addListeners() {
-    Optional<JDA> jda = jdaService.getJda();
+    Optional<JDA> jda = jdaMaker.getJda();
 
     registerListeners(jda);
   }

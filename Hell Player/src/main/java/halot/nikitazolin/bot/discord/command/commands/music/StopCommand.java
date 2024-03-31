@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.audio.AudioService;
+import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class StopCommand extends BotCommand {
 
-  private final AudioService audioService;
+  private final GuildAudioService guildAudioService;
   private final MessageUtil messageUtil;
   
   @Override
@@ -66,7 +66,7 @@ public class StopCommand extends BotCommand {
   
   @Override
   public void execute(BotCommandContext context) {
-    audioService.stopAudioSending();
+    guildAudioService.stopAudioSending();
 
     EmbedBuilder embed = messageUtil.createWarningEmbed("Player was stopped by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);

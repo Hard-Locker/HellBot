@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.config;
+package halot.nikitazolin.bot.init.config.manager;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import halot.nikitazolin.bot.init.config.model.Config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.audio.AudioService;
+import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class ShutdownCommand extends BotCommand {
 
-  private final AudioService audioService;
+  private final GuildAudioService guildAudioService;
 
   @Override
   public String name() {
@@ -63,7 +63,7 @@ public class ShutdownCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    audioService.shutdown();
+    guildAudioService.shutdown();
 //     TODO
 //    context.sendText("Bot shutdown...");
 

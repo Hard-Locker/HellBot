@@ -5,20 +5,13 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import halot.nikitazolin.bot.discord.audio.AudioService;
-import halot.nikitazolin.bot.discord.audio.player.AudioPlayerListenerService;
-import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
-import halot.nikitazolin.bot.discord.audio.player.TrackScheduler;
-import halot.nikitazolin.bot.discord.command.manager.CommandService;
-import halot.nikitazolin.bot.discord.jda.JdaService;
-import halot.nikitazolin.bot.discord.listener.JdaListenerService;
+import halot.nikitazolin.bot.discord.AudioService;
+import halot.nikitazolin.bot.discord.JdaService;
 import halot.nikitazolin.bot.init.authorization.AuthorizationService;
-import halot.nikitazolin.bot.init.config.ConfigChecker;
-import halot.nikitazolin.bot.init.config.ConfigLoader;
+import halot.nikitazolin.bot.init.config.ConfigService;
 import halot.nikitazolin.bot.repository.DbService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Guild;
 
 @Service
 @Slf4j
@@ -28,53 +21,25 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
   private final AuthorizationService authorizationService;
   private final DbService dbService;
-  private final ConfigChecker configChecker;
-  private final ConfigLoader configLoader;
+  private final ConfigService configService;
   private final JdaService jdaService;
-  private final CommandService commandService;
-  private final JdaListenerService jdaListenerService;
-  private final IPlayerService playerService;
   private final AudioService audioService;
-  private final TrackScheduler trackScheduler;
-  private final AudioPlayerListenerService audioPlayerListenerService;
-  
+
   public static final String AUTHORIZATION_FILE_PATH = "secrets.yml";
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
     authorizationService.validateAuthorization(AUTHORIZATION_FILE_PATH);
     dbService.validateDb(AUTHORIZATION_FILE_PATH);
-    
-    configuration();
+    configService.validateConfiguration();
 
-    initializeJda();
+    // Start JDA
+    jdaService.initializeJda();
 
     // TODO Need improve guild getter. Now it potential bug
-    makeAudioPlayer();
+    audioService.makeAudioPlayer();
 
     System.out.println("Ready!");
     log.info("Ready!");
-  }
-
-  private void configuration() {
-    String filePath = "config.yml";
-    configChecker.ensureFileExists(filePath);
-
-    configLoader.load(filePath);
-  }
-
-  private void initializeJda() {
-    jdaService.makeJda();
-    commandService.addCommands();
-    jdaListenerService.addListeners();
-  }
-
-  private void makeAudioPlayer() {
-    // TODO Need improve guild getter. Now it potential bug
-    Guild guild = jdaService.getJda().get().getGuilds().getFirst();
-    playerService.createPlayer();
-    trackScheduler.preparateScheduler(playerService);
-    audioPlayerListenerService.addListeners();
-    audioService.registratePlayer(guild);
   }
 }

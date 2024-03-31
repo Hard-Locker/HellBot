@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.authorization;
+package halot.nikitazolin.bot.init.authorization.manager;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

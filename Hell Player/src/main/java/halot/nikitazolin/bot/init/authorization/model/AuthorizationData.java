@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.authorization.data;
+package halot.nikitazolin.bot.init.authorization.model;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.authorization;
+package halot.nikitazolin.bot.init.authorization.manager;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -8,11 +8,11 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
-import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
-import halot.nikitazolin.bot.init.authorization.data.Database;
-import halot.nikitazolin.bot.init.authorization.data.DatabaseVendor;
-import halot.nikitazolin.bot.init.authorization.data.DiscordApi;
-import halot.nikitazolin.bot.init.authorization.data.Youtube;
+import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
+import halot.nikitazolin.bot.init.authorization.model.Database;
+import halot.nikitazolin.bot.init.authorization.model.DatabaseVendor;
+import halot.nikitazolin.bot.init.authorization.model.DiscordApi;
+import halot.nikitazolin.bot.init.authorization.model.Youtube;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
