@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.repository;
+package halot.nikitazolin.bot.repository.prepare;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

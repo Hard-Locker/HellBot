@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.repository;
+package halot.nikitazolin.bot.repository.prepare;
 
 import javax.sql.DataSource;
 
