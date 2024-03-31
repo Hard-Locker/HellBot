@@ -1,12 +1,12 @@
-package halot.nikitazolin.bot.listener;
+package halot.nikitazolin.bot.discord.listener;
 
 import java.util.Optional;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.command.manager.CommandEventHandler;
-import halot.nikitazolin.bot.jda.JdaService;
+import halot.nikitazolin.bot.discord.command.manager.CommandEventHandler;
+import halot.nikitazolin.bot.discord.jda.JdaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;

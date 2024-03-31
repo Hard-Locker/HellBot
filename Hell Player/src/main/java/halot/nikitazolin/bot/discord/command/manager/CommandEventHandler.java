@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.command.manager;
+package halot.nikitazolin.bot.discord.command.manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandContext;
-import halot.nikitazolin.bot.command.model.CommandArguments;
+import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.command.model.CommandArguments;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;

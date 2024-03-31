@@ -1,10 +1,10 @@
-package halot.nikitazolin.bot.audio;
+package halot.nikitazolin.bot.discord.audio;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import halot.nikitazolin.bot.audio.player.IPlayerService;
-import halot.nikitazolin.bot.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
+import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

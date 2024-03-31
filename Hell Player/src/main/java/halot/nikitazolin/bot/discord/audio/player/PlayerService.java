@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.audio.player;
+package halot.nikitazolin.bot.discord.audio.player;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;

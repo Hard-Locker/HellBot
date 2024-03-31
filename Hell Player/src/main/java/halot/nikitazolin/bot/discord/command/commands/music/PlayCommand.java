@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.command.commands.music;
+package halot.nikitazolin.bot.discord.command.commands.music;
 
 import java.util.List;
 
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
-import halot.nikitazolin.bot.audio.AudioService;
-import halot.nikitazolin.bot.audio.player.QueueFiller;
-import halot.nikitazolin.bot.audio.player.IPlayerService;
-import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.audio.AudioService;
+import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
+import halot.nikitazolin.bot.discord.audio.player.QueueFiller;
+import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,15 +1,17 @@
-package halot.nikitazolin.bot.command.commands;
+package halot.nikitazolin.bot.discord.command.commands.music;
 
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
+import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -17,26 +19,29 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class PingCommand extends BotCommand {
+public class SkipCommand extends BotCommand {
 
-  @Override
-  public String name() {
-    return "ping";
-  }
+  private final IPlayerService playerService;
+  private final MessageUtil messageUtil;
   
   @Override
+  public String name() {
+    return "skip";
+  }
+
+  @Override
   public List<String> nameAliases() {
-    return List.of("ping");
+    return List.of("skip", "4");
   }
 
   @Override
   public List<String> commandPrefixes() {
     return List.of("!", "1");
   }
-  
+
   @Override
   public String description() {
-    return "Wanna check ping?";
+    return "Skip current music";
   }
 
   @Override
@@ -61,13 +66,11 @@ public class PingCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-//    final long time = System.currentTimeMillis();
-//
-//    context.getSlashCommandEvent()
-//      .replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build())
-//      .setEphemeral(true)
-//      .queue(response -> {
-//          response.editOriginalEmbeds(MessageUtil.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
-//        }, failure -> context.getSlashCommandEvent().replyEmbeds(MessageUtil.createErrorEmbed("Failed to get response time!").build()).queue());
+    playerService.skipTrack();
+
+    EmbedBuilder embed = messageUtil.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
+    context.sendMessageEmbed(embed);
+
+    log.info("Track skiped by user: " + context.getUser());
   }
 }

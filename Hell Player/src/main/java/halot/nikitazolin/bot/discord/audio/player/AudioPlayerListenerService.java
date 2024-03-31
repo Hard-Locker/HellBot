@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.audio.player;
+package halot.nikitazolin.bot.discord.audio.player;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

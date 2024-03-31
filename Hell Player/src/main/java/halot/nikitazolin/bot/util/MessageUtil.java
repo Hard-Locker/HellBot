@@ -6,7 +6,7 @@ import java.time.Instant;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.jda.JdaService;
+import halot.nikitazolin.bot.discord.jda.JdaService;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 

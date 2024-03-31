@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.listener;
+package halot.nikitazolin.bot.discord.listener;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;

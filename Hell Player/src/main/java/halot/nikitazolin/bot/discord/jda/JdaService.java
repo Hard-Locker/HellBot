@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.jda;
+package halot.nikitazolin.bot.discord.jda;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.discord.listener.ReadyListener;
 import halot.nikitazolin.bot.init.authorization.data.AuthorizationData;
-import halot.nikitazolin.bot.listener.ReadyListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;

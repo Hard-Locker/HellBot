@@ -1,17 +1,15 @@
-package halot.nikitazolin.bot.command.commands.music;
+package halot.nikitazolin.bot.discord.command.commands;
 
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.audio.AudioService;
-import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -19,29 +17,26 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class StopCommand extends BotCommand {
+public class PingCommand extends BotCommand {
 
-  private final AudioService audioService;
-  private final MessageUtil messageUtil;
-  
   @Override
   public String name() {
-    return "stop";
+    return "ping";
   }
-
+  
   @Override
   public List<String> nameAliases() {
-    return List.of("stop", "999");
+    return List.of("ping");
   }
 
   @Override
   public List<String> commandPrefixes() {
     return List.of("!", "1");
   }
-
+  
   @Override
   public String description() {
-    return "Stop playing music";
+    return "Wanna check ping?";
   }
 
   @Override
@@ -63,14 +58,16 @@ public class StopCommand extends BotCommand {
   public OptionData[] options() {
     return new OptionData[] {};
   }
-  
+
   @Override
   public void execute(BotCommandContext context) {
-    audioService.stopAudioSending();
-
-    EmbedBuilder embed = messageUtil.createWarningEmbed("Player was stopped by user: " + context.getUser().getAsMention());
-    context.sendMessageEmbed(embed);
-
-    log.info("Player was stopped by user: " + context.getUser());
+//    final long time = System.currentTimeMillis();
+//
+//    context.getSlashCommandEvent()
+//      .replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build())
+//      .setEphemeral(true)
+//      .queue(response -> {
+//          response.editOriginalEmbeds(MessageUtil.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
+//        }, failure -> context.getSlashCommandEvent().replyEmbeds(MessageUtil.createErrorEmbed("Failed to get response time!").build()).queue());
   }
 }

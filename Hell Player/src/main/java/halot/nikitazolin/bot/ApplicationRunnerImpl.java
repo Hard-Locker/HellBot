@@ -5,16 +5,16 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import halot.nikitazolin.bot.audio.AudioService;
-import halot.nikitazolin.bot.audio.player.AudioPlayerListenerService;
-import halot.nikitazolin.bot.audio.player.IPlayerService;
-import halot.nikitazolin.bot.audio.player.TrackScheduler;
-import halot.nikitazolin.bot.command.manager.CommandService;
+import halot.nikitazolin.bot.discord.audio.AudioService;
+import halot.nikitazolin.bot.discord.audio.player.AudioPlayerListenerService;
+import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
+import halot.nikitazolin.bot.discord.audio.player.TrackScheduler;
+import halot.nikitazolin.bot.discord.command.manager.CommandService;
+import halot.nikitazolin.bot.discord.jda.JdaService;
+import halot.nikitazolin.bot.discord.listener.JdaListenerService;
 import halot.nikitazolin.bot.init.authorization.AuthorizationService;
 import halot.nikitazolin.bot.init.config.ConfigChecker;
 import halot.nikitazolin.bot.init.config.ConfigLoader;
-import halot.nikitazolin.bot.jda.JdaService;
-import halot.nikitazolin.bot.listener.JdaListenerService;
 import halot.nikitazolin.bot.repository.DbService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,10 +47,10 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     
     configuration();
 
-//    initializeJda();
-//
-//    // TODO Need improve guild getter. Now it potential bug
-//    makeAudioPlayer();
+    initializeJda();
+
+    // TODO Need improve guild getter. Now it potential bug
+    makeAudioPlayer();
 
     System.out.println("Ready!");
     log.info("Ready!");

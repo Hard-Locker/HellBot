@@ -1,13 +1,13 @@
-package halot.nikitazolin.bot.command.commands.music;
+package halot.nikitazolin.bot.discord.command.commands.music;
 
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.audio.player.IPlayerService;
-import halot.nikitazolin.bot.command.model.BotCommand;
-import halot.nikitazolin.bot.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.audio.AudioService;
+import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,19 +19,19 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SkipCommand extends BotCommand {
+public class StopCommand extends BotCommand {
 
-  private final IPlayerService playerService;
+  private final AudioService audioService;
   private final MessageUtil messageUtil;
   
   @Override
   public String name() {
-    return "skip";
+    return "stop";
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("skip", "4");
+    return List.of("stop", "999");
   }
 
   @Override
@@ -41,7 +41,7 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Skip current music";
+    return "Stop playing music";
   }
 
   @Override
@@ -63,14 +63,14 @@ public class SkipCommand extends BotCommand {
   public OptionData[] options() {
     return new OptionData[] {};
   }
-
+  
   @Override
   public void execute(BotCommandContext context) {
-    playerService.skipTrack();
+    audioService.stopAudioSending();
 
-    EmbedBuilder embed = messageUtil.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
+    EmbedBuilder embed = messageUtil.createWarningEmbed("Player was stopped by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);
 
-    log.info("Track skiped by user: " + context.getUser());
+    log.info("Player was stopped by user: " + context.getUser());
   }
 }
