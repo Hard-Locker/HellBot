@@ -15,19 +15,19 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class DbDataSource {
+public class DataSourceRegistrator {
 
   private final ApplicationContext applicationContext;
   private final AuthorizationData authorizationData;
 
   public void registerDataSourceСonstant() {
-    Database dbConfig = authorizationData.getDatabase();
+    Database database = authorizationData.getDatabase();
 
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    dataSource.setDriverClassName(dbConfig.getDbVendor().getDriverClassName());
-    dataSource.setUrl(dbConfig.getDbUrl());
-    dataSource.setUsername(dbConfig.getDbUsername());
-    dataSource.setPassword(dbConfig.getDbPassword());
+    dataSource.setDriverClassName(database.getDbVendor().getDriverClassName());
+    dataSource.setUrl(database.getDbUrl());
+    dataSource.setUsername(database.getDbUsername());
+    dataSource.setPassword(database.getDbPassword());
 
     ((GenericApplicationContext) applicationContext).registerBean("dataSourceСonstant", DataSource.class,
         () -> dataSource);

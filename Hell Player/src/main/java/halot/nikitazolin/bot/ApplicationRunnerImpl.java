@@ -9,7 +9,7 @@ import halot.nikitazolin.bot.discord.AudioService;
 import halot.nikitazolin.bot.discord.JdaService;
 import halot.nikitazolin.bot.init.authorization.AuthorizationService;
 import halot.nikitazolin.bot.init.config.ConfigService;
-import halot.nikitazolin.bot.repository.DbService;
+import halot.nikitazolin.bot.repository.DatabaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ApplicationRunnerImpl implements ApplicationRunner {
 
   private final AuthorizationService authorizationService;
-  private final DbService dbService;
+  private final DatabaseService databaseService;
   private final ConfigService configService;
   private final JdaService jdaService;
   private final AudioService audioService;
@@ -30,14 +30,14 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
     authorizationService.validateAuthorization(AUTHORIZATION_FILE_PATH);
-    dbService.validateDb(AUTHORIZATION_FILE_PATH);
+    databaseService.validateDb(AUTHORIZATION_FILE_PATH);
     configService.validateConfiguration();
 
     // Start JDA
-    jdaService.initializeJda();
+//    jdaService.initializeJda();
 
     // TODO Need improve guild getter. Now it potential bug
-    audioService.makeAudioPlayer();
+//    audioService.makeAudioPlayer();
 
     System.out.println("Ready!");
     log.info("Ready!");

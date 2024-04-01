@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @RequiredArgsConstructor
-//@Transactional
 @Slf4j
 public class UserRepository implements IUserRepository {
 
