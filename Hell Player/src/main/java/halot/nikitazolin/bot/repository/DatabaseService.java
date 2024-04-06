@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
 import halot.nikitazolin.bot.init.authorization.model.DatabaseVendor;
-import halot.nikitazolin.bot.repository.prepare.DataSourceRegistrator;
 import halot.nikitazolin.bot.repository.prepare.DbH2Creator;
+import halot.nikitazolin.bot.repository.prepare.DbRegistrator;
 import halot.nikitazolin.bot.repository.prepare.FlywayMigrationRunner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DatabaseService {
 
   private final AuthorizationData authorizationData;
-  private final DataSourceRegistrator dataSourceRegistrator;
+  private final DbRegistrator dbRegistrator;
   private final DbH2Creator dbH2Creator;
   private final FlywayMigrationRunner flywayMigrationRunner;
 
@@ -40,13 +40,13 @@ public class DatabaseService {
       dbH2Creator.ensureExistsDatabase(filePath);
     }
 
-    dataSourceRegistrator.registerDataSourceСonstant();
-    flywayMigrationRunner.migrateDatabaseConstant();
+    dbRegistrator.registerConstantDb();
+    flywayMigrationRunner.migrateDatabases();
     log.info("Constant database was prepared");
   }
 
   private void prepareTemporaryDb() {
-    flywayMigrationRunner.migrateDatabaseTemporary();
+    flywayMigrationRunner.migrateDatabases();
     log.info("Temporary database was prepared");
   }
 }

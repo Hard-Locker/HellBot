@@ -23,7 +23,7 @@ public class PingCommand extends BotCommand {
   public String name() {
     return "ping";
   }
-  
+
   @Override
   public List<String> nameAliases() {
     return List.of("ping");
@@ -33,7 +33,7 @@ public class PingCommand extends BotCommand {
   public List<String> commandPrefixes() {
     return List.of("!", "1");
   }
-  
+
   @Override
   public String description() {
     return "Wanna check ping?";
@@ -62,6 +62,8 @@ public class PingCommand extends BotCommand {
   @Override
   public void execute(BotCommandContext context) {
 //    final long time = System.currentTimeMillis();
+//
+//    jda.getRestPing().queue(ping -> System.out.println("Logged in with ping: " + ping));
 //
 //    context.getSlashCommandEvent()
 //      .replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build())

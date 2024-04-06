@@ -18,6 +18,9 @@
           <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
       </encoder>
   </appender>
+  
+  <!-- Logger for Flyway with DEBUG level -->
+  <logger name="org.flywaydb" level="DEBUG"/>
 
   <!-- Root Logger -->
   <root level="INFO">

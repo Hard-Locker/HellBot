@@ -23,8 +23,8 @@ public class DbH2Creator {
 
   private String dbName = "HellDB";
   private String dbUrl = "jdbc:h2:file:./db/" + dbName + ";DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE";
-  private String username = "odmen";
-  private String password = "admin";
+  private String username = "ODMEN";
+  private String password = "ADMIN";
 
   public void ensureExistsDatabase(String authorizationFilePath) {
     try {
