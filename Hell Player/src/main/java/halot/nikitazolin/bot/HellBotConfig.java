@@ -71,28 +71,4 @@ public class HellBotConfig {
 
     return dataSource;
   }
-
-//  @Bean
-//  DataSource dataSourceTemporary() {
-//    DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//
-//    dataSource.setDriverClassName("org.h2.Driver");
-//    dataSource.setUrl("jdbc:h2:file:./db/HellDB;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE");
-//    dataSource.setUsername("ODMEN");
-//    dataSource.setPassword("ADMIN");
-//
-//    return dataSource;
-//  }
-
-//  @Bean
-//  DataSource dataSourceConstant() {
-//    DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//
-//    dataSource.setDriverClassName("org.postgresql.Driver");
-//    dataSource.setUrl("jdbc:postgresql://localhost:5432/helldb");
-//    dataSource.setUsername("odmen");
-//    dataSource.setPassword("admin");
-//
-//    return dataSource;
-//  }
 }

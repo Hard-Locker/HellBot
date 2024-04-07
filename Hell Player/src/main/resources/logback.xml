@@ -13,14 +13,14 @@
 
   <!-- File Appender -->
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-      <file>logs/hellPlayer.log</file>
+      <file>logs/hellBot.log</file>
       <encoder>
           <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
       </encoder>
   </appender>
   
-  <!-- Logger for Flyway with DEBUG level -->
-  <logger name="org.flywaydb" level="DEBUG"/>
+  <!-- Logger for Flyway -->
+  <logger name="org.flywaydb" level="INFO"/>
 
   <!-- Root Logger -->
   <root level="INFO">
