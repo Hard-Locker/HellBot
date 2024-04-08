@@ -37,7 +37,14 @@ public class DatabaseService {
   private void prepareConstantDb(String filePath) {
     if (authorizationData.getDatabase().getDbVendor() == DatabaseVendor.H2) {
       log.info("Ensure exists H2 database");
-      dbH2Manager.ensureExistsDatabase(filePath);
+
+      if (dbH2Manager.checkAuthorizationData()) {
+        log.info("Authorization data have information. Try start database");
+        dbH2Manager.startDatabaseServer();
+      } else {
+        log.info("Authorization data is invalid. Create default database");
+        dbH2Manager.createDefaultDatabase(filePath);
+      }
     }
 
     dbRegistrator.registerConstantDb();

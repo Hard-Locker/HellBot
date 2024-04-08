@@ -34,10 +34,10 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     configService.validateConfiguration();
 
     // Start JDA
-    jdaService.initializeJda();
+//    jdaService.initializeJda();
 
     // TODO Need improve guild getter. Now it potential bug
-    audioService.makeAudioPlayer();
+//    audioService.makeAudioPlayer();
 
     System.out.println("Ready!");
     log.info("Ready!");

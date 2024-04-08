@@ -1,7 +1,5 @@
 package halot.nikitazolin.bot.repository.prepare;
 
-import java.sql.SQLException;
-
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.HellBotConfig;
@@ -30,8 +28,8 @@ public class DbRegistrator {
     try {
       hellBotConfig.addTenant(tenantId, driverClassName, url, username, password);
       hellBotConfig.setCurrentTenant(tenantId);
-      log.info("Successfully add constant database");
-    } catch (SQLException e) {
+      log.info("Add constant database");
+    } catch (Exception e) {
       log.info("Error with adding constant database: " + e);
     }
   }
