@@ -35,18 +35,19 @@ public class DbH2Manager {
   public void createDefaultDatabase(String authorizationFilePath) {
     String dbName = "HellDB";
     String dbPath = "/./db/" + dbName;
-    String port = "10097";
-    String dbUrl = "jdbc:h2:tcp://localhost:" + port + dbPath;
+    String initialPort = "8082";
     String username = "ODMEN";
     String password = "ADMIN";
 
-    startServer(port);
+    startServer(initialPort, true);
+
+    String dbUrl = "jdbc:h2:tcp://localhost:" + server.getPort() + dbPath;
 
     try (Connection connection = DriverManager.getConnection(dbUrl, username, password)) {
       Database database = new Database(true, DatabaseVendor.H2, dbName, dbUrl, username, password);
 
       saveAuthorizationDatabase(authorizationFilePath, database);
-      log.info("Database created with default data.");
+      log.info("Database created with default data on port " + server.getPort() + ".");
     } catch (SQLException e) {
       log.error("Error while creating the database: " + e.getMessage(), e);
     }
@@ -61,7 +62,7 @@ public class DbH2Manager {
       String dbUrl = authorizationData.getDatabase().getDbUrl();
       Optional<String> portOptional = extractPortFromUrl(dbUrl);
 
-      portOptional.ifPresentOrElse(this::startServer,
+      portOptional.ifPresentOrElse(port -> startServer(port, false),
           () -> log.error("Port was not found or invalid in the database URL"));
     } catch (Exception e) {
       log.error("Error with starting database server: {}", e.getMessage(), e);
@@ -92,12 +93,31 @@ public class DbH2Manager {
     return Optional.empty();
   }
 
-  private void startServer(String port) {
-    try {
-      server = Server.createTcpServer("-tcpPort", port, "-tcpAllowOthers", "-ifNotExists").start();
-      log.info("H2 database server started and available at: " + server.getURL());
-    } catch (SQLException e) {
-      log.error("Could not start H2 database server: " + e.getMessage(), e);
+  private void startServer(String initialPort, boolean tryNextPorts) {
+    int port = Integer.parseInt(initialPort);
+    final int maxAttempts = 50;
+    boolean serverStarted = false;
+
+    for (int attempt = 0; attempt < maxAttempts && !serverStarted; attempt++) {
+      try {
+        server = Server.createTcpServer("-tcpPort", String.valueOf(port), "-tcpAllowOthers", "-ifNotExists").start();
+        log.info("H2 database server started and available at: " + server.getURL());
+        serverStarted = true;
+      } catch (SQLException e) {
+        if (tryNextPorts) {
+          log.warn("Port " + port + " is in use. Trying next port.");
+          port++;
+        } else {
+          log.error("Could not start H2 database server on port " + port + ": " + e.getMessage(), e);
+
+          break;
+        }
+      }
+    }
+
+    if (!serverStarted) {
+      log.error(
+          "Failed to start the H2 database server after trying " + maxAttempts + " ports starting from " + initialPort);
     }
   }
 
