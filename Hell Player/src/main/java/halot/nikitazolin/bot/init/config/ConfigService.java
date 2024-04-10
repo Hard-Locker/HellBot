@@ -15,8 +15,7 @@ public class ConfigService {
   private final ConfigChecker configChecker;
   private final ConfigLoader configLoader;
 
-  public void validateConfiguration() {
-    String filePath = "config.yml";
+  public void validateConfiguration(String filePath) {
     configChecker.ensureFileExists(filePath);
 
     configLoader.load(filePath);

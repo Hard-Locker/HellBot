@@ -26,12 +26,13 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   private final AudioService audioService;
 
   public static final String AUTHORIZATION_FILE_PATH = "secrets.yml";
+  public static final String CONFIG_FILE_PATH = "config.yml";
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
     authorizationService.validateAuthorization(AUTHORIZATION_FILE_PATH);
     databaseService.validateDb(AUTHORIZATION_FILE_PATH);
-    configService.validateConfiguration();
+    configService.validateConfiguration(CONFIG_FILE_PATH);
 
     // Start JDA
     jdaService.initializeJda();
