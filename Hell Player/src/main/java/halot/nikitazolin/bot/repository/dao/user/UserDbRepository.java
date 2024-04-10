@@ -6,44 +6,44 @@ import java.util.List;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
-import halot.nikitazolin.bot.repository.model.User;
+import halot.nikitazolin.bot.repository.model.UserDb;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class UserRepository implements IUserRepository {
+public class UserDbRepository implements IUserDbRepository {
 
-  private final UserJpaRepository userJpaRepository;
+  private final UserDbJpaRepository userDbJpaRepository;
 
   @Override
-  public boolean insert(User user) {
-    log.info("Inserting a new user into the database: {}", user);
+  public boolean insert(UserDb userDb) {
+    log.info("Inserting a new user into the database: {}", userDb);
 
     try {
-      userJpaRepository.save(user);
-      log.info("Inserted user: {}", user);
+      userDbJpaRepository.save(userDb);
+      log.info("Inserted user: {}", userDb);
 
       return true;
     } catch (DataAccessException e) {
-      log.error("Error inserting user: {}", user, e);
+      log.error("Error inserting user: {}", userDb, e);
 
       return false;
     }
   }
 
   @Override
-  public boolean update(User user) {
-    log.info("Updating user in the database: {}", user);
+  public boolean update(UserDb userDb) {
+    log.info("Updating user in the database: {}", userDb);
 
     try {
-      userJpaRepository.save(user);
-      log.info("Updated user: {}", user);
+      userDbJpaRepository.save(userDb);
+      log.info("Updated user: {}", userDb);
 
       return true;
     } catch (DataAccessException e) {
-      log.error("Error updating user: {}", user, e);
+      log.error("Error updating user: {}", userDb, e);
 
       return false;
     }
@@ -54,7 +54,7 @@ public class UserRepository implements IUserRepository {
     log.info("Deleting user with ID: {}", userId);
 
     try {
-      userJpaRepository.deleteById(userId);
+      userDbJpaRepository.deleteById(userId);
       log.info("Deleted user with ID: {}", userId);
 
       return true;
@@ -66,14 +66,14 @@ public class UserRepository implements IUserRepository {
   }
 
   @Override
-  public List<User> getAll() {
+  public List<UserDb> getAll() {
     log.info("Retrieving all users from the database");
 
     try {
-      List<User> users = userJpaRepository.findAll();
-      log.info("Retrieved {} users from database.", users.size());
+      List<UserDb> userDbs = userDbJpaRepository.findAll();
+      log.info("Retrieved {} users from database.", userDbs.size());
 
-      return users;
+      return userDbs;
     } catch (DataAccessException e) {
       log.error("Error retrieving users from database", e);
 

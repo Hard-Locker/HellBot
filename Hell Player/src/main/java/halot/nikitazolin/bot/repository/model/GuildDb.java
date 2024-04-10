@@ -12,17 +12,23 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "guild")
+public class GuildDb {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "user_id", nullable = false)
-  private Long userId;
+  @Column(name = "guild_id", nullable = false, unique = true)
+  private Long guildId;
 
-  @Column(name = "username", nullable = true, columnDefinition = "varchar(255)")
-  private String username;
+  @Column(name = "guild_name", nullable = false, columnDefinition = "varchar(255)")
+  private String guildName;
+
+  public GuildDb(Long guildId, String guildName) {
+    super();
+    this.guildId = guildId;
+    this.guildName = guildName;
+  }
 }

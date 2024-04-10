@@ -9,6 +9,7 @@ import halot.nikitazolin.bot.discord.AudioService;
 import halot.nikitazolin.bot.discord.JdaService;
 import halot.nikitazolin.bot.init.authorization.AuthorizationService;
 import halot.nikitazolin.bot.init.config.ConfigService;
+import halot.nikitazolin.bot.init.discord.DbFiller;
 import halot.nikitazolin.bot.repository.DatabaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   private final ConfigService configService;
   private final JdaService jdaService;
   private final AudioService audioService;
+  private final DbFiller dbFiller;
 
   public static final String AUTHORIZATION_FILE_PATH = "secrets.yml";
   public static final String CONFIG_FILE_PATH = "config.yml";
@@ -40,6 +42,8 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     // TODO Need improve guild getter. Now it potential bug
     audioService.makeAudioPlayer();
 
+    dbFiller.fillDatabase();
+    
     System.out.println("Ready!");
     log.info("Ready!");
   }
