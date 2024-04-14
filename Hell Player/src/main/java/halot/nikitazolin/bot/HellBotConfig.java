@@ -13,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @Slf4j
 @ComponentScan(basePackages = "halot.nikitazolin.bot")
+@EnableTransactionManagement
 @RequiredArgsConstructor
 public class HellBotConfig {
 
-  private final ThreadLocal<String> currentTenant = new ThreadLocal<>();
+  private final InheritableThreadLocal<String> currentTenant = new InheritableThreadLocal<>();
   private final Map<Object, Object> tenantDataSources = new ConcurrentHashMap<>();
 
   private AbstractRoutingDataSource multiTenantDataSource;
@@ -33,6 +35,8 @@ public class HellBotConfig {
     multiTenantDataSource = new AbstractRoutingDataSource() {
       @Override
       protected Object determineCurrentLookupKey() {
+        log.debug("currentTenant: " + currentTenant.get());
+
         return currentTenant.get();
       }
     };
@@ -44,10 +48,8 @@ public class HellBotConfig {
     return multiTenantDataSource;
   }
 
-  public void addTenant(String tenantId, String driverClassName, String url, String username, String password)
-      throws SQLException {
-    DataSource dataSource = DataSourceBuilder.create().driverClassName(driverClassName).url(url).username(username)
-        .password(password).build();
+  public void addTenant(String tenantId, String driverClassName, String url, String username, String password) throws SQLException {
+    DataSource dataSource = DataSourceBuilder.create().driverClassName(driverClassName).url(url).username(username).password(password).build();
 
     try (Connection connection = dataSource.getConnection()) {
       tenantDataSources.put(tenantId, dataSource);

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.discord.command.model.CommandArguments;
+import halot.nikitazolin.bot.init.discord.DbFiller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
@@ -23,9 +24,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 @Slf4j
 @RequiredArgsConstructor
 public class CommandEventHandler extends ListenerAdapter {
-  
+
   private final CommandCollector commandCollector;
-  
+  private final DbFiller dbFiller;
+
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
     if (slashEvent.getGuild() == null || slashEvent.getUser().isBot() || slashEvent.getMember() == null) {
@@ -42,19 +44,21 @@ public class CommandEventHandler extends ListenerAdapter {
       slashEvent.reply("You don't have the permission to execute this command!").setEphemeral(true).queue();
       return;
     }
-    
+
     slashEvent.deferReply().queue();
-    
+
     List<String> stringArgs = new ArrayList<>();
     List<Attachment> attachmentArgs = new ArrayList<>();
     stringArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.STRING).map(option -> option.getAsString()).toList();
     attachmentArgs = slashEvent.getOptions().stream().filter(option -> option.getType() == OptionType.ATTACHMENT).map(option -> option.getAsAttachment()).toList();
-    CommandArguments commandArguments = new CommandArguments(stringArgs, attachmentArgs);
 
+    CommandArguments commandArguments = new CommandArguments(stringArgs, attachmentArgs);
     BotCommandContext context = new BotCommandContext(command.get(), slashEvent, null, commandArguments);
-    
+
     slashEvent.getHook().deleteOriginal().queue();
     command.get().execute(context);
+
+    dbFiller.fillUserTable(context.getMember());
   }
 
   @Override
@@ -67,7 +71,7 @@ public class CommandEventHandler extends ListenerAdapter {
     String[] messageParts = message.getContentRaw().trim().split(" ", 2);
     List<String> arguments = new ArrayList<>();
 
-    if(messageParts.length > 1) {
+    if (messageParts.length > 1) {
       String[] parts = messageParts[1].split("\\n");
       arguments.addAll(Arrays.asList(parts));
     }
@@ -88,10 +92,13 @@ public class CommandEventHandler extends ListenerAdapter {
     List<Attachment> attachmentArgs = new ArrayList<>();
     stringArgs = arguments;
     attachmentArgs = message.getAttachments();
-    CommandArguments commandArguments = new CommandArguments(stringArgs, attachmentArgs);
 
+    CommandArguments commandArguments = new CommandArguments(stringArgs, attachmentArgs);
     BotCommandContext context = new BotCommandContext(command.get(), null, messageEvent, commandArguments);
+
     command.get().execute(context);
+
+    dbFiller.fillUserTable(context.getMember());
   }
 
   private Optional<BotCommand> getCommandByReceivedMessage(String commandName) {

@@ -35,7 +35,8 @@ public class BotCommandContext {
   private Member member;
   private TextChannel textChannel;
 
-  public BotCommandContext(BotCommand botCommand, SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent, CommandArguments commandArguments) {
+  public BotCommandContext(BotCommand botCommand, SlashCommandInteractionEvent slashCommandEvent,
+      MessageReceivedEvent messageReceivedEvent, CommandArguments commandArguments) {
     super();
     this.botCommand = botCommand;
     this.slashCommandEvent = slashCommandEvent;
@@ -46,8 +47,6 @@ public class BotCommandContext {
     user = fillUser(slashCommandEvent, messageReceivedEvent);
     member = fillMember(slashCommandEvent, messageReceivedEvent);
     textChannel = fillTextChannel(slashCommandEvent, messageReceivedEvent);
-    
-//    System.out.println("");
   }
 
   public void sendText(CharSequence text) {
@@ -61,13 +60,13 @@ public class BotCommandContext {
   public void sendMessagesEmbed(List<MessageEmbed> messagesEmbed) {
     textChannel.sendMessageEmbeds(messagesEmbed).queue();
   }
-  
+
   public void sendMessageEmbed(EmbedBuilder embedBuilder) {
     MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
 
     textChannel.sendMessage(messageCreateData).queue();
   }
-  
+
   private Guild fillGuild(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {
     List<Supplier<Guild>> guildSuppliers = new ArrayList<>();
 
@@ -137,7 +136,8 @@ public class BotCommandContext {
     return null;
   }
 
-  private TextChannel fillTextChannel(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {
+  private TextChannel fillTextChannel(SlashCommandInteractionEvent slashCommandEvent,
+      MessageReceivedEvent messageReceivedEvent) {
     List<Supplier<TextChannel>> textChannelSuppliers = new ArrayList<>();
 
     if (slashCommandEvent != null) {

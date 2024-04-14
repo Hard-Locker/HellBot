@@ -42,8 +42,9 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     // TODO Need improve guild getter. Now it potential bug
     audioService.makeAudioPlayer();
 
+    // TODO Need improve guild getter. Now it potential bug
     dbFiller.fillDatabase();
-    
+
     System.out.println("Ready!");
     log.info("Ready!");
   }

@@ -6,13 +6,17 @@ DROP TABLE IF EXISTS song_history CASCADE;
 CREATE TABLE users (
   id BIGSERIAL PRIMARY KEY,
   user_id BIGINT NOT NULL UNIQUE,
-  username VARCHAR(255)
+  username VARCHAR(255),
+  role VARCHAR(255),
+  permission VARCHAR(255),
+  note VARCHAR(255)
 );
 
 CREATE TABLE guild (
   id BIGSERIAL PRIMARY KEY,
   guild_id BIGINT NOT NULL UNIQUE,
-  guild_name VARCHAR(255)
+  guild_name VARCHAR(255),
+  note VARCHAR(255)
 );
 
 CREATE TABLE event_history (

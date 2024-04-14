@@ -80,25 +80,25 @@ public class PlayCommand extends BotCommand {
     String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     String url3 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
 //    String url3 = "https://youtu.be/kS-Mob5Ha64?si=qlEmw8tKoEmmQhHs";
-    
+
 //    List<String> links = context.getArgumentMapper().getString();
     List<String> links = List.of(url0, url1, url2, url3);
 //    System.out.println("links size: " + links.size());
-    
+
     for (String trackUrl : links) {
       playerService.getAudioPlayerManager().loadItemSync(trackUrl, new QueueFiller(playerService));
 //      playerService.getAudioPlayerManager().loadItem(trackUrl, new QueueFiller(playerService));
     }
-    
-    if(guildAudioService.connectToVoiceChannel(context) == false) {
+
+    if (guildAudioService.connectToVoiceChannel(context) == false) {
       return;
     }
-    
+
     guildAudioService.getPlayerService().startPlayingMusic();
-    
+
     EmbedBuilder embed = messageUtil.createSuccessEmbed("Play: " + audioPlayer.getPlayingTrack().getIdentifier());
     context.sendMessageEmbed(embed);
-    
+
     log.debug("User launched audiotrack." + " User: " + context.getUser() + " Track: " + audioPlayer.getPlayingTrack().getIdentifier());
   }
 }

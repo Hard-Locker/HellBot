@@ -2,15 +2,18 @@ package halot.nikitazolin.bot.repository.dao.user;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import halot.nikitazolin.bot.repository.model.UserDb;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class UserDbRepository implements IUserDbRepository {
@@ -78,6 +81,22 @@ public class UserDbRepository implements IUserDbRepository {
       log.error("Error retrieving users from database", e);
 
       return Collections.emptyList();
+    }
+  }
+
+  @Override
+  public Optional<UserDb> findByUserId(Long userId) {
+    log.info("Retrieving user from the database by ID: {}", userId);
+
+    try {
+      Optional<UserDb> userDb = userDbJpaRepository.findOneByUserId(userId);
+      log.info("Retrieved user from database? = {}", userDb.isPresent());
+
+      return userDb;
+    } catch (DataAccessException e) {
+      log.error("Error retrieving user from database", e);
+
+      return Optional.empty();
     }
   }
 }

@@ -26,9 +26,19 @@ public class GuildDb {
   @Column(name = "guild_name", nullable = false, columnDefinition = "varchar(255)")
   private String guildName;
 
+  @Column(name = "note", nullable = true, columnDefinition = "varchar(255)")
+  private String note;
+
   public GuildDb(Long guildId, String guildName) {
     super();
     this.guildId = guildId;
     this.guildName = guildName;
+  }
+
+  public GuildDb(Long guildId, String guildName, String note) {
+    super();
+    this.guildId = guildId;
+    this.guildName = guildName;
+    this.note = note;
   }
 }

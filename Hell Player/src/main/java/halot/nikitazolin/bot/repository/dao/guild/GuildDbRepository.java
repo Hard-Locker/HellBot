@@ -6,12 +6,14 @@ import java.util.Optional;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import halot.nikitazolin.bot.repository.model.GuildDb;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class GuildDbRepository implements IGuildDbRepository {
@@ -84,11 +86,11 @@ public class GuildDbRepository implements IGuildDbRepository {
 
   @Override
   public Optional<GuildDb> findByGuildId(Long guildId) {
-    log.info("Retrieving guild from the database by ID.");
+    log.info("Retrieving guild from the database by ID: {}", guildId);
 
     try {
       Optional<GuildDb> guildDb = guildDbJpaRepository.findOneByGuildId(guildId);
-      log.info("Retrieved guild from database.", guildDb);
+      log.info("Retrieved guild from database? = {}", guildDb.isPresent());
 
       return guildDb;
     } catch (DataAccessException e) {

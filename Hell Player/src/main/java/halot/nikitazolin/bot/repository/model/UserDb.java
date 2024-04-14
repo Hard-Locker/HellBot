@@ -26,9 +26,32 @@ public class UserDb {
   @Column(name = "username", nullable = true, columnDefinition = "varchar(255)")
   private String username;
 
+  @Column(name = "role", nullable = true, columnDefinition = "varchar(255)")
+  private String role;
+
+  @Column(name = "permission", nullable = true, columnDefinition = "varchar(255)")
+  private String permission;
+
+  @Column(name = "note", nullable = true, columnDefinition = "varchar(255)")
+  private String note;
+
   public UserDb(Long userId, String username) {
-    super();
     this.userId = userId;
     this.username = username;
+  }
+
+  public UserDb(Long userId, String username, String role, String permission) {
+    this.userId = userId;
+    this.username = username;
+    this.role = role;
+    this.permission = permission;
+  }
+
+  public UserDb(Long userId, String username, String role, String permission, String note) {
+    this.userId = userId;
+    this.username = username;
+    this.role = role;
+    this.permission = permission;
+    this.note = note;
   }
 }

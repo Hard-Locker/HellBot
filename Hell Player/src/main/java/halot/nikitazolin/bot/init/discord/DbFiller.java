@@ -3,15 +3,19 @@ package halot.nikitazolin.bot.init.discord;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import halot.nikitazolin.bot.discord.jda.JdaMaker;
+import halot.nikitazolin.bot.repository.dao.eventHistory.IEventHistoryRepository;
 import halot.nikitazolin.bot.repository.dao.guild.IGuildDbRepository;
+import halot.nikitazolin.bot.repository.dao.songHistory.ISongHistoryRepository;
 import halot.nikitazolin.bot.repository.dao.user.IUserDbRepository;
 import halot.nikitazolin.bot.repository.model.GuildDb;
 import halot.nikitazolin.bot.repository.model.UserDb;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 
 @Service
 @Slf4j
@@ -21,14 +25,15 @@ public class DbFiller {
   private final JdaMaker jdaMaker;
   private final IGuildDbRepository guildDbRepository;
   private final IUserDbRepository userDbRepository;
+  private final IEventHistoryRepository eventHistoryRepository;
+  private final ISongHistoryRepository songHistoryRepository;
 
   public void fillDatabase() {
-    fillGuildTable();
-    fillUserTable();
+    Guild guild = jdaMaker.getJda().get().getGuilds().getFirst();
+    fillGuildTable(guild);
   }
 
-  private void fillGuildTable() {
-    Guild guild = jdaMaker.getJda().get().getGuilds().getFirst();
+  public void fillGuildTable(Guild guild) {
     GuildDb guildDB = new GuildDb(guild.getIdLong(), guild.getName());
     Optional<GuildDb> existingGuildDb = guildDbRepository.findByGuildId(guild.getIdLong());
 
@@ -39,17 +44,17 @@ public class DbFiller {
       log.info("Guild already exists in database. No action needed.");
     }
   }
-  
-  private void fillUserTable() {
-    Guild guild = jdaMaker.getJda().get().getGuilds().getFirst();
-//    List<Member> members = guild.getMembers();
-    
-    System.out.println("Member count: " + guild.getMemberCount());
-    
-//    for(Member member : members) {
-//      System.out.println(member.getNickname());
-//    }
-    
-    UserDb userDb = new UserDb();
+
+  @Transactional
+  public void fillUserTable(Member member) {
+    Optional<UserDb> existingUserDb = userDbRepository.findByUserId(member.getUser().getIdLong());
+    UserDb userDb = new UserDb(member.getUser().getIdLong(), member.getUser().getName());
+
+    if (existingUserDb.isEmpty()) {
+      userDbRepository.insert(userDb);
+      log.info("User {} saved to DB.", member.getUser().getIdLong());
+    } else {
+      log.info("User {} already exists in database.", member.getUser().getIdLong());
+    }
   }
 }
