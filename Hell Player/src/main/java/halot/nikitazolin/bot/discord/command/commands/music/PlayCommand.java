@@ -1,5 +1,6 @@
 package halot.nikitazolin.bot.discord.command.commands.music;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
@@ -12,6 +13,7 @@ import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
 import halot.nikitazolin.bot.discord.audio.player.QueueFiller;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
+import halot.nikitazolin.bot.repository.model.SongHistory;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,7 +85,6 @@ public class PlayCommand extends BotCommand {
 
 //    List<String> links = context.getArgumentMapper().getString();
     List<String> links = List.of(url0, url1, url2, url3);
-//    System.out.println("links size: " + links.size());
 
     for (String trackUrl : links) {
       playerService.getAudioPlayerManager().loadItemSync(trackUrl, new QueueFiller(playerService));

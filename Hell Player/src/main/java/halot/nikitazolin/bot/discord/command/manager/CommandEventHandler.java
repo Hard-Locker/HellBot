@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.discord.command.model.CommandArguments;
-import halot.nikitazolin.bot.init.discord.DbFiller;
+import halot.nikitazolin.bot.init.discord.DatabaseFillService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 public class CommandEventHandler extends ListenerAdapter {
 
   private final CommandCollector commandCollector;
-  private final DbFiller dbFiller;
+  private final DatabaseFillService databaseFillService;
 
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
@@ -58,7 +58,8 @@ public class CommandEventHandler extends ListenerAdapter {
     slashEvent.getHook().deleteOriginal().queue();
     command.get().execute(context);
 
-    dbFiller.fillUserTable(context.getMember());
+    databaseFillService.saveUserToDb(context.getMember());
+    databaseFillService.saveEventHistoryToDb(context);
   }
 
   @Override
@@ -98,7 +99,8 @@ public class CommandEventHandler extends ListenerAdapter {
 
     command.get().execute(context);
 
-    dbFiller.fillUserTable(context.getMember());
+    databaseFillService.saveUserToDb(context.getMember());
+    databaseFillService.saveEventHistoryToDb(context);
   }
 
   private Optional<BotCommand> getCommandByReceivedMessage(String commandName) {

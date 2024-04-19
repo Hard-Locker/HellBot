@@ -1,16 +1,19 @@
 package halot.nikitazolin.bot.init.discord;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import halot.nikitazolin.bot.repository.dao.eventHistory.IEventHistoryRepository;
 import halot.nikitazolin.bot.repository.dao.guild.IGuildDbRepository;
 import halot.nikitazolin.bot.repository.dao.songHistory.ISongHistoryRepository;
 import halot.nikitazolin.bot.repository.dao.user.IUserDbRepository;
+import halot.nikitazolin.bot.repository.model.EventHistory;
 import halot.nikitazolin.bot.repository.model.GuildDb;
+import halot.nikitazolin.bot.repository.model.SongHistory;
 import halot.nikitazolin.bot.repository.model.UserDb;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +23,7 @@ import net.dv8tion.jda.api.entities.Member;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DbFiller {
+public class DatabaseFillService {
 
   private final JdaMaker jdaMaker;
   private final IGuildDbRepository guildDbRepository;
@@ -30,10 +33,10 @@ public class DbFiller {
 
   public void fillDatabase() {
     Guild guild = jdaMaker.getJda().get().getGuilds().getFirst();
-    fillGuildTable(guild);
+    saveGuildToDb(guild);
   }
 
-  public void fillGuildTable(Guild guild) {
+  public void saveGuildToDb(Guild guild) {
     GuildDb guildDB = new GuildDb(guild.getIdLong(), guild.getName());
     Optional<GuildDb> existingGuildDb = guildDbRepository.findByGuildId(guild.getIdLong());
 
@@ -45,8 +48,7 @@ public class DbFiller {
     }
   }
 
-  @Transactional
-  public void fillUserTable(Member member) {
+  public void saveUserToDb(Member member) {
     Optional<UserDb> existingUserDb = userDbRepository.findByUserId(member.getUser().getIdLong());
     UserDb userDb = new UserDb(member.getUser().getIdLong(), member.getUser().getName());
 
@@ -56,5 +58,17 @@ public class DbFiller {
     } else {
       log.info("User {} already exists in database.", member.getUser().getIdLong());
     }
+  }
+  
+  public void saveEventHistoryToDb(BotCommandContext context) {
+    EventHistory eventHistory = new EventHistory(LocalDateTime.now(), context.getBotCommand().name(), context.getUser().getIdLong(), context.getGuild().getIdLong());
+    
+    eventHistoryRepository.insert(eventHistory);
+    log.info("EventHistory {} saved to DB.");
+  }
+  
+  public void saveSongHistoryToDb(SongHistory songHistory) {
+    songHistoryRepository.insert(songHistory);
+    log.info("SongHistory {} saved to DB.");
   }
 }

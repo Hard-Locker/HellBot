@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
   private IPlayerService playerService;
-
   private boolean isRepeat = false;
 
   public void preparateScheduler(IPlayerService playerService) {

@@ -40,5 +40,4 @@ public class QueueFiller implements AudioLoadResultHandler {
   public void loadFailed(FriendlyException exception) {
 
   }
-
 }

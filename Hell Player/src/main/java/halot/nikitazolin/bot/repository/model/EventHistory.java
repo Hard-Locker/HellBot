@@ -35,4 +35,20 @@ public class EventHistory {
 
   @Column(name = "note", columnDefinition = "varchar(255)")
   private String note;
+
+  public EventHistory(LocalDateTime eventDatetime, String eventType, Long userId, Long guildId) {
+    super();
+    this.eventDatetime = eventDatetime;
+    this.eventType = eventType;
+    this.userId = userId;
+    this.guildId = guildId;
+  }
+
+  public EventHistory(LocalDateTime eventDatetime, String eventType, Long userId, Long guildId, String note) {
+    this.eventDatetime = eventDatetime;
+    this.eventType = eventType;
+    this.userId = userId;
+    this.guildId = guildId;
+    this.note = note;
+  }
 }
