@@ -10,6 +10,12 @@
 
   <repositories>
     <repository>
+      <id>arbjergDev-snapshots</id>
+      <name>Lavalink Repository</name>
+      <url>https://maven.lavalink.dev/snapshots</url>
+    </repository>
+
+    <repository>
       <id>jitpack</id>
       <url>https://jitpack.io</url>
     </repository>
@@ -22,26 +28,23 @@
       <version>5.0.0-beta.22</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/dev.arbjerg/lavaplayer -->
+    <!-- https://maven.lavalink.dev/snapshots -->
     <dependency>
       <groupId>dev.arbjerg</groupId>
       <artifactId>lavaplayer</artifactId>
-      <version>2.1.1</version>
+      <version>afec211f05c9dcf0b6ee44276a02f0316ea2458a-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
         </exclusion>
+
+        <exclusion>
+          <groupId>com.github.walkyst</groupId>
+          <artifactId>JAADec-fork</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
-
-    <!--
-    <dependency>
-      <groupId>com.github.devoxin</groupId>
-      <artifactId>lavaplayer</artifactId>
-      <version>1.8.0</version>
-    </dependency>
-    -->
 
     <dependency>
       <groupId>org.yaml</groupId>
@@ -70,32 +73,6 @@
       <version>5.11.0</version>
       <scope>test</scope>
     </dependency>
-
-    <!--
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>testcontainers</artifactId>
-      <version>1.19.7</version>
-      <scope>test</scope>
-    </dependency>
-    -->
-
-    <!--
-    <dependency>
-      <groupId>org.testcontainers</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>1.19.7</version>
-      <scope>test</scope>
-    </dependency>
-    -->
-
-    <!--
-    <dependency>
-      <groupId>org.firebirdsql</groupId>
-      <artifactId>firebird-testcontainers-java</artifactId>
-      <version>1.4.0</version>
-    </dependency>
-    -->
     <!-- //////////////// -->
 
     <!-- LOG -->

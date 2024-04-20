@@ -20,8 +20,8 @@
   </appender>
   
   <logger name="org.flywaydb" level="WARN"/>
-  <logger name="org.springframework.transaction" level="TRACE"/>
-  <logger name="org.springframework.transaction.interceptor" level="TRACE"/>
+  <logger name="org.springframework.transaction" level="WARN"/>
+  <logger name="org.springframework.transaction.interceptor" level="WARN"/>
   <logger name="org.hibernate.SQL" level="WARN"/>
 
   <!-- Root Logger -->
