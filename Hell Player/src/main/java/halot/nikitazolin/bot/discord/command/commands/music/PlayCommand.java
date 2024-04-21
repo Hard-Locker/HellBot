@@ -70,17 +70,14 @@ public class PlayCommand extends BotCommand {
   @Override
   public void execute(BotCommandContext context) {
     String url0 = "https://www.youtube.com/watch?v=Tctv-vujFKU";
-//    String url0 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
     String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
     String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-//    String url3 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     String url3 = "https://youtu.be/Tctv-vujFKU?si=731Seio46tir0SgO";
 
 //    List<String> links = context.getArgumentMapper().getString();
     List<String> links = List.of(url0, url1, url2, url3);
-    System.out.println("links size: " + links.size());
 
-    queueFiller.makeTracks(links);
+    queueFiller.fillQueue(links);
 
     if (guildAudioService.connectToVoiceChannel(context) == false) {
       return;
@@ -90,6 +87,7 @@ public class PlayCommand extends BotCommand {
 
     EmbedBuilder embed = messageUtil.createSuccessEmbed("User launched audiotrack");
     context.sendMessageEmbed(embed);
+    
     log.debug("User launched audiotrack." + " User: " + context.getUser());
   }
 }

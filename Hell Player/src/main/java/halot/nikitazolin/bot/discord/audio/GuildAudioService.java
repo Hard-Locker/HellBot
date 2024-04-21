@@ -33,7 +33,6 @@ public class GuildAudioService {
   private void setUpAudioSendHandler(AudioManager audioManager, Guild guild) {
     if (audioManager.getSendingHandler() == null) {
       audioManager.setSendingHandler(playerService);
-
       log.debug("Set sending handler for guild: " + guild.getId());
     }
   }

@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
-import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import halot.nikitazolin.bot.repository.dao.eventHistory.IEventHistoryRepository;
 import halot.nikitazolin.bot.repository.dao.guild.IGuildDbRepository;
 import halot.nikitazolin.bot.repository.dao.songHistory.ISongHistoryRepository;
@@ -25,16 +24,14 @@ import net.dv8tion.jda.api.entities.Member;
 @RequiredArgsConstructor
 public class DatabaseFillService {
 
-  private final JdaMaker jdaMaker;
   private final IGuildDbRepository guildDbRepository;
   private final IUserDbRepository userDbRepository;
   private final IEventHistoryRepository eventHistoryRepository;
   private final ISongHistoryRepository songHistoryRepository;
 
-  public void fillDatabase() {
-    Guild guild = jdaMaker.getJda().get().getGuilds().getFirst();
-    saveGuildToDb(guild);
-  }
+//  public void fillDatabase(Guild guild) {
+//    saveGuildToDb(guild);
+//  }
 
   public void saveGuildToDb(Guild guild) {
     GuildDb guildDB = new GuildDb(guild.getIdLong(), guild.getName());

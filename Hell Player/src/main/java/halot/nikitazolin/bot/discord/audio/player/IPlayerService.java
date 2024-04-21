@@ -5,7 +5,6 @@ import java.util.concurrent.BlockingQueue;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 
@@ -37,5 +36,5 @@ public interface IPlayerService extends AudioSendHandler {
 
   AudioPlayerManager getAudioPlayerManager();
 
-  BlockingQueue<AudioTrack> getQueue();
+  BlockingQueue<String> getQueue();
 }

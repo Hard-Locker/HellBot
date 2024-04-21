@@ -11,6 +11,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
+import halot.nikitazolin.bot.init.discord.DatabaseFillService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,13 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
-  private IPlayerService playerService;
+  private final DatabaseFillService databaseFillService;
+  private final IPlayerService playerService;
+
   private boolean isRepeat = false;
-
-  public void preparateScheduler(IPlayerService playerService) {
-    this.playerService = playerService;
-  }
-
+  
   @Override
   public void onEvent(AudioEvent event) {
     super.onEvent(event);
@@ -34,22 +33,28 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
 
   @Override
   public void onPlayerPause(AudioPlayer player) {
+
   }
 
   @Override
   public void onPlayerResume(AudioPlayer player) {
+
   }
 
   @Override
   public void onTrackStart(AudioPlayer player, AudioTrack track) {
+    System.out.println("Event onTrackStart");
+    System.out.println("uri: " + track.getInfo().uri);
+    System.out.println("length: " + track.getInfo().length);
+    System.out.println("author: " + track.getInfo().author);
+    System.out.println("title: " + track.getInfo().title);
   }
 
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-    AudioPlayer audioPlayer = playerService.getAudioPlayer();
-
     if (endReason == AudioTrackEndReason.FINISHED) {
-      audioPlayer.playTrack(playerService.getQueue().poll());
+      playerService.startPlayingMusic();
+//      playerService.getAudioPlayerManager().loadItem(playerService.getQueue().poll(), new AudioLoadResultManager(playerService.getAudioPlayer()));
     }
   }
 

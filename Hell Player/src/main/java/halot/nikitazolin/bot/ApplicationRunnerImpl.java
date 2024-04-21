@@ -37,13 +37,12 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     configService.validateConfiguration(CONFIG_FILE_PATH);
 
     // Start JDA
+    // TODO Need improve guild getter. Now it potential bug
     jdaService.initializeJda();
 
-    // TODO Need improve guild getter. Now it potential bug
-    audioService.makeAudioPlayer();
+    audioService.makeAudioPlayer(jdaService.getGuild());
 
-    // TODO Need improve guild getter. Now it potential bug
-    databaseFillService.fillDatabase();
+    databaseFillService.saveGuildToDb(jdaService.getGuild());
 
     System.out.println("Ready!");
     log.info("Ready!");
