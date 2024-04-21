@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
+import halot.nikitazolin.bot.discord.audio.player.PlayerService;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class SkipCommand extends BotCommand {
 
-  private final IPlayerService playerService;
+  private final PlayerService playerService;
   private final MessageUtil messageUtil;
   
   @Override

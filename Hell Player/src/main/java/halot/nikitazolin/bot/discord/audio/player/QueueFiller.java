@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class QueueFiller {
 
-  private final IPlayerService playerService;
+  private final PlayerService playerService;
 
   public void fillQueue(List<String> identifiers) {
     for (String identifier : identifiers) {

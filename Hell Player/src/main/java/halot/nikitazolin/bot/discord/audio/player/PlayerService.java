@@ -18,13 +18,14 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.audio.AudioSendHandler;
 
 @Service
 @Scope("singleton")
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-public class PlayerService implements IPlayerService {
+public class PlayerService implements AudioSendHandler {
 
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
@@ -51,33 +52,42 @@ public class PlayerService implements IPlayerService {
     AudioSourceManagers.registerRemoteSources(audioPlayerManager);
     AudioSourceManagers.registerLocalSource(audioPlayerManager);
     audioPlayerManager.source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);
-    
+
     audioPlayerManager.getConfiguration().setResamplingQuality(ResamplingQuality.HIGH);
     audioPlayerManager.getConfiguration().setOpusEncodingQuality(10);
-    
+
     audioPlayer = audioPlayerManager.createPlayer();
 
     log.info("Created PlayerService for implementation AudioSendHandler");
   }
 
-  public void startPlayingMusic() {
+  public void play() {
     if ((audioPlayer.isPaused() == false) && (audioPlayer.getPlayingTrack() == null)) {
       audioPlayerManager.loadItem(queue.poll(), new AudioLoadResultManager(audioPlayer));
+    } else if (audioPlayer.isPaused() == true) {
+      audioPlayer.setPaused(false);
     }
   }
 
-  public void stopPlayingMusic() {
-    queue.clear();
+  public void stop() {
     audioPlayer.stopTrack();
   }
 
   public void skipTrack() {
     audioPlayer.stopTrack();
-    startPlayingMusic();
+    play();
   }
 
   public void skipTracks() {
     // TODO
+  }
+
+  public void pause() {
+    if (audioPlayer.isPaused() == false) {
+      audioPlayer.setPaused(true);
+    } else {
+      audioPlayer.setPaused(false);
+    }
   }
 
   public void setVolume() {
@@ -86,6 +96,11 @@ public class PlayerService implements IPlayerService {
 
   public void clearQueue() {
     queue.clear();
+  }
+  
+  public void offPlayer() {
+    queue.clear();
+    audioPlayer.stopTrack();
   }
 
   public void shutdownPlayer() {

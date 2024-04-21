@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.audio.player.PlayerService;
+import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
@@ -19,19 +19,19 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class StopCommand extends BotCommand {
+public class OffCommand extends BotCommand {
 
-  private final PlayerService playerService;
+  private final GuildAudioService guildAudioService;
   private final MessageUtil messageUtil;
-
+  
   @Override
   public String name() {
-    return "stop";
+    return "off";
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("stop", "9");
+    return List.of("off", "999");
   }
 
   @Override
@@ -41,7 +41,7 @@ public class StopCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Stop player and skip current music";
+    return "Stop music, clear playlist, and disconnect from voice channel";
   }
 
   @Override
@@ -63,14 +63,14 @@ public class StopCommand extends BotCommand {
   public OptionData[] options() {
     return new OptionData[] {};
   }
-
+  
   @Override
   public void execute(BotCommandContext context) {
-    playerService.stop();
+    guildAudioService.stopAudioSending();
 
-    EmbedBuilder embed = messageUtil.createWarningEmbed("Music was stopped by user: " + context.getUser().getAsMention());
+    EmbedBuilder embed = messageUtil.createWarningEmbed("Player was go off by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);
 
-    log.info("Music was stopped by user: " + context.getUser());
+    log.info("Player was go off by user: " + context.getUser());
   }
 }

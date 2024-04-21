@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AudioPlayerListenerService {
 
-  private final IPlayerService playerService;
+  private final PlayerService playerService;
   private final TrackScheduler trackScheduler;
 
   public void addListeners() {

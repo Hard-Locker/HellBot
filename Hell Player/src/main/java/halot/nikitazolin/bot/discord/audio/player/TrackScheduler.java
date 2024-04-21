@@ -1,5 +1,7 @@
 package halot.nikitazolin.bot.discord.audio.player;
 
+import java.time.LocalDateTime;
+
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
 import halot.nikitazolin.bot.init.discord.DatabaseFillService;
+import halot.nikitazolin.bot.repository.model.SongHistory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,9 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
   private final DatabaseFillService databaseFillService;
-  private final IPlayerService playerService;
+  private final PlayerService playerService;
 
-  private boolean isRepeat = false;
+//  private boolean isRepeat = false;
   
   @Override
   public void onEvent(AudioEvent event) {
@@ -43,18 +46,21 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
 
   @Override
   public void onTrackStart(AudioPlayer player, AudioTrack track) {
-    System.out.println("Event onTrackStart");
-    System.out.println("uri: " + track.getInfo().uri);
-    System.out.println("length: " + track.getInfo().length);
-    System.out.println("author: " + track.getInfo().author);
-    System.out.println("title: " + track.getInfo().title);
+    String url = track.getInfo().uri;
+    String author = track.getInfo().author;
+    String title = track.getInfo().title;
+    Long length = track.getInfo().length;
+    
+    SongHistory songHistory = new SongHistory(LocalDateTime.now(), url, author, title, length);
+//    databaseFillService.saveSongHistoryToDb(songHistory);
+//    
+//    log.info("SongHistory saved to database.");
   }
 
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
     if (endReason == AudioTrackEndReason.FINISHED) {
-      playerService.startPlayingMusic();
-//      playerService.getAudioPlayerManager().loadItem(playerService.getQueue().poll(), new AudioLoadResultManager(playerService.getAudioPlayer()));
+      playerService.play();
     }
   }
 

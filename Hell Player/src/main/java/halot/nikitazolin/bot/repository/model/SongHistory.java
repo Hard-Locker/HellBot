@@ -45,6 +45,15 @@ public class SongHistory {
   @Column(name = "note", columnDefinition = "varchar(255)")
   private String note;
 
+  public SongHistory(LocalDateTime eventDatetime, String songUrl, String songArtist, String songName, Long songDuration) {
+    super();
+    this.eventDatetime = eventDatetime;
+    this.songUrl = songUrl;
+    this.songArtist = songArtist;
+    this.songName = songName;
+    this.songDuration = songDuration;
+  }
+
   public SongHistory(LocalDateTime eventDatetime, String songUrl, String songArtist, String songName, Long songDuration, Long userId, Long guildId) {
     this.eventDatetime = eventDatetime;
     this.songUrl = songUrl;

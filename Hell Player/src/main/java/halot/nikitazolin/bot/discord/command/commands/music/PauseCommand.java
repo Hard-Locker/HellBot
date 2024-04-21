@@ -19,19 +19,19 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class StopCommand extends BotCommand {
+public class PauseCommand extends BotCommand {
 
   private final PlayerService playerService;
   private final MessageUtil messageUtil;
 
   @Override
   public String name() {
-    return "stop";
+    return "pause";
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("stop", "9");
+    return List.of("pause", "2");
   }
 
   @Override
@@ -41,7 +41,7 @@ public class StopCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Stop player and skip current music";
+    return "Pause current music";
   }
 
   @Override
@@ -66,11 +66,11 @@ public class StopCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    playerService.stop();
+    playerService.pause();
 
-    EmbedBuilder embed = messageUtil.createWarningEmbed("Music was stopped by user: " + context.getUser().getAsMention());
+    EmbedBuilder embed = messageUtil.createInfoEmbed("Music paused by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);
 
-    log.info("Music was stopped by user: " + context.getUser());
+    log.info("Music paused by user: " + context.getUser());
   }
 }

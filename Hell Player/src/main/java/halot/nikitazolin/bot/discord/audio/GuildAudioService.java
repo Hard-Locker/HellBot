@@ -3,7 +3,7 @@ package halot.nikitazolin.bot.discord.audio;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
+import halot.nikitazolin.bot.discord.audio.player.PlayerService;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.Getter;
@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 public class GuildAudioService {
 
   private final MessageUtil messageUtil;
-  private final IPlayerService playerService;
+  private final PlayerService playerService;
   private AudioManager audioManager;
 
   public void registratePlayer(Guild guild) {
@@ -52,7 +52,7 @@ public class GuildAudioService {
   }
 
   public void stopAudioSending() {
-    playerService.stopPlayingMusic();
+    playerService.offPlayer();
     audioManager.closeAudioConnection();
   }
   

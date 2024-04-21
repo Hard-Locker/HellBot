@@ -29,10 +29,6 @@ public class DatabaseFillService {
   private final IEventHistoryRepository eventHistoryRepository;
   private final ISongHistoryRepository songHistoryRepository;
 
-//  public void fillDatabase(Guild guild) {
-//    saveGuildToDb(guild);
-//  }
-
   public void saveGuildToDb(Guild guild) {
     GuildDb guildDB = new GuildDb(guild.getIdLong(), guild.getName());
     Optional<GuildDb> existingGuildDb = guildDbRepository.findByGuildId(guild.getIdLong());

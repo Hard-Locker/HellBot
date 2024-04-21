@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.audio.player.AudioPlayerListenerService;
-import halot.nikitazolin.bot.discord.audio.player.IPlayerService;
+import halot.nikitazolin.bot.discord.audio.player.PlayerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.entities.Guild;
 @RequiredArgsConstructor
 public class AudioService {
 
-  private final IPlayerService playerService;
+  private final PlayerService playerService;
   private final GuildAudioService guildAudioService;
   private final AudioPlayerListenerService audioPlayerListenerService;
 

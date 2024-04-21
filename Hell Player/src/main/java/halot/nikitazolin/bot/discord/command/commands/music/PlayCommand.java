@@ -73,9 +73,9 @@ public class PlayCommand extends BotCommand {
     String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
     String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
     String url3 = "https://youtu.be/Tctv-vujFKU?si=731Seio46tir0SgO";
-
-//    List<String> links = context.getArgumentMapper().getString();
     List<String> links = List.of(url0, url1, url2, url3);
+
+//    List<String> links = context.getCommandArguments().getString();
 
     queueFiller.fillQueue(links);
 
@@ -83,11 +83,13 @@ public class PlayCommand extends BotCommand {
       return;
     }
 
-    guildAudioService.getPlayerService().startPlayingMusic();
+    guildAudioService.getPlayerService().play();
 
-    EmbedBuilder embed = messageUtil.createSuccessEmbed("User launched audiotrack");
-    context.sendMessageEmbed(embed);
-    
-    log.debug("User launched audiotrack." + " User: " + context.getUser());
+    if (!links.isEmpty()) {
+      EmbedBuilder embed = messageUtil.createSuccessEmbed("Added audiotrack");
+      context.sendMessageEmbed(embed);
+    }
+
+    log.debug("User added links to playing music. " + "User: " + context.getUser());
   }
 }
