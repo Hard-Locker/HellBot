@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.init.discord;
+package halot.nikitazolin.bot.discord;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

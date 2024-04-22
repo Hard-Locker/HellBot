@@ -7,10 +7,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.discord.DatabaseFillService;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.discord.command.model.CommandArguments;
-import halot.nikitazolin.bot.init.discord.DatabaseFillService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;

@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.discord.AudioService;
+import halot.nikitazolin.bot.discord.DatabaseFillService;
 import halot.nikitazolin.bot.discord.JdaService;
 import halot.nikitazolin.bot.init.authorization.AuthorizationService;
-import halot.nikitazolin.bot.init.discord.DatabaseFillService;
 import halot.nikitazolin.bot.init.settings.SettingsService;
 import halot.nikitazolin.bot.repository.DatabaseService;
 import lombok.RequiredArgsConstructor;
@@ -38,11 +38,11 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
     // Start JDA
     // TODO Need improve guild getter. Now it potential bug
-//    jdaService.initializeJda();
-//
-//    audioService.makeAudioPlayer(jdaService.getGuild());
-//
-//    databaseFillService.saveGuildToDb(jdaService.getGuild());
+    jdaService.initializeJda();
+
+    audioService.makeAudioPlayer(jdaService.getGuild());
+
+    databaseFillService.saveGuildToDb(jdaService.getGuild());
 
     System.out.println("Ready!");
     log.info("Ready!");

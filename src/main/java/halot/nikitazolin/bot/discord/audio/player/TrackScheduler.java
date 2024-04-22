@@ -13,7 +13,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
-import halot.nikitazolin.bot.init.discord.DatabaseFillService;
+import halot.nikitazolin.bot.discord.DatabaseFillService;
 import halot.nikitazolin.bot.repository.model.SongHistory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
