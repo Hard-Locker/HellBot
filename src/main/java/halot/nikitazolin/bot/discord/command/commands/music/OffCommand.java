@@ -71,6 +71,6 @@ public class OffCommand extends BotCommand {
     EmbedBuilder embed = messageUtil.createWarningEmbed("Player was go off by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);
 
-    log.info("Player was go off by user: " + context.getUser());
+    log.debug("Player was go off by user: " + context.getUser());
   }
 }

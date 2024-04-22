@@ -1,6 +1,7 @@
 package halot.nikitazolin.bot.discord.audio.player;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -78,7 +79,7 @@ public class PlayerService implements AudioSendHandler {
     play();
   }
 
-  public void skipTracks() {
+  public void skipTracks(List<Integer> positions) {
     // TODO
   }
 
@@ -90,8 +91,8 @@ public class PlayerService implements AudioSendHandler {
     }
   }
 
-  public void setVolume() {
-    // TODO
+  public void setVolume(int volume) {
+    audioPlayer.setVolume(volume);
   }
 
   public void clearQueue() {

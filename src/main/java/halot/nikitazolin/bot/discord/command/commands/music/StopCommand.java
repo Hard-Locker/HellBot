@@ -71,6 +71,6 @@ public class StopCommand extends BotCommand {
     EmbedBuilder embed = messageUtil.createWarningEmbed("Music was stopped by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);
 
-    log.info("Music was stopped by user: " + context.getUser());
+    log.debug("Music was stopped by user: " + context.getUser());
   }
 }

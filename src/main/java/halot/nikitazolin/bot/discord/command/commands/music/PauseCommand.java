@@ -68,9 +68,14 @@ public class PauseCommand extends BotCommand {
   public void execute(BotCommandContext context) {
     playerService.pause();
 
-    EmbedBuilder embed = messageUtil.createInfoEmbed("Music paused by user: " + context.getUser().getAsMention());
-    context.sendMessageEmbed(embed);
+    if (playerService.getAudioPlayer().isPaused() == true) {
+      EmbedBuilder embed = messageUtil.createInfoEmbed("Music paused by user: " + context.getUser().getAsMention());
+      context.sendMessageEmbed(embed);
+    } else {
+      EmbedBuilder embed = messageUtil.createInfoEmbed("Music resumed by user: " + context.getUser().getAsMention());
+      context.sendMessageEmbed(embed);
+    }
 
-    log.info("Music paused by user: " + context.getUser());
+    log.debug("Music paused by user: " + context.getUser());
   }
 }

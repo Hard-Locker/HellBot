@@ -71,6 +71,6 @@ public class SkipCommand extends BotCommand {
     EmbedBuilder embed = messageUtil.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
     context.sendMessageEmbed(embed);
 
-    log.info("Track skiped by user: " + context.getUser());
+    log.debug("Track skiped by user: " + context.getUser());
   }
 }
