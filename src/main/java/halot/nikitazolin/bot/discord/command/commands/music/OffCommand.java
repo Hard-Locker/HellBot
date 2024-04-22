@@ -26,15 +26,22 @@ public class OffCommand extends BotCommand {
   private final GuildAudioService guildAudioService;
   private final MessageUtil messageUtil;
   private final Settings settings;
-  
+
+  private final String commandName = "off";
+
   @Override
   public String name() {
-    return "off";
+    return commandName;
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("off", "999");
+    List<String> defaultAliases = List.of(commandName);
+    List<String> additionalAliases = settings.getNameAliases().getOrDefault(commandName, List.of());
+    List<String> allAliases = new ArrayList<>(defaultAliases);
+    allAliases.addAll(additionalAliases);
+
+    return allAliases;
   }
 
   @Override
@@ -70,7 +77,7 @@ public class OffCommand extends BotCommand {
   public OptionData[] options() {
     return new OptionData[] {};
   }
-  
+
   @Override
   public void execute(BotCommandContext context) {
     guildAudioService.stopAudioSending();

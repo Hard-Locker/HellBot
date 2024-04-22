@@ -24,15 +24,22 @@ public class HelloCommand extends BotCommand {
 
   private final MessageUtil messageUtil;
   private final Settings settings;
-  
+
+  private final String commandName = "hello";
+
   @Override
   public String name() {
-    return "hello";
+    return commandName;
   }
-  
+
   @Override
   public List<String> nameAliases() {
-    return List.of("hello");
+    List<String> defaultAliases = List.of(commandName);
+    List<String> additionalAliases = settings.getNameAliases().getOrDefault(commandName, List.of());
+    List<String> allAliases = new ArrayList<>(defaultAliases);
+    allAliases.addAll(additionalAliases);
+
+    return allAliases;
   }
 
   @Override
@@ -43,12 +50,12 @@ public class HelloCommand extends BotCommand {
 
     return prefixes;
   }
-  
+
   @Override
   public String description() {
     return "Greetings";
   }
-  
+
   @Override
   public String requiredRole() {
     return null;
@@ -73,7 +80,7 @@ public class HelloCommand extends BotCommand {
   public void execute(BotCommandContext context) {
     EmbedBuilder embed = messageUtil.createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
     context.sendMessageEmbed(embed);
-    
+
     log.debug("User get hello" + context.getUser());
   }
 }

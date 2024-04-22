@@ -26,14 +26,21 @@ public class ShutdownCommand extends BotCommand {
   private final MessageUtil messageUtil;
   private final Settings settings;
 
+  private final String commandName = "shutdown";
+
   @Override
   public String name() {
-    return "shutdown";
+    return commandName;
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("shutdown");
+    List<String> defaultAliases = List.of(commandName);
+    List<String> additionalAliases = settings.getNameAliases().getOrDefault(commandName, List.of());
+    List<String> allAliases = new ArrayList<>(defaultAliases);
+    allAliases.addAll(additionalAliases);
+
+    return allAliases;
   }
 
   @Override

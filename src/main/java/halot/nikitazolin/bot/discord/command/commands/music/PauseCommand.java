@@ -27,14 +27,21 @@ public class PauseCommand extends BotCommand {
   private final MessageUtil messageUtil;
   private final Settings settings;
 
+  private final String commandName = "pause";
+
   @Override
   public String name() {
-    return "pause";
+    return commandName;
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("pause");
+    List<String> defaultAliases = List.of(commandName);
+    List<String> additionalAliases = settings.getNameAliases().getOrDefault(commandName, List.of());
+    List<String> allAliases = new ArrayList<>(defaultAliases);
+    allAliases.addAll(additionalAliases);
+
+    return allAliases;
   }
 
   @Override

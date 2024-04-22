@@ -26,15 +26,22 @@ public class SkipCommand extends BotCommand {
   private final PlayerService playerService;
   private final MessageUtil messageUtil;
   private final Settings settings;
-  
+
+  private final String commandName = "skip";
+
   @Override
   public String name() {
-    return "skip";
+    return commandName;
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("skip", "4");
+    List<String> defaultAliases = List.of(commandName);
+    List<String> additionalAliases = settings.getNameAliases().getOrDefault(commandName, List.of());
+    List<String> allAliases = new ArrayList<>(defaultAliases);
+    allAliases.addAll(additionalAliases);
+
+    return allAliases;
   }
 
   @Override

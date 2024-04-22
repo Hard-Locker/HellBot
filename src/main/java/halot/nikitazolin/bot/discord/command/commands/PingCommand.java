@@ -23,15 +23,22 @@ public class PingCommand extends BotCommand {
 
   private final MessageUtil messageUtil;
   private final Settings settings;
-  
+
+  private final String commandName = "ping";
+
   @Override
   public String name() {
-    return "ping";
+    return commandName;
   }
 
   @Override
   public List<String> nameAliases() {
-    return List.of("ping");
+    List<String> defaultAliases = List.of(commandName);
+    List<String> additionalAliases = settings.getNameAliases().getOrDefault(commandName, List.of());
+    List<String> allAliases = new ArrayList<>(defaultAliases);
+    allAliases.addAll(additionalAliases);
+
+    return allAliases;
   }
 
   @Override
