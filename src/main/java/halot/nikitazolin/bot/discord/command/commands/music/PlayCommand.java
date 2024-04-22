@@ -1,5 +1,6 @@
 package halot.nikitazolin.bot.discord.command.commands.music;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
@@ -9,6 +10,7 @@ import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.audio.player.QueueFiller;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
+import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ public class PlayCommand extends BotCommand {
   private final GuildAudioService guildAudioService;
   private final MessageUtil messageUtil;
   private final QueueFiller queueFiller;
+  private final Settings settings;
 
   @Override
   public String name() {
@@ -39,7 +42,11 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public List<String> commandPrefixes() {
-    return List.of("!", "1");
+    List<String> prefixes = new ArrayList<>(List.of("!"));
+    List<String> additionalPrefixes = settings.getPrefixes() != null ? settings.getPrefixes() : List.of();
+    prefixes.addAll(additionalPrefixes);
+
+    return prefixes;
   }
 
   @Override

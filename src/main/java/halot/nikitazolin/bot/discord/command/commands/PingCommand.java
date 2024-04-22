@@ -1,5 +1,6 @@
 package halot.nikitazolin.bot.discord.command.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
+import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,9 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class PingCommand extends BotCommand {
 
+  private final MessageUtil messageUtil;
+  private final Settings settings;
+  
   @Override
   public String name() {
     return "ping";
@@ -31,7 +36,11 @@ public class PingCommand extends BotCommand {
 
   @Override
   public List<String> commandPrefixes() {
-    return List.of("!", "1");
+    List<String> prefixes = new ArrayList<>(List.of("!"));
+    List<String> additionalPrefixes = settings.getPrefixes() != null ? settings.getPrefixes() : List.of();
+    prefixes.addAll(additionalPrefixes);
+
+    return prefixes;
   }
 
   @Override
