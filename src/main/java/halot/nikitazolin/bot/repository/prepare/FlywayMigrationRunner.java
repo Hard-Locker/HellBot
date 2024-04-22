@@ -26,7 +26,7 @@ public class FlywayMigrationRunner {
       String dataSourceName = entry.getKey();
       DataSource dataSource = entry.getValue();
       log.info("Trying to migrate database for dataSource: {}", dataSourceName);
-      Flyway flyway = Flyway.configure().dataSource(dataSource).baselineOnMigrate(true).load();
+      Flyway flyway = Flyway.configure().dataSource(dataSource).baselineOnMigrate(false).load();
       flyway.migrate();
       log.info("Successfully applied migration to dataSource: {}", dataSourceName);
     }
