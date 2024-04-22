@@ -28,13 +28,13 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   private final DatabaseFillService databaseFillService;
 
   public static final String AUTHORIZATION_FILE_PATH = "secrets.yml";
-  public static final String CONFIG_FILE_PATH = "config.yml";
+  public static final String SETTINGS_FILE_PATH = "settings.yml";
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
     authorizationService.validateAuthorization(AUTHORIZATION_FILE_PATH);
     databaseService.validateDb(AUTHORIZATION_FILE_PATH);
-    settingsService.validateConfig(CONFIG_FILE_PATH);
+    settingsService.validateSettings(SETTINGS_FILE_PATH);
 
     // Start JDA
     // TODO Need improve guild getter. Now it potential bug

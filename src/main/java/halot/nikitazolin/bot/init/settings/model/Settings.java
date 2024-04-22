@@ -1,6 +1,5 @@
 package halot.nikitazolin.bot.init.settings.model;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,17 +28,4 @@ public class Settings {
   private List<String> playlistFolderPaths;
   private List<String> prefixes;
   private HashMap<String, List<String>> nameAliases;
-
-//  public void printFieldValues() {
-//    Field[] fields = this.getClass().getDeclaredFields(); // Get all fields from the class
-//    for (Field field : fields) {
-//      field.setAccessible(true); // Make field accessible if it is private
-//      try {
-//        Object value = field.get(this); // Get value of the field for this instance
-//        System.out.println(field.getName() + ": " + (value != null ? value.toString() : "null"));
-//      } catch (IllegalAccessException e) {
-//        System.out.println("Error accessing field: " + field.getName());
-//      }
-//    }
-//  }
 }

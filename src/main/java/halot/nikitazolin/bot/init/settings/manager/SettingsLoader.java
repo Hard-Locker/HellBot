@@ -21,33 +21,31 @@ public class SettingsLoader {
   private final Settings settings;
 
   public void load(String filePath) {
-//    Yaml yaml = new Yaml(new Constructor(Config.class, new LoaderOptions()));
-//    
-//    try (InputStream inputStream = new FileInputStream(filePath)) {
-//      log.info("File loaded successfully from {}", filePath);
-//      Config loadedConfig = yaml.load(inputStream);
-//      
-//      if (loadedConfig != null) {
-//        config.setVolume(loadedConfig.getVolume());
-//        config.setOwnerIds(loadedConfig.getOwnerIds());
-//        config.setAloneTimeUntilStop(loadedConfig.getAloneTimeUntilStop());
-//        config.setBotStatusAtStart(loadedConfig.getBotStatusAtStart());
-//        config.setBotActivityAtStart(loadedConfig.getBotActivityAtStart());
-//        config.setSongInStatus(loadedConfig.isSongInStatus());
-//        config.setStayInChannel(loadedConfig.isStayInChannel());
-//        config.setUpdateAlerts(loadedConfig.isUpdateAlerts());
-//        config.setAllowedTextChannelIds(loadedConfig.getAllowedTextChannelIds());
-//        config.setAllowedVoiceChannelIds(loadedConfig.getAllowedVoiceChannelIds());
-//        config.setDjUserIds(loadedConfig.getDjUserIds());
-//        config.setBannedUserIds(loadedConfig.getBannedUserIds());
-//        config.setPlaylistFolderPaths(loadedConfig.getPlaylistFolderPaths());
-//        config.setPrefixes(loadedConfig.getPrefixes());
-//        config.setNameAliases(loadedConfig.getNameAliases());
-//      }
-//    } catch (IOException e) {
-//      log.error("Error reading config file: {}", e.getMessage());
-//    }
-//    
-//    config.printFieldValues();
+    Yaml yaml = new Yaml(new Constructor(Settings.class, new LoaderOptions()));
+
+    try (InputStream inputStream = new FileInputStream(filePath)) {
+      log.info("File loaded successfully from {}", filePath);
+      Settings loadedConfig = yaml.load(inputStream);
+
+      if (loadedConfig != null) {
+        settings.setVolume(loadedConfig.getVolume());
+        settings.setOwnerIds(loadedConfig.getOwnerIds());
+        settings.setAloneTimeUntilStop(loadedConfig.getAloneTimeUntilStop());
+        settings.setBotStatusAtStart(loadedConfig.getBotStatusAtStart());
+        settings.setBotActivityAtStart(loadedConfig.getBotActivityAtStart());
+        settings.setSongInStatus(loadedConfig.isSongInStatus());
+        settings.setStayInChannel(loadedConfig.isStayInChannel());
+        settings.setUpdateAlerts(loadedConfig.isUpdateAlerts());
+        settings.setAllowedTextChannelIds(loadedConfig.getAllowedTextChannelIds());
+        settings.setAllowedVoiceChannelIds(loadedConfig.getAllowedVoiceChannelIds());
+        settings.setDjUserIds(loadedConfig.getDjUserIds());
+        settings.setBannedUserIds(loadedConfig.getBannedUserIds());
+        settings.setPlaylistFolderPaths(loadedConfig.getPlaylistFolderPaths());
+        settings.setPrefixes(loadedConfig.getPrefixes());
+        settings.setNameAliases(loadedConfig.getNameAliases());
+      }
+    } catch (IOException e) {
+      log.error("Error reading config file: {}", e.getMessage());
+    }
   }
 }

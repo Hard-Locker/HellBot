@@ -15,11 +15,11 @@ public class SettingsService {
   private final SettingsFileChecker settingsFileChecker;
   private final SettingsLoader settingsLoader;
 
-  public void validateConfig(String filePath) {
+  public void validateSettings(String filePath) {
     settingsFileChecker.ensureFileExists(filePath);
 
     settingsLoader.load(filePath);
 
-    log.info("Load config");
+    log.info("Loaded {}", filePath);
   }
 }
