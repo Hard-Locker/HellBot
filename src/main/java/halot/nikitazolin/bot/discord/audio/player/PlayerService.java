@@ -16,6 +16,8 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
+import halot.nikitazolin.bot.discord.DatabaseFillService;
+import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +30,12 @@ import net.dv8tion.jda.api.audio.AudioSendHandler;
 @RequiredArgsConstructor
 public class PlayerService implements AudioSendHandler {
 
+  private final DatabaseFillService databaseFillService;
+
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
   private AudioFrame lastFrame;
-  private BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+  private BlockingQueue<AudioItemContext> queue = new LinkedBlockingQueue<>();
 
   @Override
   public boolean canProvide() {
@@ -64,7 +68,9 @@ public class PlayerService implements AudioSendHandler {
 
   public void play() {
     if ((audioPlayer.isPaused() == false) && (audioPlayer.getPlayingTrack() == null)) {
-      audioPlayerManager.loadItem(queue.poll(), new AudioLoadResultManager(audioPlayer));
+      AudioItemContext audioItemContext = queue.poll();
+
+      audioPlayerManager.loadItem(audioItemContext.getUrl(), new AudioLoadResultManager(audioPlayer, audioItemContext.getContext(), databaseFillService));
     } else if (audioPlayer.isPaused() == true) {
       audioPlayer.setPaused(false);
     }
@@ -98,7 +104,7 @@ public class PlayerService implements AudioSendHandler {
   public void clearQueue() {
     queue.clear();
   }
-  
+
   public void offPlayer() {
     queue.clear();
     audioPlayer.stopTrack();
@@ -107,5 +113,18 @@ public class PlayerService implements AudioSendHandler {
   public void shutdownPlayer() {
     audioPlayer.destroy();
     audioPlayerManager.shutdown();
+  }
+
+  public void fillQueue(List<String> identifiers, BotCommandContext context) {
+    for (String identifier : identifiers) {
+      AudioItemContext audioItemContext = new AudioItemContext(identifier, context);
+      boolean result = queue.offer(audioItemContext);
+
+      if (result) {
+        log.debug("Add link {} to queue", identifier);
+      } else {
+        log.warn("Problem with adding link {} to queue", identifier);
+      }
+    }
   }
 }

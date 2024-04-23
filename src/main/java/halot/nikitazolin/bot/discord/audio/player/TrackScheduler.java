@@ -1,7 +1,5 @@
 package halot.nikitazolin.bot.discord.audio.player;
 
-import java.time.LocalDateTime;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +11,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
-import halot.nikitazolin.bot.discord.DatabaseFillService;
-import halot.nikitazolin.bot.repository.model.SongHistory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
-  private final DatabaseFillService databaseFillService;
   private final PlayerService playerService;
 
 //  private boolean isRepeat = false;
@@ -46,20 +41,14 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
 
   @Override
   public void onTrackStart(AudioPlayer player, AudioTrack track) {
-    String url = track.getInfo().uri;
-    String author = track.getInfo().author;
-    String title = track.getInfo().title;
-    Long length = track.getInfo().length;
     
-    SongHistory songHistory = new SongHistory(LocalDateTime.now(), url, author, title, length);
-//    databaseFillService.saveSongHistoryToDb(songHistory);
-//    
-//    log.info("SongHistory saved to database.");
   }
 
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
     if (endReason == AudioTrackEndReason.FINISHED) {
+      log.trace("Track ended, try start new track");
+      
       playerService.play();
     }
   }

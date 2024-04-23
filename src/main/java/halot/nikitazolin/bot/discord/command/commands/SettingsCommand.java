@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands.music;
+package halot.nikitazolin.bot.discord.command.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.init.settings.model.Settings;
@@ -15,20 +14,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class PlayCommand extends BotCommand {
+public class SettingsCommand extends BotCommand {
 
-  private final GuildAudioService guildAudioService;
   private final MessageUtil messageUtil;
   private final Settings settings;
 
-  private final String commandName = "play";
+  private final String commandName = "settings";
 
   @Override
   public String name() {
@@ -56,7 +53,7 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Start playing music from link";
+    return "Show all settings";
   }
 
   @Override
@@ -76,31 +73,14 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] { new OptionData(OptionType.STRING, "link", "URL with content", false) };
+    return new OptionData[] {};
   }
 
   @Override
   public void execute(BotCommandContext context) {
-    String url0 = "https://www.youtube.com/watch?v=Tctv-vujFKU";
-    String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
-    String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-    String url3 = "https://youtu.be/Tctv-vujFKU?si=731Seio46tir0SgO";
-    List<String> links = List.of(url0, url1, url2, url3);
-//    List<String> links = context.getCommandArguments().getString();
-
-    guildAudioService.getPlayerService().fillQueue(links, context);
-
-    if (guildAudioService.connectToVoiceChannel(context) == false) {
-      return;
-    }
-
-    guildAudioService.getPlayerService().play();
-
-    if (!links.isEmpty()) {
-      EmbedBuilder embed = messageUtil.createSuccessEmbed("Added audiotrack");
-      context.sendMessageEmbed(embed);
-    }
-
-    log.debug("User added links to playing music. " + "User: " + context.getUser());
+//    EmbedBuilder embed = messageUtil.createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
+//    context.sendMessageEmbed(embed);
+//
+//    log.debug("User get hello" + context.getUser());
   }
 }

@@ -30,13 +30,11 @@ public class GuildDb {
   private String note;
 
   public GuildDb(Long guildId, String guildName) {
-    super();
     this.guildId = guildId;
     this.guildName = guildName;
   }
 
   public GuildDb(Long guildId, String guildName, String note) {
-    super();
     this.guildId = guildId;
     this.guildName = guildName;
     this.note = note;
