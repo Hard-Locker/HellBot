@@ -3,7 +3,7 @@ package halot.nikitazolin.bot.discord.audio.player;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

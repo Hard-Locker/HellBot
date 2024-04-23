@@ -8,8 +8,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.DatabaseFillService;
+import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
-import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
 import halot.nikitazolin.bot.discord.command.model.CommandArguments;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

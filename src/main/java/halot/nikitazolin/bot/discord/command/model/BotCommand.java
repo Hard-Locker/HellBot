@@ -2,6 +2,7 @@ package halot.nikitazolin.bot.discord.command.model;
 
 import java.util.List;
 
+import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;

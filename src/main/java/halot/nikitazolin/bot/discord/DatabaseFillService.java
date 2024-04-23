@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import halot.nikitazolin.bot.repository.dao.eventHistory.IEventHistoryRepository;
 import halot.nikitazolin.bot.repository.dao.guild.IGuildDbRepository;
 import halot.nikitazolin.bot.repository.dao.songHistory.ISongHistoryRepository;

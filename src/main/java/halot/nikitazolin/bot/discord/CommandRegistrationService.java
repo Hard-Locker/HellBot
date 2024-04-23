@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.manager;
+package halot.nikitazolin.bot.discord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.discord.command.manager.CommandCollector;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import lombok.Getter;
@@ -22,7 +23,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-public class CommandService {
+public class CommandRegistrationService {
 
   @Autowired
   private List<BotCommand> allCommands;

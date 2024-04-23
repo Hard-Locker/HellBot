@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
-import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

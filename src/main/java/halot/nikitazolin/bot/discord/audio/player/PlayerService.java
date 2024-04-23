@@ -17,7 +17,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import halot.nikitazolin.bot.discord.DatabaseFillService;
-import halot.nikitazolin.bot.discord.command.model.BotCommandContext;
+import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

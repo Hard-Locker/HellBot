@@ -1,9 +1,11 @@
-package halot.nikitazolin.bot.discord.command.model;
+package halot.nikitazolin.bot.discord.command;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.command.model.CommandArguments;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
