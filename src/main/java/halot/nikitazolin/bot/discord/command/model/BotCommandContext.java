@@ -37,7 +37,6 @@ public class BotCommandContext {
 
   public BotCommandContext(BotCommand botCommand, SlashCommandInteractionEvent slashCommandEvent,
       MessageReceivedEvent messageReceivedEvent, CommandArguments commandArguments) {
-    super();
     this.botCommand = botCommand;
     this.slashCommandEvent = slashCommandEvent;
     this.messageReceivedEvent = messageReceivedEvent;
@@ -65,6 +64,18 @@ public class BotCommandContext {
     MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
 
     textChannel.sendMessage(messageCreateData).queue();
+  }
+
+  public void sendPrivateMessage(EmbedBuilder embedBuilder) {
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
+    
+    if (!user.isBot()) {
+      user.openPrivateChannel().queue((privateChannel) -> {
+        privateChannel.sendMessage(messageCreateData).queue();
+      }, (error) -> {
+        log.warn("Failed to send a private message to the user: " + user);
+      });
+    }
   }
 
   private Guild fillGuild(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {

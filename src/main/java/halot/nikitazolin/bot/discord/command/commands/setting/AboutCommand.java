@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands;
+package halot.nikitazolin.bot.discord.command.commands.setting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +20,12 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SettingsCommand extends BotCommand {
+public class AboutCommand extends BotCommand {
 
   private final MessageUtil messageUtil;
   private final Settings settings;
 
-  private final String commandName = "settings";
+  private final String commandName = "about";
 
   @Override
   public String name() {
@@ -53,7 +53,7 @@ public class SettingsCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Show all settings";
+    return "Show information about bot";
   }
 
   @Override

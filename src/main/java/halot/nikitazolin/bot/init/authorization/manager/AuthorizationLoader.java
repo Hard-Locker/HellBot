@@ -46,12 +46,11 @@ public class AuthorizationLoader {
   }
 
   private void loadDiscordApi(Map<String, Object> config) {
-    @SuppressWarnings("unchecked")
-    Map<String, Object> discordApiConfig = (Map<String, Object>) config.get("discordApi");
+    Map<String, Object> discordApiConfig = getMap(config, "discordApi");
 
     if (discordApiConfig != null) {
       DiscordApi discordApi = new DiscordApi();
-      discordApi.setApiKey((String) discordApiConfig.get("apiKey"));
+      discordApi.setApiKey(getString(discordApiConfig, "apiKey"));
 
       authorizationData.setDiscordApi(discordApi);
       log.info("Authorization data (DiscordApi) loaded successfully");
@@ -59,14 +58,13 @@ public class AuthorizationLoader {
   }
 
   private void loadYoutube(Map<String, Object> config) {
-    @SuppressWarnings("unchecked")
-    Map<String, Object> youtubeConfig = (Map<String, Object>) config.get("youtube");
+    Map<String, Object> youtubeConfig = getMap(config, "youtube");
 
     if (youtubeConfig != null) {
       Youtube youtube = new Youtube();
-      youtube.setYoutubeEnabled((Boolean) youtubeConfig.get("youtubeEnabled"));
-      youtube.setYoutubeLogin((String) youtubeConfig.get("youtubeLogin"));
-      youtube.setYoutubePassword((String) youtubeConfig.get("youtubePassword"));
+      youtube.setYoutubeEnabled(getBoolean(youtubeConfig, "youtubeEnabled"));
+      youtube.setYoutubeLogin(getString(youtubeConfig, "youtubeLogin"));
+      youtube.setYoutubePassword(getString(youtubeConfig, "youtubePassword"));
 
       authorizationData.setYoutube(youtube);
       log.info("Authorization data (Youtube) loaded successfully");
@@ -74,20 +72,19 @@ public class AuthorizationLoader {
   }
 
   private void loadDatabase(Map<String, Object> config) {
-    @SuppressWarnings("unchecked")
-    Map<String, Object> dbConfig = (Map<String, Object>) config.get("database");
+    Map<String, Object> dbConfig = getMap(config, "database");
 
     if (dbConfig != null) {
-      String dbVendorName = (String) dbConfig.get("dbVendor");
+      String dbVendorName = getString(dbConfig, "dbVendor");
 
       DatabaseVendor.fromString(dbVendorName).ifPresentOrElse(dbVendor -> {
         Database database = new Database();
-        database.setDbEnabled((Boolean) dbConfig.get("dbEnabled"));
+        database.setDbEnabled(getBoolean(dbConfig, "dbEnabled"));
         database.setDbVendor(dbVendor);
-        database.setDbName((String) dbConfig.get("dbName"));
-        database.setDbUrl((String) dbConfig.get("dbUrl"));
-        database.setDbUsername((String) dbConfig.get("dbUsername"));
-        database.setDbPassword((String) dbConfig.get("dbPassword"));
+        database.setDbName(getString(dbConfig, "dbName"));
+        database.setDbUrl(getString(dbConfig, "dbUrl"));
+        database.setDbUsername(getString(dbConfig, "dbUsername"));
+        database.setDbPassword(getString(dbConfig, "dbPassword"));
 
         authorizationData.setDatabase(database);
         log.info("Authorization data (Database) loaded successfully");
@@ -96,4 +93,72 @@ public class AuthorizationLoader {
       });
     }
   }
+
+  private String getString(Map<String, Object> config, String key) {
+    Object value = config.get(key);
+    return value instanceof String ? (String) value : null;
+  }
+
+  private Boolean getBoolean(Map<String, Object> config, String key) {
+    Object value = config.get(key);
+    return value instanceof Boolean ? (Boolean) value : false;
+  }
+
+  @SuppressWarnings("unchecked")
+  private Map<String, Object> getMap(Map<String, Object> config, String key) {
+    Object value = config.get(key);
+    return value instanceof Map ? (Map<String, Object>) value : null;
+  }
+
+//  private void loadDiscordApi(Map<String, Object> config) {
+//    @SuppressWarnings("unchecked")
+//    Map<String, Object> discordApiConfig = (Map<String, Object>) config.get("discordApi");
+//
+//    if (discordApiConfig != null) {
+//      DiscordApi discordApi = new DiscordApi();
+//      discordApi.setApiKey((String) discordApiConfig.get("apiKey"));
+//
+//      authorizationData.setDiscordApi(discordApi);
+//      log.info("Authorization data (DiscordApi) loaded successfully");
+//    }
+//  }
+//
+//  private void loadYoutube(Map<String, Object> config) {
+//    @SuppressWarnings("unchecked")
+//    Map<String, Object> youtubeConfig = (Map<String, Object>) config.get("youtube");
+//
+//    if (youtubeConfig != null) {
+//      Youtube youtube = new Youtube();
+//      youtube.setYoutubeEnabled((Boolean) youtubeConfig.get("youtubeEnabled"));
+//      youtube.setYoutubeLogin((String) youtubeConfig.get("youtubeLogin"));
+//      youtube.setYoutubePassword((String) youtubeConfig.get("youtubePassword"));
+//
+//      authorizationData.setYoutube(youtube);
+//      log.info("Authorization data (Youtube) loaded successfully");
+//    }
+//  }
+//
+//  private void loadDatabase(Map<String, Object> config) {
+//    @SuppressWarnings("unchecked")
+//    Map<String, Object> dbConfig = (Map<String, Object>) config.get("database");
+//
+//    if (dbConfig != null) {
+//      String dbVendorName = (String) dbConfig.get("dbVendor");
+//
+//      DatabaseVendor.fromString(dbVendorName).ifPresentOrElse(dbVendor -> {
+//        Database database = new Database();
+//        database.setDbEnabled((Boolean) dbConfig.get("dbEnabled"));
+//        database.setDbVendor(dbVendor);
+//        database.setDbName((String) dbConfig.get("dbName"));
+//        database.setDbUrl((String) dbConfig.get("dbUrl"));
+//        database.setDbUsername((String) dbConfig.get("dbUsername"));
+//        database.setDbPassword((String) dbConfig.get("dbPassword"));
+//
+//        authorizationData.setDatabase(database);
+//        log.info("Authorization data (Database) loaded successfully");
+//      }, () -> {
+//        log.error("Unsupported database vendor: {}", dbVendorName);
+//      });
+//    }
+//  }
 }

@@ -14,7 +14,7 @@ import lombok.Data;
 public class Settings {
 
   private int volume;
-  private Long ownerIds;
+  private Long ownerUserId;
   private Long aloneTimeUntilStop;
   private String botStatusAtStart;
   private String botActivityAtStart;
@@ -23,6 +23,7 @@ public class Settings {
   private boolean updateAlerts;
   private List<Long> allowedTextChannelIds;
   private List<Long> allowedVoiceChannelIds;
+  private List<Long> adminUserIds;
   private List<Long> djUserIds;
   private List<Long> bannedUserIds;
   private List<String> playlistFolderPaths;

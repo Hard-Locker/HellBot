@@ -29,7 +29,7 @@ public class HellBotConfig {
   private final Map<Object, Object> tenantDataSources = new ConcurrentHashMap<>();
 
   private AbstractRoutingDataSource multiTenantDataSource;
-
+  
   @Bean
   DataSource dataSource() {
     multiTenantDataSource = new AbstractRoutingDataSource() {
