@@ -9,8 +9,8 @@ import halot.nikitazolin.bot.discord.AudioService;
 import halot.nikitazolin.bot.discord.DatabaseFillService;
 import halot.nikitazolin.bot.discord.JdaService;
 import halot.nikitazolin.bot.init.authorization.AuthorizationService;
+import halot.nikitazolin.bot.init.database.DatabaseService;
 import halot.nikitazolin.bot.init.settings.SettingsService;
-import halot.nikitazolin.bot.repository.DatabaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.repository.prepare;
+package halot.nikitazolin.bot.init.database.manager;
 
 import java.util.Map;
 

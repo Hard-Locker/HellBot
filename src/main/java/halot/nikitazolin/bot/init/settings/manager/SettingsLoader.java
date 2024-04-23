@@ -60,44 +60,4 @@ public class SettingsLoader {
   private <T> T defaultIfNull(T value, T defaultValue) {
     return value == null ? defaultValue : value;
   }
-
-//  public void load(String filePath) {
-//    Yaml yaml = new Yaml(new Constructor(Settings.class, new LoaderOptions()));
-//
-//    try (InputStream inputStream = new FileInputStream(filePath)) {
-//      log.info("Loading configuration file from {}", filePath);
-//      Settings loadedConfig = yaml.load(inputStream);
-//
-//      if (loadedConfig != null) {
-//        safelyAssign(settings::setVolume, loadedConfig.getVolume());
-//        safelyAssign(settings::setOwnerUserId, loadedConfig.getOwnerUserId());
-//        safelyAssign(settings::setAloneTimeUntilStop, loadedConfig.getAloneTimeUntilStop());
-//        safelyAssign(settings::setBotStatusAtStart, loadedConfig.getBotStatusAtStart());
-//        safelyAssign(settings::setBotActivityAtStart, loadedConfig.getBotActivityAtStart());
-//        safelyAssign(settings::setSongInStatus, loadedConfig.isSongInStatus());
-//        safelyAssign(settings::setStayInChannel, loadedConfig.isStayInChannel());
-//        safelyAssign(settings::setUpdateAlerts, loadedConfig.isUpdateAlerts());
-//        safelyAssign(settings::setAllowedTextChannelIds, loadedConfig.getAllowedTextChannelIds());
-//        safelyAssign(settings::setAllowedVoiceChannelIds, loadedConfig.getAllowedVoiceChannelIds());
-//        safelyAssign(settings::setAdminUserIds, loadedConfig.getAdminUserIds());
-//        safelyAssign(settings::setDjUserIds, loadedConfig.getDjUserIds());
-//        safelyAssign(settings::setBannedUserIds, loadedConfig.getBannedUserIds());
-//        safelyAssign(settings::setPlaylistFolderPaths, loadedConfig.getPlaylistFolderPaths());
-//        safelyAssign(settings::setPrefixes, loadedConfig.getPrefixes());
-//        safelyAssign(settings::setNameAliases, loadedConfig.getNameAliases());
-//      }
-//    } catch (Exception e) {
-//      log.error("Failed to load configuration from file: {}", e.getMessage());
-//    }
-//  }
-//
-//  private <T> void safelyAssign(Consumer<T> setter, T value) {
-//    try {
-//      if (value != null) {
-//        setter.accept(value);
-//      }
-//    } catch (Exception e) {
-//      log.error("Invalid setting value: {}", value, e);
-//    }
-//  }
 }

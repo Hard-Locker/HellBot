@@ -1,12 +1,12 @@
-package halot.nikitazolin.bot.repository;
+package halot.nikitazolin.bot.init.database;
 
 import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
 import halot.nikitazolin.bot.init.authorization.model.DatabaseVendor;
-import halot.nikitazolin.bot.repository.prepare.DbH2Manager;
-import halot.nikitazolin.bot.repository.prepare.DbRegistrator;
-import halot.nikitazolin.bot.repository.prepare.FlywayMigrationRunner;
+import halot.nikitazolin.bot.init.database.manager.DbH2Manager;
+import halot.nikitazolin.bot.init.database.manager.DbRegistrator;
+import halot.nikitazolin.bot.init.database.manager.FlywayMigrationRunner;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
