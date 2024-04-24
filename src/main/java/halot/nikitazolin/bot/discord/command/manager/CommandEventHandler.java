@@ -12,14 +12,20 @@ import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.CommandArguments;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.Message.Attachment;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Slf4j
@@ -27,8 +33,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 public class CommandEventHandler extends ListenerAdapter {
 
   private final CommandCollector commandCollector;
-  private final DatabaseService databaseService;
+  private final MessageUtil messageUtil;
   private final Settings settings;
+  private final DatabaseService databaseService;
 
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
@@ -44,6 +51,11 @@ public class CommandEventHandler extends ListenerAdapter {
 
     if (command.get().neededPermission() != null && !slashEvent.getMember().hasPermission(command.get().neededPermission())) {
       slashEvent.reply("You don't have the permission to execute this command!").setEphemeral(true).queue();
+
+      return;
+    }
+    
+    if (!checkAllowedTextChannel(slashEvent.getChannel().asTextChannel(), slashEvent.getUser())) {
       return;
     }
 
@@ -88,6 +100,11 @@ public class CommandEventHandler extends ListenerAdapter {
 
     if (command.get().neededPermission() != null && !messageEvent.getMember().hasPermission(command.get().neededPermission())) {
       messageEvent.getChannel().asTextChannel().sendMessage("You don't have the permission to execute this command!").queue();
+
+      return;
+    }
+    
+    if (!checkAllowedTextChannel(messageEvent.getChannel().asTextChannel(), messageEvent.getAuthor())) {
       return;
     }
 
@@ -132,5 +149,36 @@ public class CommandEventHandler extends ListenerAdapter {
   private Optional<BotCommand> getSlashCommand(String commandName) {
     List<BotCommand> commands = commandCollector.getActiveCommands();
     return commands.stream().filter(command -> command.name().equalsIgnoreCase(commandName)).findFirst();
+  }
+  
+  private boolean checkAllowedTextChannel(TextChannel textChannel, User user) {
+    List<Long> allowedTextChannelIds = new ArrayList<>();
+
+    try {
+      allowedTextChannelIds.addAll(settings.getAllowedTextChannelIds());
+    } catch (NullPointerException e) {
+      log.debug("Especial allowed text channel not set. Bot can connect read any channel.");
+
+      return true;
+    }
+
+    if (allowedTextChannelIds.isEmpty() || allowedTextChannelIds.contains(textChannel.getIdLong())) {
+      return true;
+    } else {
+      EmbedBuilder embed = messageUtil.createErrorEmbed(textChannel.getName() + " text channel is denied for bot.");
+      MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embed.build()).build();
+
+      if (!user.isBot()) {
+        user.openPrivateChannel().queue((privateChannel) -> {
+          privateChannel.sendMessage(messageCreateData).queue();
+        }, (error) -> {
+          log.warn("Failed to send a private message to the user: " + user);
+        });
+      }
+
+      log.debug("User tried to use a command in an denied text channel.");
+
+      return false;
+    }
   }
 }
