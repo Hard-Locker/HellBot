@@ -16,7 +16,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
-import halot.nikitazolin.bot.discord.DatabaseFillService;
+import halot.nikitazolin.bot.discord.DatabaseService;
 import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ import net.dv8tion.jda.api.audio.AudioSendHandler;
 @RequiredArgsConstructor
 public class PlayerService implements AudioSendHandler {
 
-  private final DatabaseFillService databaseFillService;
+  private final DatabaseService databaseService;
 
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
@@ -70,7 +70,7 @@ public class PlayerService implements AudioSendHandler {
     if ((audioPlayer.isPaused() == false) && (audioPlayer.getPlayingTrack() == null)) {
       AudioItemContext audioItemContext = queue.poll();
 
-      audioPlayerManager.loadItem(audioItemContext.getUrl(), new AudioLoadResultManager(audioPlayer, audioItemContext.getContext(), databaseFillService));
+      audioPlayerManager.loadItem(audioItemContext.getUrl(), new AudioLoadResultManager(audioPlayer, audioItemContext.getContext(), databaseService));
     } else if (audioPlayer.isPaused() == true) {
       audioPlayer.setPaused(false);
     }

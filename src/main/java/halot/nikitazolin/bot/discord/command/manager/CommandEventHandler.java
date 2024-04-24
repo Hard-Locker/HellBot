@@ -7,10 +7,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.DatabaseFillService;
+import halot.nikitazolin.bot.discord.DatabaseService;
 import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
 import halot.nikitazolin.bot.discord.command.model.CommandArguments;
+import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
@@ -26,7 +27,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 public class CommandEventHandler extends ListenerAdapter {
 
   private final CommandCollector commandCollector;
-  private final DatabaseFillService databaseFillService;
+  private final DatabaseService databaseService;
+  private final Settings settings;
 
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent slashEvent) {
@@ -58,8 +60,8 @@ public class CommandEventHandler extends ListenerAdapter {
     slashEvent.getHook().deleteOriginal().queue();
     command.get().execute(context);
 
-    databaseFillService.saveUserToDb(context.getMember());
-    databaseFillService.saveEventHistoryToDb(context);
+    databaseService.saveUserToDb(context.getMember());
+    databaseService.saveEventHistoryToDb(context);
   }
 
   @Override
@@ -99,8 +101,8 @@ public class CommandEventHandler extends ListenerAdapter {
 
     command.get().execute(context);
 
-    databaseFillService.saveUserToDb(context.getMember());
-    databaseFillService.saveEventHistoryToDb(context);
+    databaseService.saveUserToDb(context.getMember());
+    databaseService.saveEventHistoryToDb(context);
   }
 
   private Optional<BotCommand> getCommandByReceivedMessage(String commandName) {

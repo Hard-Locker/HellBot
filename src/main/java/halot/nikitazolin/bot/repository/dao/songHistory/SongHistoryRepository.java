@@ -1,5 +1,8 @@
 package halot.nikitazolin.bot.repository.dao.songHistory;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,6 +82,24 @@ public class SongHistoryRepository implements ISongHistoryRepository {
     } catch (DataAccessException e) {
       log.error("Error retrieving songHistorys from database", e);
 
+      return Collections.emptyList();
+    }
+  }
+  
+  @Override
+  public List<SongHistory> getEventByDate(LocalDate date) {
+    log.info("Retrieving song history from the database by date: {}", date);
+    LocalDateTime startOfDay = date.atStartOfDay();
+    LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+    
+    try {
+      List<SongHistory> songHistorys = songHistoryJpaRepository.findByEventDatetimeBetween(startOfDay, endOfDay);
+      log.info("Retrieved {} song historys from database.", songHistorys.size());
+      
+      return songHistorys;
+    } catch (DataAccessException e) {
+      log.error("Error retrieving song historys from database", e);
+      
       return Collections.emptyList();
     }
   }

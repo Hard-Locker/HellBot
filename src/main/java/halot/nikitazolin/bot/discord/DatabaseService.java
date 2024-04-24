@@ -1,6 +1,8 @@
 package halot.nikitazolin.bot.discord;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ import net.dv8tion.jda.api.entities.Member;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DatabaseFillService {
+public class DatabaseService {
 
   private final IGuildDbRepository guildDbRepository;
   private final IUserDbRepository userDbRepository;
@@ -35,9 +37,9 @@ public class DatabaseFillService {
 
     if (existingGuildDb.isEmpty()) {
       guildDbRepository.insert(guildDB);
-      log.info("New guild saved to DB.");
+      log.debug("New guild saved to DB.");
     } else {
-      log.info("Guild already exists in database. No action needed.");
+      log.debug("Guild already exists in database. No action needed.");
     }
   }
 
@@ -47,9 +49,9 @@ public class DatabaseFillService {
 
     if (existingUserDb.isEmpty()) {
       userDbRepository.insert(userDb);
-      log.info("User {} saved to DB.", member.getUser().getIdLong());
+      log.debug("User {} saved to DB.", member.getUser().getIdLong());
     } else {
-      log.info("User {} already exists in database.", member.getUser().getIdLong());
+      log.debug("User {} already exists in database.", member.getUser().getIdLong());
     }
   }
   
@@ -57,11 +59,18 @@ public class DatabaseFillService {
     EventHistory eventHistory = new EventHistory(LocalDateTime.now(), context.getBotCommand().name(), context.getUser().getIdLong(), context.getGuild().getIdLong());
     
     eventHistoryRepository.insert(eventHistory);
-    log.info("EventHistory {} saved to DB.");
+    log.debug("EventHistory {} saved to DB.");
   }
   
   public void saveSongHistoryToDb(SongHistory songHistory) {
     songHistoryRepository.insert(songHistory);
-    log.info("SongHistory {} saved to DB.");
+    log.debug("SongHistory {} saved to DB.");
+  }
+  
+  public List<SongHistory> getSongHistoryByDate(LocalDate date) {
+    List<SongHistory> songHistorys = songHistoryRepository.getEventByDate(date);
+    log.debug("SongHistory get from DB.");
+    
+    return songHistorys;
   }
 }

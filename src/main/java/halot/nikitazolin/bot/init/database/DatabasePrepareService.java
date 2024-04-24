@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class DatabaseService {
+public class DatabasePrepareService {
 
   private final AuthorizationData authorizationData;
   private final DbRegistrator dbRegistrator;

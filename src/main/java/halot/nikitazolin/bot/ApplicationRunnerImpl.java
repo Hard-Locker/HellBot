@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.discord.AudioService;
-import halot.nikitazolin.bot.discord.DatabaseFillService;
+import halot.nikitazolin.bot.discord.DatabaseService;
 import halot.nikitazolin.bot.discord.JdaService;
 import halot.nikitazolin.bot.init.authorization.AuthorizationService;
-import halot.nikitazolin.bot.init.database.DatabaseService;
+import halot.nikitazolin.bot.init.database.DatabasePrepareService;
 import halot.nikitazolin.bot.init.settings.SettingsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ApplicationRunnerImpl implements ApplicationRunner {
 
   private final AuthorizationService authorizationService;
-  private final DatabaseService databaseService;
+  private final DatabasePrepareService databasePrepareService;
   private final SettingsService settingsService;
   private final JdaService jdaService;
   private final AudioService audioService;
-  private final DatabaseFillService databaseFillService;
+  private final DatabaseService databaseService;
 
   public static final String AUTHORIZATION_FILE_PATH = "secrets.yml";
   public static final String SETTINGS_FILE_PATH = "settings.yml";
@@ -33,7 +33,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
     authorizationService.validateAuthorization(AUTHORIZATION_FILE_PATH);
-    databaseService.validateDb(AUTHORIZATION_FILE_PATH);
+    databasePrepareService.validateDb(AUTHORIZATION_FILE_PATH);
     settingsService.validateSettings(SETTINGS_FILE_PATH);
 
     // Start JDA
@@ -42,7 +42,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
     audioService.makeAudioPlayer(jdaService.getGuild());
 
-    databaseFillService.saveGuildToDb(jdaService.getGuild());
+    databaseService.saveGuildToDb(jdaService.getGuild());
 
     System.out.println("Ready!");
     log.info("Ready!");

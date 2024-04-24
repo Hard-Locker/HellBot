@@ -106,7 +106,7 @@ public class AuthorizationConsoleMenu {
 
   private boolean getTwoOptionInput(String optionTitle, String optionDescription) {
     log.debug("Requesting input: {}", optionDescription);
-    String newLine = "\n";
+    String newLine = System.lineSeparator();
     int selectedOption;
     StringBuilder outputMenu = new StringBuilder();
     outputMenu.append(optionTitle);

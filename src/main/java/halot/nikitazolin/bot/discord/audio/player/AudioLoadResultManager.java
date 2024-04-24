@@ -8,7 +8,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
-import halot.nikitazolin.bot.discord.DatabaseFillService;
+import halot.nikitazolin.bot.discord.DatabaseService;
 import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import halot.nikitazolin.bot.repository.model.SongHistory;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class AudioLoadResultManager implements AudioLoadResultHandler {
 
   private final AudioPlayer audioPlayer;
   private final BotCommandContext context;
-  private final DatabaseFillService databaseFillService;
+  private final DatabaseService databaseService;
 
   @Override
   public void trackLoaded(AudioTrack track) {
@@ -55,7 +55,7 @@ public class AudioLoadResultManager implements AudioLoadResultHandler {
     Long guildId = context.getGuild().getIdLong();
 
     SongHistory songHistory = new SongHistory(LocalDateTime.now(), url, author, title, length, userId, guildId);
-    databaseFillService.saveSongHistoryToDb(songHistory);
+    databaseService.saveSongHistoryToDb(songHistory);
 
     log.debug("SongHistory saved to database.");
   }
