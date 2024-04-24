@@ -18,20 +18,23 @@ public class JdaService {
   private final JdaMaker jdaMaker;
   private final CommandRegistrationService commandRegistrationService;
   private final JdaListenerService jdaListenerService;
-  
+
   private Guild guild;
 
   public void initializeJda() {
     jdaMaker.makeJda();
     commandRegistrationService.addCommands();
     jdaListenerService.addListeners();
-    
+
     writeGuild();
 
     log.info("Initialize JDA");
   }
-  
+
   private void writeGuild() {
-    guild = jdaMaker.getJda().get().getGuilds().getFirst();
+    jdaMaker.getJda().ifPresent(jda -> {
+      Guild firstGuild = jda.getGuilds().getFirst();
+      guild = firstGuild;
+    });
   }
 }

@@ -8,10 +8,12 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.command.BotCommandContext;
 import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -21,6 +23,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class PingCommand extends BotCommand {
 
+  private final JdaMaker jdaMaker;
   private final MessageUtil messageUtil;
   private final Settings settings;
 
@@ -77,15 +80,17 @@ public class PingCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-//    final long time = System.currentTimeMillis();
-//
-//    jda.getRestPing().queue(ping -> System.out.println("Logged in with ping: " + ping));
-//
-//    context.getSlashCommandEvent()
-//      .replyEmbeds(MessageUtil.createInfoEmbed("Getting Response Time...").build())
-//      .setEphemeral(true)
-//      .queue(response -> {
-//          response.editOriginalEmbeds(MessageUtil.createSuccessEmbed("Response Time: " + (System.currentTimeMillis() - time) + "ms").build()).queue();
-//        }, failure -> context.getSlashCommandEvent().replyEmbeds(MessageUtil.createErrorEmbed("Failed to get response time!").build()).queue());
+    final long time = System.currentTimeMillis();
+
+    jdaMaker.getJda().ifPresent(jda -> {
+      jda.getRestPing().queue(ping -> {
+        long latency = System.currentTimeMillis() - time;
+        String pingInfo = String.format("Ping: %d ms (REST API), Latency: %d ms", ping, latency);
+        log.trace("User check ping. {}", pingInfo);
+
+        EmbedBuilder embed = messageUtil.createSuccessEmbed(pingInfo);
+        context.sendMessageEmbed(embed);
+      });
+    });
   }
 }

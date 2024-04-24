@@ -13,6 +13,7 @@ import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -79,11 +80,18 @@ public class ShutdownCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    guildAudioService.shutdown();
-//     TODO
-//    context.sendText("Bot shutdown...");
+    EmbedBuilder embed = messageUtil.createErrorEmbed("Bot shutdown...");
+    context.sendMessageEmbed(embed);
 
+    guildAudioService.shutdown();
     log.warn("User shutdown bot. " + "User: " + context.getUser());
+
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      log.error("Shutdown was interrupted. Exception: {}", e);
+    }
 
     System.exit(0);
   }
