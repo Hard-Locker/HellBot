@@ -23,7 +23,7 @@ public class AuthorizationConsoleMenu {
     log.info("Displaying menu");
 
     apiMenu(authorizationData, filePath);
-    youtubeMenu(authorizationData, filePath);
+//    youtubeMenu(authorizationData, filePath);
     dbMenu(authorizationData, filePath);
   }
 
@@ -37,6 +37,7 @@ public class AuthorizationConsoleMenu {
     authorizationSaver.saveToFile(filePath);
   }
 
+  //Now not used
   private void youtubeMenu(AuthorizationData authorizationData, String filePath) {
     log.info("Displaying YouTube authorization menu");
     boolean youtubeEnabled = getTwoOptionInput("-----YouTube authorization-----",

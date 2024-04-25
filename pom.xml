@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
   <artifactId>hell-bot</artifactId>
-  <version>0.0.1</version>
+  <version>0.4.1</version>
   <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
 
@@ -196,6 +196,19 @@
     <plugins>
 
       <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>3.2.4</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
@@ -213,7 +226,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>halot.nikitazolin.bot.HellPlayer</mainClass>
+              <mainClass>halot.nikitazolin.bot.HellBot</mainClass>
               <classpathPrefix>dependency-jars/</classpathPrefix>
             </manifest>
           </archive>

@@ -1,0 +1,50 @@
+# HellBot
+
+HellBot is designed to enhance music playback on your Discord server.
+
+## Usage
+
+To use HellBot, you must install the latest 64-bit version of Java.
+
+Steps:
+1. To launch HellBot, open a terminal window in the directory where the application is located.
+2. Execute the command: "java -jar filename". For example "java -jar hell-bot-0.4.1.jar".
+
+On first run, you will need to:
+• Enter your Discord API key.
+• Choose the type of database you wish to use:
+  If you choose the H2 database, it will be automatically created and store the authorization data.
+  If you choose PostgreSQL, ensure you have created an empty database beforehand and have the connection details ready.
+
+## Features
+
+• Hosts yourself
+• Fast loading of songs
+• Supports online radio/streams, including Youtube
+• Supports local files
+• Save playback history
+
+## Supported formats powered by Lavaplayer.
+The set of sources where LavaPlayer can load tracks from is easily extensible, but the ones currently included by default are:
+• YouTube
+• SoundCloud
+• Twitch streams
+• Local files
+• HTTP URLs
+
+The file formats that LavaPlayer can currently handle are (relevant for file/url sources):
+• MP3
+• FLAC
+• WAV
+• Matroska/WebM (AAC, Opus or Vorbis codecs)
+• MP4/M4A (AAC codec)
+• OGG streams (Opus, Vorbis and FLAC codecs)
+• AAC streams
+
+## Contacts
+
+For support or inquiries, please contact us via:
+• Email: nikita.98.zolin@gmail.com
+• Discord: hard_locker
+• Telegram: https://t.me/Hard_Locker
+• Skype: https://join.skype.com/invite/FdhmsVH2OnEx

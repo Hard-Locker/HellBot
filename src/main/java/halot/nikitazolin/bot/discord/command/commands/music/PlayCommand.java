@@ -81,12 +81,7 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    String url0 = "https://www.youtube.com/watch?v=Tctv-vujFKU";
-    String url1 = "D:\\Music\\Folders\\2024\\Kidd Russell - Fade (Минус).mp3";
-    String url2 = "D:\\Music\\Folders\\2023\\30 Seconds To Mars - Attack.mp3";
-    String url3 = "https://youtu.be/Tctv-vujFKU?si=731Seio46tir0SgO";
-    List<String> links = List.of(url0, url1, url2, url3);
-//    List<String> links = context.getCommandArguments().getString();
+    List<String> links = context.getCommandArguments().getString();
 
     guildAudioService.getPlayerService().fillQueue(links, context);
 

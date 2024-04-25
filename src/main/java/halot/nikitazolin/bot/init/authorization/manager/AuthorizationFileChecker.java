@@ -40,7 +40,7 @@ public class AuthorizationFileChecker {
         if (apiKeyInFile.contains("apiKey:")) {
           String apiKeyValue = apiKeyInFile.substring("apiKey:".length()).trim();
 
-          return (apiKeyValue.length() > 50);
+          return (apiKeyValue.length() > 10);
         }
       }
     } catch (IOException e) {
@@ -86,7 +86,7 @@ public class AuthorizationFileChecker {
       }
 
       log.debug("Wrote initial structure to file with path: {}", filePath);
-      
+
       return true;
     } catch (IOException e) {
       log.error("Error writing the secrets file: {}", e);
