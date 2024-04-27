@@ -70,7 +70,7 @@ public class PlayerService implements AudioSendHandler {
     if ((audioPlayer.isPaused() == false) && (audioPlayer.getPlayingTrack() == null)) {
       AudioItemContext audioItemContext = queue.poll();
 
-      audioPlayerManager.loadItem(audioItemContext.getUrl(), new AudioLoadResultManager(audioPlayer, audioItemContext.getContext(), databaseService));
+      audioPlayerManager.loadItem(audioItemContext.url(), new AudioLoadResultManager(audioPlayer, audioItemContext.context(), databaseService));
     } else if (audioPlayer.isPaused() == true) {
       audioPlayer.setPaused(false);
     }
