@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.manager;
+package halot.nikitazolin.bot.discord.command;
 
 import java.util.ArrayList;
 import java.util.List;

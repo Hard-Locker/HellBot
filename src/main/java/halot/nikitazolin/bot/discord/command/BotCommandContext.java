@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -70,7 +71,7 @@ public class BotCommandContext {
 
   public void sendPrivateMessage(EmbedBuilder embedBuilder) {
     MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
-    
+
     if (!user.isBot()) {
       user.openPrivateChannel().queue((privateChannel) -> {
         privateChannel.sendMessage(messageCreateData).queue();
@@ -78,6 +79,11 @@ public class BotCommandContext {
         log.warn("Failed to send a private message to the user: " + user);
       });
     }
+  }
+
+  public void sendMessageWithButtons(String message, Button... buttons) {
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(message).setActionRow(buttons).build();
+    textChannel.sendMessage(messageCreateData).queue();
   }
 
   private Guild fillGuild(SlashCommandInteractionEvent slashCommandEvent, MessageReceivedEvent messageReceivedEvent) {

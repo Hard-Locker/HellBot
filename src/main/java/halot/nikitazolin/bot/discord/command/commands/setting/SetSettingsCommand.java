@@ -2,7 +2,6 @@ package halot.nikitazolin.bot.discord.command.commands.setting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -13,9 +12,10 @@ import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 @Component
 @Scope("prototype")
@@ -54,7 +54,7 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Show all settings";
+    return "You can change any settings";
   }
 
   @Override
@@ -79,6 +79,9 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    
+    Button yesButton = Button.primary("yesButton", "Yes");
+    Button noButton = Button.danger("noButton", "No");
+
+    context.sendMessageWithButtons("Are you sure you want to proceed?", yesButton, noButton);
   }
 }
