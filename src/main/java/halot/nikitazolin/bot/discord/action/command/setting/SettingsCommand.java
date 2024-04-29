@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands.setting;
+package halot.nikitazolin.bot.discord.action.command.setting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,14 +7,16 @@ import java.util.stream.Collectors;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
-import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -23,7 +25,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class SettingsCommand extends BotCommand {
 
-  private final MessageUtil messageUtil;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
 
   private final String commandName = "settings";
@@ -90,7 +93,7 @@ public class SettingsCommand extends BotCommand {
     }
 
     if (allowedIds.contains(context.getUser().getIdLong())) {
-      EmbedBuilder embed = messageUtil.createAltInfoEmbed("Сurrent bot settings:");
+      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("Сurrent bot settings:");
       String notSetValue = "Not set";
 
       embed.addField("Volume", String.valueOf(settings.getVolume()), true);
@@ -117,12 +120,17 @@ public class SettingsCommand extends BotCommand {
         embed.addField("Name aliases", notSetValue, false);
       }
 
-      context.sendPrivateMessage(embed);
+      messageSender.sendPrivateMessage(context.getUser(), embed);
       log.debug("User show settings" + context.getUser());
     } else {
-      EmbedBuilder embed = messageUtil.createAltInfoEmbed("You have not permission for use this command");
-      context.sendPrivateMessage(embed);
+      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
+      messageSender.sendPrivateMessage(context.getUser(), embed);
       log.debug("User have not permission for show settings" + context.getUser());
     }
+  }
+
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+
   }
 }

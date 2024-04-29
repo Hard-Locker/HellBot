@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands;
+package halot.nikitazolin.bot.discord.action.command;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,14 +6,16 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
-import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -22,7 +24,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class HelloCommand extends BotCommand {
 
-  private final MessageUtil messageUtil;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
 
   private final String commandName = "hello";
@@ -78,9 +81,14 @@ public class HelloCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    EmbedBuilder embed = messageUtil.createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
-    context.sendMessageEmbed(embed);
+    EmbedBuilder embed = messageFormatter.createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
+    messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     log.debug("User get hello" + context.getUser());
+  }
+
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+
   }
 }

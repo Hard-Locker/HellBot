@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands.music;
+package halot.nikitazolin.bot.discord.action.command.setting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,28 +6,27 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.audio.player.PlayerService;
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
-import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class PauseCommand extends BotCommand {
+public class AboutCommand extends BotCommand {
 
-  private final PlayerService playerService;
-  private final MessageUtil messageUtil;
+  private final MessageFormatter messageFormatter;
   private final Settings settings;
 
-  private final String commandName = "pause";
+  private final String commandName = "about";
 
   @Override
   public String name() {
@@ -55,7 +54,7 @@ public class PauseCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Pause current music";
+    return "Show information about bot";
   }
 
   @Override
@@ -80,16 +79,14 @@ public class PauseCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    playerService.pause();
+//    EmbedBuilder embed = messageUtil.createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
+//    context.sendMessageEmbed(embed);
+//
+//    log.debug("User get hello" + context.getUser());
+  }
 
-    if (playerService.getAudioPlayer().isPaused() == true) {
-      EmbedBuilder embed = messageUtil.createInfoEmbed("Music paused by user: " + context.getUser().getAsMention());
-      context.sendMessageEmbed(embed);
-    } else {
-      EmbedBuilder embed = messageUtil.createInfoEmbed("Music resumed by user: " + context.getUser().getAsMention());
-      context.sendMessageEmbed(embed);
-    }
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
 
-    log.debug("Music paused by user: " + context.getUser());
   }
 }

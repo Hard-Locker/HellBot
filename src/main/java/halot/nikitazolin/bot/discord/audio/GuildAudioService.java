@@ -6,10 +6,11 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,8 @@ import net.dv8tion.jda.api.managers.AudioManager;
 @RequiredArgsConstructor
 public class GuildAudioService {
 
-  private final MessageUtil messageUtil;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
   private final PlayerService playerService;
   private AudioManager audioManager;
@@ -74,8 +76,9 @@ public class GuildAudioService {
 
       return userVoiceChannel;
     } catch (NullPointerException e) {
-      EmbedBuilder embed = messageUtil.createErrorEmbed(context.getUser().getAsMention() + ", you need to be in voice channel to use music command.");
-      context.sendMessageEmbed(embed);
+      EmbedBuilder embed = messageFormatter.createErrorEmbed(
+          context.getUser().getAsMention() + ", you need to be in voice channel to use music command.");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
       log.debug("User must to be in correct voice channel to use music command.");
       return null;
@@ -102,8 +105,9 @@ public class GuildAudioService {
     VoiceChannel afkVoiceChannel = context.getGuild().getAfkChannel();
 
     if (afkVoiceChannel != null && afkVoiceChannel.equals(userVoiceChannel)) {
-      EmbedBuilder embed = messageUtil.createErrorEmbed(context.getUser().getAsMention() + ", this command cannot be used in the AFK channel.");
-      context.sendMessageEmbed(embed);
+      EmbedBuilder embed = messageFormatter
+          .createErrorEmbed(context.getUser().getAsMention() + ", this command cannot be used in the AFK channel.");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
       log.debug("User try call bot in AFK channel. User: " + context.getUser());
 
       return false;
@@ -122,8 +126,9 @@ public class GuildAudioService {
     }
 
     if (botVoiceChannel != null && !botVoiceChannel.equals(userVoiceChannel)) {
-      EmbedBuilder embed = messageUtil.createErrorEmbed(context.getUser().getAsMention() + ", you must be in the same voice channel as the bot to use this command.");
-      context.sendMessageEmbed(embed);
+      EmbedBuilder embed = messageFormatter.createErrorEmbed(
+          context.getUser().getAsMention() + ", you must be in the same voice channel as the bot to use this command.");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
       log.debug("User try call bot in different channel. User:" + context.getUser());
 
       return false;
@@ -146,8 +151,9 @@ public class GuildAudioService {
     if (allowedVoiceChannelIds.isEmpty() || allowedVoiceChannelIds.contains(userVoiceChannel.getIdLong())) {
       return true;
     } else {
-      EmbedBuilder embed = messageUtil.createErrorEmbed(context.getUser().getAsMention() + ", your voice channel is denied for bot.");
-      context.sendMessageEmbed(embed);
+      EmbedBuilder embed = messageFormatter
+          .createErrorEmbed(context.getUser().getAsMention() + ", your voice channel is denied for bot.");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
       log.debug("User tried to use a command in an denied voice channel.");
 
       return false;

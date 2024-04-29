@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class EventHandler extends ListenerAdapter {
+public class EventListener extends ListenerAdapter {
 
   private final SlashCommandEventManager slashCommandEventManager;
   private final MessageReceivedEventManager messageReceivedEventManager;

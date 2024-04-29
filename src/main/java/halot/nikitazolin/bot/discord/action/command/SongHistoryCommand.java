@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands;
+package halot.nikitazolin.bot.discord.action.command;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -9,16 +9,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.DatabaseService;
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
-import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.repository.model.SongHistory;
-import halot.nikitazolin.bot.util.MessageUtil;
 import halot.nikitazolin.bot.util.TimeConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -27,7 +29,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @RequiredArgsConstructor
 public class SongHistoryCommand extends BotCommand {
 
-  private final MessageUtil messageUtil;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
   private final DatabaseService databaseService;
   private final TimeConverter timeConverter;
@@ -90,25 +93,27 @@ public class SongHistoryCommand extends BotCommand {
     List<SongHistory> songs = databaseService.getSongHistoryByDate(today);
 
     if (songs.isEmpty()) {
-      EmbedBuilder embed = messageUtil.createInfoEmbed("No songs were played today.");
-      context.sendMessageEmbed(embed);
-      
+      EmbedBuilder embed = messageFormatter.createInfoEmbed("No songs were played today.");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+
       return;
     }
 
-    EmbedBuilder embed = messageUtil.createInfoEmbed("Here is your music history for today:");
+    EmbedBuilder embed = messageFormatter.createInfoEmbed("Here is your music history for today:");
 
     for (SongHistory song : songs) {
-      String songInfo = String.format("%s - %s" + newLine + "Duration: %s" + newLine + "URL: %s", 
-          song.getSongArtist(),
-          song.getSongName(), 
-          timeConverter.convertLongTimeToSimpleFormat(song.getSongDuration()), 
-          song.getSongUrl());
+      String songInfo = String.format("%s - %s" + newLine + "Duration: %s" + newLine + "URL: %s", song.getSongArtist(),
+          song.getSongName(), timeConverter.convertLongTimeToSimpleFormat(song.getSongDuration()), song.getSongUrl());
 
       embed.addField(song.getEventDatetime().format(DateTimeFormatter.ofPattern("HH:mm")), songInfo, false);
     }
 
-    context.sendMessageEmbed(embed);
-    log.debug("Music history sent to " + context.getUser());
+    messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+    log.debug("Music history sent by user: {}", context.getUser());
+  }
+
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+
   }
 }

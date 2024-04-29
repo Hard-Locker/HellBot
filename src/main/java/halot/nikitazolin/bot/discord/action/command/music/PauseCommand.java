@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands.music;
+package halot.nikitazolin.bot.discord.action.command.music;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,29 +6,31 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.audio.GuildAudioService;
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
-import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.audio.player.PlayerService;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class PlayCommand extends BotCommand {
+public class PauseCommand extends BotCommand {
 
-  private final GuildAudioService guildAudioService;
-  private final MessageUtil messageUtil;
+  private final PlayerService playerService;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
 
-  private final String commandName = "play";
+  private final String commandName = "pause";
 
   @Override
   public String name() {
@@ -56,7 +58,7 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Start playing music from link";
+    return "Pause current music";
   }
 
   @Override
@@ -76,26 +78,26 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] { new OptionData(OptionType.STRING, "link", "URL with content", false) };
+    return new OptionData[] {};
   }
 
   @Override
   public void execute(BotCommandContext context) {
-    List<String> links = context.getCommandArguments().getString();
+    playerService.pause();
 
-    guildAudioService.getPlayerService().fillQueue(links, context);
-
-    if (guildAudioService.connectToVoiceChannel(context) == false) {
-      return;
+    if (playerService.getAudioPlayer().isPaused() == true) {
+      EmbedBuilder embed = messageFormatter.createInfoEmbed("Music paused by user: " + context.getUser().getAsMention());
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+    } else {
+      EmbedBuilder embed = messageFormatter.createInfoEmbed("Music resumed by user: " + context.getUser().getAsMention());
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 
-    guildAudioService.getPlayerService().play();
+    log.debug("Music paused by user: " + context.getUser());
+  }
 
-    if (!links.isEmpty()) {
-      EmbedBuilder embed = messageUtil.createSuccessEmbed("Added audiotrack");
-      context.sendMessageEmbed(embed);
-    }
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
 
-    log.debug("User added links to playing music. " + "User: " + context.getUser());
   }
 }

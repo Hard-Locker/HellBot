@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands.music;
+package halot.nikitazolin.bot.discord.action.command.music;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,28 +6,31 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.audio.player.PlayerService;
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
-import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.audio.GuildAudioService;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class StopCommand extends BotCommand {
+public class OffCommand extends BotCommand {
 
-  private final PlayerService playerService;
-  private final MessageUtil messageUtil;
+  private final GuildAudioService guildAudioService;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
 
-  private final String commandName = "stop";
+  private final String commandName = "off";
 
   @Override
   public String name() {
@@ -55,7 +58,7 @@ public class StopCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Stop player and skip current music";
+    return "Stop music, clear playlist, and disconnect from voice channel";
   }
 
   @Override
@@ -80,11 +83,17 @@ public class StopCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    playerService.stop();
+    guildAudioService.stopAudioSending();
 
-    EmbedBuilder embed = messageUtil.createWarningEmbed("Music was stopped by user: " + context.getUser().getAsMention());
-    context.sendMessageEmbed(embed);
+    EmbedBuilder embed = messageFormatter
+        .createWarningEmbed("Player was go off by user: " + context.getUser().getAsMention());
+    messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
-    log.debug("Music was stopped by user: " + context.getUser());
+    log.debug("Player was go off by user: " + context.getUser());
+  }
+
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+
   }
 }

@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.util;
+package halot.nikitazolin.bot.discord.tool;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -13,15 +13,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 @Component
 @Scope("prototype")
 @RequiredArgsConstructor
-public class MessageUtil {
+public class MessageFormatter {
 
   private final JdaMaker jdaMaker;
 
-  private static final Color BOT_COLOR_SUCCESS = new Color(88, 170, 137);
-  private static final Color BOT_COLOR_ERROR = new Color(191, 61, 39);
-  private static final Color BOT_COLOR_INFO = new Color(32, 102, 148);
-  private static final Color BOT_COLOR_INFO_ALT = new Color(87, 97, 133);
-  private static final Color BOT_COLOR_WARNING = new Color(255, 122, 0);
+  private static final Color BOT_COLOR_SUCCESS = new Color(0, 255, 0);
+  private static final Color BOT_COLOR_ERROR = new Color(255, 0, 0);
+  private static final Color BOT_COLOR_INFO = new Color(255, 255, 0);
+  private static final Color BOT_COLOR_INFO_ALT = new Color(0, 255, 255);
+  private static final Color BOT_COLOR_WARNING = new Color(255, 69, 0);
 
   public EmbedBuilder createSuccessEmbed() {
     EmbedBuilder embedBuilder = new EmbedBuilder();

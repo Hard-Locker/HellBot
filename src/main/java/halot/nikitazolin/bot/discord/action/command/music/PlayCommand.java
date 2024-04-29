@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands;
+package halot.nikitazolin.bot.discord.action.command.music;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,28 +6,32 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.GuildAudioService;
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
-import halot.nikitazolin.bot.discord.command.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class ShutdownCommand extends BotCommand {
+public class PlayCommand extends BotCommand {
 
   private final GuildAudioService guildAudioService;
-  private final MessageUtil messageUtil;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
 
-  private final String commandName = "shutdown";
+  private final String commandName = "play";
 
   @Override
   public String name() {
@@ -55,7 +59,7 @@ public class ShutdownCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Shutdown bot";
+    return "Start playing music from link";
   }
 
   @Override
@@ -75,24 +79,31 @@ public class ShutdownCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] {};
+    return new OptionData[] { new OptionData(OptionType.STRING, "link", "URL with content", false) };
   }
 
   @Override
   public void execute(BotCommandContext context) {
-    EmbedBuilder embed = messageUtil.createErrorEmbed("Bot shutdown...");
-    context.sendMessageEmbed(embed);
+    List<String> links = context.getCommandArguments().getString();
 
-    guildAudioService.shutdown();
-    log.warn("User shutdown bot. " + "User: " + context.getUser());
+    guildAudioService.getPlayerService().fillQueue(links, context);
 
-    try {
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      log.error("Shutdown was interrupted. Exception: {}", e);
+    if (guildAudioService.connectToVoiceChannel(context) == false) {
+      return;
     }
 
-    System.exit(0);
+    guildAudioService.getPlayerService().play();
+
+    if (!links.isEmpty()) {
+      EmbedBuilder embed = messageFormatter.createSuccessEmbed("Added audiotrack");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+    }
+
+    log.debug("User added links to playing music. " + "User: " + context.getUser());
+  }
+
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+
   }
 }

@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.command.commands;
+package halot.nikitazolin.bot.discord.action.command;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,28 +6,31 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.discord.command.BotCommandContext;
-import halot.nikitazolin.bot.discord.command.model.BotCommand;
-import halot.nikitazolin.bot.discord.jda.JdaMaker;
+import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.audio.GuildAudioService;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.util.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class PingCommand extends BotCommand {
+public class ShutdownCommand extends BotCommand {
 
-  private final JdaMaker jdaMaker;
-  private final MessageUtil messageUtil;
+  private final GuildAudioService guildAudioService;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
 
-  private final String commandName = "ping";
+  private final String commandName = "shutdown";
 
   @Override
   public String name() {
@@ -55,7 +58,7 @@ public class PingCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Wanna check ping?";
+    return "Shutdown bot";
   }
 
   @Override
@@ -80,17 +83,24 @@ public class PingCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    final long time = System.currentTimeMillis();
+    EmbedBuilder embed = messageFormatter.createErrorEmbed("Bot shutdown...");
+    messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
-    jdaMaker.getJda().ifPresent(jda -> {
-      jda.getRestPing().queue(ping -> {
-        long latency = System.currentTimeMillis() - time;
-        String pingInfo = String.format("Ping: %d ms (REST API), Latency: %d ms", ping, latency);
-        log.trace("User check ping. {}", pingInfo);
+    guildAudioService.shutdown();
+    log.warn("User shutdown bot. " + "User: " + context.getUser());
 
-        EmbedBuilder embed = messageUtil.createSuccessEmbed(pingInfo);
-        context.sendMessageEmbed(embed);
-      });
-    });
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      log.error("Shutdown was interrupted. Exception: {}", e);
+    }
+
+    System.exit(0);
+  }
+
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+
   }
 }

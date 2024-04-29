@@ -17,18 +17,19 @@ import net.dv8tion.jda.api.JDA;
 public class JdaListenerService {
 
   private final JdaMaker jdaMaker;
-  private final EventHandler eventHandler;
+  private final EventListener eventListener;
 
   public void addListeners() {
-    Optional<JDA> jda = jdaMaker.getJda();
+    Optional<JDA> jdaOptional = jdaMaker.getJda();
 
-    registerListeners(jda);
+    jdaOptional.ifPresentOrElse(this::registerListeners, () -> {
+      System.err.println("JDA is not present!");
+      log.error("JDA is not present");
+    });
   }
 
-  private void registerListeners(Optional<JDA> jda) {
-    jda.ifPresentOrElse(jdaL -> {
-      jdaL.addEventListener(eventHandler);
-      log.info("register event listener: " + eventHandler);
-    }, () -> System.out.println("JDA is not present!"));
+  private void registerListeners(JDA jda) {
+    jda.addEventListener(eventListener);
+    log.info("Registered event listener: {}", eventListener);
   }
 }

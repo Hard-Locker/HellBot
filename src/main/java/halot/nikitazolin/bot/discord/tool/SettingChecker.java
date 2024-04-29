@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.util;
+package halot.nikitazolin.bot.discord.tool;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 @RequiredArgsConstructor
 public class SettingChecker {
 
-  private final MessageUtil messageUtil;
+  private final MessageFormatter messageFormatter;
   private final Settings settings;
   
   public boolean checkAllowedTextChannel(TextChannel textChannel, User user) {
@@ -38,7 +38,7 @@ public class SettingChecker {
     if (allowedTextChannelIds.isEmpty() || allowedTextChannelIds.contains(textChannel.getIdLong())) {
       return true;
     } else {
-      EmbedBuilder embed = messageUtil.createErrorEmbed(textChannel.getName() + " text channel is denied for bot.");
+      EmbedBuilder embed = messageFormatter.createErrorEmbed(textChannel.getName() + " text channel is denied for bot.");
       MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embed.build()).build();
 
       if (!user.isBot()) {
