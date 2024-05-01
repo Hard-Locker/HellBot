@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -81,7 +82,8 @@ public class HelloCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    EmbedBuilder embed = messageFormatter.createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
+    EmbedBuilder embed = messageFormatter
+        .createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     log.debug("User get hello" + context.getUser());
@@ -89,6 +91,11 @@ public class HelloCommand extends BotCommand {
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+
+  }
+
+  @Override
+  public void modalInputProcessing(ModalInteractionEvent modalEvent) {
 
   }
 }

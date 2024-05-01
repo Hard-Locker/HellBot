@@ -50,11 +50,11 @@ public class BotCommandContext {
     List<Supplier<Guild>> guildSuppliers = new ArrayList<>();
 
     if (slashCommandEvent != null) {
-      guildSuppliers.add(() -> slashCommandEvent.getGuild());
+      guildSuppliers.add(slashCommandEvent::getGuild);
     }
 
     if (messageReceivedEvent != null) {
-      guildSuppliers.add(() -> messageReceivedEvent.getGuild());
+      guildSuppliers.add(messageReceivedEvent::getGuild);
     }
 
     for (Supplier<Guild> supplier : guildSuppliers) {
@@ -73,11 +73,11 @@ public class BotCommandContext {
     List<Supplier<User>> userSuppliers = new ArrayList<>();
 
     if (slashCommandEvent != null) {
-      userSuppliers.add(() -> slashCommandEvent.getUser());
+      userSuppliers.add(slashCommandEvent::getUser);
     }
 
     if (messageReceivedEvent != null) {
-      userSuppliers.add(() -> messageReceivedEvent.getAuthor());
+      userSuppliers.add(messageReceivedEvent::getAuthor);
     }
 
     for (Supplier<User> supplier : userSuppliers) {
@@ -96,11 +96,11 @@ public class BotCommandContext {
     List<Supplier<Member>> memberSuppliers = new ArrayList<>();
 
     if (slashCommandEvent != null) {
-      memberSuppliers.add(() -> slashCommandEvent.getMember());
+      memberSuppliers.add(slashCommandEvent::getMember);
     }
 
     if (messageReceivedEvent != null) {
-      memberSuppliers.add(() -> messageReceivedEvent.getMember());
+      memberSuppliers.add(messageReceivedEvent::getMember);
     }
 
     for (Supplier<Member> supplier : memberSuppliers) {

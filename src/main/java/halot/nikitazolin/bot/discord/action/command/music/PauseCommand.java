@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -86,10 +87,12 @@ public class PauseCommand extends BotCommand {
     playerService.pause();
 
     if (playerService.getAudioPlayer().isPaused() == true) {
-      EmbedBuilder embed = messageFormatter.createInfoEmbed("Music paused by user: " + context.getUser().getAsMention());
+      EmbedBuilder embed = messageFormatter
+          .createInfoEmbed("Music paused by user: " + context.getUser().getAsMention());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     } else {
-      EmbedBuilder embed = messageFormatter.createInfoEmbed("Music resumed by user: " + context.getUser().getAsMention());
+      EmbedBuilder embed = messageFormatter
+          .createInfoEmbed("Music resumed by user: " + context.getUser().getAsMention());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 
@@ -98,6 +101,11 @@ public class PauseCommand extends BotCommand {
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+
+  }
+
+  @Override
+  public void modalInputProcessing(ModalInteractionEvent modalEvent) {
 
   }
 }

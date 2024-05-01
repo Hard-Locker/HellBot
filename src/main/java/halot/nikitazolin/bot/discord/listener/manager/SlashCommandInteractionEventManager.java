@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SlashCommandEventManager {
+public class SlashCommandInteractionEventManager {
 
   private final CommandCollector commandCollector;
   private final SettingChecker settingChecker;
