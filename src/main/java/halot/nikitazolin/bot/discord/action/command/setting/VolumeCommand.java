@@ -14,6 +14,7 @@ import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.audio.player.PlayerService;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
@@ -32,16 +34,17 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetSettingsCommand extends BotCommand {
+public class VolumeCommand extends BotCommand {
 
+  private final PlayerService playerService;
   private final MessageSender messageSender;
   private final Settings settings;
   private final SettingsSaver settingsSaver;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "set";
+  private final String commandName = "volume";
   private final String close = "close";
-  private final String aloneTime = "aloneTime";
+  private final String volume = "volume";
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers;
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers;
 
@@ -71,7 +74,7 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "You can change any settings";
+    return "Set volume level";
   }
 
   @Override
@@ -91,26 +94,49 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] {};
+    return new OptionData[] { new OptionData(OptionType.STRING, "volume", "Volume level (0-150)", false) };
   }
 
   @Override
   public void execute(BotCommandContext context) {
-    Button closeButton = Button.danger(close, "Close settings");
-    Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
-    List<Button> buttons = List.of(closeButton, aloneTimeButton);
+    List<String> args = context.getCommandArguments().getString();
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
-        buttons);
+    if (args.isEmpty()) {
+      makeGui(context);
+    } else {
+      try {
+        int volumeLevel = Integer.parseInt(args.get(0));
+        updateVolume(volumeLevel);
+      } catch (NumberFormatException e) {
+        log.warn("Error parsing volume level from arguments", e);
+      } catch (IndexOutOfBoundsException e) {
+        log.warn("Error accessing the first argument for volume level", e);
+      }
+    }
+  }
+
+  private void makeGui(BotCommandContext context) {
+    Button closeButton = Button.danger(close, "Close settings");
+    Button volumeButton = Button.primary(volume, "Set volume");
+    List<Button> buttons = List.of(closeButton, volumeButton);
+
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Volume setting", buttons);
 
     buttonHandlers = new HashMap<>();
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(aloneTime, this::makeAloneTimeUntilStop);
+    buttonHandlers.put(volume, this::makeVolumeModal);
 
     modalHandlers = new HashMap<>();
-    modalHandlers.put(aloneTime, this::setAloneTimeUntilStop);
+    modalHandlers.put(volume, this::handleVolumeModal);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName));
+  }
+
+  private void updateVolume(int volumeLevel) {
+    playerService.setVolume(volumeLevel);
+    settings.setVolume(volumeLevel);
+    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+    log.debug("Current volume level: {}", volumeLevel);
   }
 
   @Override
@@ -130,25 +156,28 @@ public class SetSettingsCommand extends BotCommand {
     log.debug("Settings closed");
   }
 
-  private void makeAloneTimeUntilStop(ButtonInteractionEvent buttonEvent) {
+  private void makeVolumeModal(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
-        .create(aloneTime, "Set alone time in seconds until stop bot").addActionRow(TextInput
-            .create("aloneTimeInput", "Time (seconds 0-4000)", TextInputStyle.SHORT).setRequiredRange(0, 4000).build())
+        .create(volume, "Set Volume").addActionRow(TextInput
+            .create("volumeInput", "Volume Level (0-150)", TextInputStyle.SHORT).setRequiredRange(0, 150).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened alone time modal");
+    log.debug("Opened volume modal");
   }
 
-  private void setAloneTimeUntilStop(ModalInteractionEvent modalEvent) {
-    String inputTime = modalEvent.getValue("aloneTimeInput").getAsString();
-    Long time = Long.parseLong(inputTime);
+  private void handleVolumeModal(ModalInteractionEvent modalEvent) {
+    String input = modalEvent.getValue("volumeInput").getAsString();
 
-    settings.setAloneTimeUntilStop(time);
-    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-
-    modalEvent.reply("Alone time set to " + time).setEphemeral(true).queue();
-    log.debug("User changed alone time to " + time);
+    try {
+      int volumeLevel = Integer.parseInt(input);
+      updateVolume(volumeLevel);
+      modalEvent.reply("Current volume level: " + volumeLevel).setEphemeral(true).queue();
+    } catch (NumberFormatException e) {
+      log.warn("Error parsing volume level from arguments", e);
+    } catch (IndexOutOfBoundsException e) {
+      log.warn("Error accessing the first argument for volume level", e);
+    }
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
