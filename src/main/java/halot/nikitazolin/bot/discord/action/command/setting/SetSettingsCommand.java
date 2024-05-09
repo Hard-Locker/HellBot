@@ -128,25 +128,66 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    if (checkUserPermission(context.getUser()) == true) {
-      Button closeButton = Button.danger(close, "Close settings");
-      Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
-      List<Button> buttons = List.of(closeButton, aloneTimeButton);
-
-      Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
-          buttons);
-
-      buttonHandlers.put(close, this::selectClose);
-      buttonHandlers.put(aloneTime, this::makeAloneTimeUntilStop);
-
-      modalHandlers.put(aloneTime, this::setAloneTimeUntilStop);
-
-      actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName));
-    } else {
+    if (checkUserPermission(context.getUser()) == false) {
       EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
       messageSender.sendPrivateMessage(context.getUser(), embed);
       log.debug("User have not permission for use settings" + context.getUser());
+
+      return;
     }
+
+    Button closeButton = Button.danger(close, "Close settings");
+    Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
+    Button botStatusButton = Button.primary(botStatus, "Set bot status");
+    Button botActivityButton = Button.primary(botActivity, "Set bot activity");
+    Button songInStatusButton = Button.primary(songInStatus, "Set song in status");
+    Button stayInChannelButton = Button.primary(stayInChannel, "Set stay in channel");
+    Button updateAlertsButton = Button.primary(updateAlerts, "Set update alerts");
+    Button allowedTextChannelIdsButton = Button.primary(allowedTextChannelIds, "Set allowed text channel");
+    Button allowedVoiceChannelIdsButton = Button.primary(allowedVoiceChannelIds, "Set allowed voice channel");
+    Button adminUserIdsButton = Button.primary(adminUserIds, "Set admin");
+    Button djUserIdsButton = Button.primary(djUserIds, "Set DJ");
+    Button bannedUserIdsButton = Button.primary(bannedUserIds, "Ban users");
+    Button playlistFolderPathsButton = Button.primary(playlistFolderPaths, "Set playlist folders");
+    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
+    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
+    List<Button> buttons = List.of(closeButton, aloneTimeButton);
+
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
+        buttons);
+
+    buttonHandlers.put(close, this::selectClose);
+    buttonHandlers.put(aloneTime, this::makeAloneTimeUntilStop);
+//    buttonHandlers.put(botStatus, this::make);
+//    buttonHandlers.put(botActivity, this::make);
+//    buttonHandlers.put(songInStatus, this::make);
+//    buttonHandlers.put(stayInChannel, this::make);
+//    buttonHandlers.put(updateAlerts, this::make);
+//    buttonHandlers.put(allowedTextChannelIds, this::make);
+//    buttonHandlers.put(allowedVoiceChannelIds, this::make);
+//    buttonHandlers.put(adminUserIds, this::make);
+//    buttonHandlers.put(djUserIds, this::make);
+//    buttonHandlers.put(bannedUserIds, this::make);
+//    buttonHandlers.put(playlistFolderPaths, this::make);
+//    buttonHandlers.put(prefixes, this::make);
+//    buttonHandlers.put(nameAliases, this::make);
+
+    modalHandlers.put(aloneTime, this::setAloneTimeUntilStop);
+//    modalHandlers.put(botStatus, this::set);
+//    modalHandlers.put(botActivity, this::set);
+//    modalHandlers.put(songInStatus, this::set);
+//    modalHandlers.put(stayInChannel, this::set);
+//    modalHandlers.put(updateAlerts, this::set);
+//    modalHandlers.put(allowedTextChannelIds, this::set);
+//    modalHandlers.put(allowedVoiceChannelIds, this::set);
+//    modalHandlers.put(adminUserIds, this::set);
+//    modalHandlers.put(djUserIds, this::set);
+//    modalHandlers.put(bannedUserIds, this::set);
+//    modalHandlers.put(playlistFolderPaths, this::set);
+//    modalHandlers.put(prefixes, this::set);
+//    modalHandlers.put(nameAliases, this::set);
+
+    actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName));
   }
 
   @Override

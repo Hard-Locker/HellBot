@@ -120,7 +120,7 @@ public class PlayerService implements AudioSendHandler {
       AudioItemContext audioItemContext = new AudioItemContext(identifier, context);
       boolean result = queue.offer(audioItemContext);
 
-      if (result) {
+      if (result == true) {
         log.debug("Add link {} to queue", identifier);
       } else {
         log.warn("Problem with adding link {} to queue", identifier);

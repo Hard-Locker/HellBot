@@ -68,33 +68,4 @@ public class MessageSender {
           error -> log.warn("Failed to send a private message to the user: " + user));
     }
   }
-
-//  public Long sendPrivateMessageWithButtons(User user, String message, List<Button> buttons) {
-//    CompletableFuture<Long> futureMessageId = new CompletableFuture<>();
-//    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(message).setActionRow(buttons).build();
-//
-//    if (!user.isBot()) {
-//      user.openPrivateChannel().queue(privateChannel -> {privateChannel.sendMessage(messageCreateData).queue(
-////            messageSent -> {
-////          Long messageId = messageSent.getIdLong();
-////          log.debug("Message sent with ID: " + messageId);
-////          futureMessageId.complete(messageId);
-////        }, error -> {
-////          log.error("Failed to send message: " + error.getMessage());
-////          futureMessageId.complete(null);
-////        }
-//        );
-//      }, error -> {log.warn("Failed to send a private message to the user: " + user);}
-//      );
-//    }
-//
-//    try {
-//      return futureMessageId.get();
-//    } catch (InterruptedException | ExecutionException e) {
-//      log.error("Error waiting for the message to be sent: ", e);
-//      Thread.currentThread().interrupt();
-//
-//      return null;
-//    }
-//  }
 }
