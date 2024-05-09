@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -62,8 +63,22 @@ public class SettingsCommand extends BotCommand {
   }
 
   @Override
-  public String requiredRole() {
-    return null;
+  public boolean checkUserPermission(User user) {
+    List<Long> allowedIds = new ArrayList<>();
+
+    if (settings.getOwnerUserId() != null) {
+      allowedIds.add(settings.getOwnerUserId());
+    }
+
+    if (settings.getAdminUserIds() != null) {
+      allowedIds.addAll(settings.getAdminUserIds());
+    }
+
+    if (allowedIds.contains(user.getIdLong())) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
@@ -83,60 +98,53 @@ public class SettingsCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    List<Long> allowedIds = new ArrayList<>();
-
-    if (settings.getOwnerUserId() != null) {
-      allowedIds.add(settings.getOwnerUserId());
-    }
-
-    if (settings.getAdminUserIds() != null) {
-      allowedIds.addAll(settings.getAdminUserIds());
-    }
-
-    if (allowedIds.contains(context.getUser().getIdLong())) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("Сurrent bot settings:");
-      String notSetValue = "Not set";
-
-      embed.addField("Volume", String.valueOf(settings.getVolume()), true);
-      embed.addField("Owner ID", settings.getOwnerUserId() != null ? settings.getOwnerUserId().toString() : notSetValue, true);
-      embed.addField("Alone time until stop", settings.getAloneTimeUntilStop() != null ? settings.getAloneTimeUntilStop().toString() : notSetValue, true);
-      embed.addField("Bot status at start", settings.getBotStatusAtStart() != null ? settings.getBotStatusAtStart() : notSetValue, true);
-      embed.addField("Bot activity at start", settings.getBotActivityAtStart() != null ? settings.getBotActivityAtStart() : notSetValue, true);
-      embed.addField("Song in status", String.valueOf(settings.isSongInStatus()), true);
-      embed.addField("Stay in channel", String.valueOf(settings.isStayInChannel()), true);
-      embed.addField("Update alerts", String.valueOf(settings.isUpdateAlerts()), true);
-      embed.addField("Allowed text channel IDs", settings.getAllowedTextChannelIds() != null ? settings.getAllowedTextChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
-      embed.addField("Allowed voice channel IDs", settings.getAllowedVoiceChannelIds() != null ? settings.getAllowedVoiceChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
-      embed.addField("Admin IDs", settings.getAdminUserIds() != null ? settings.getAdminUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
-      embed.addField("DJ IDs", settings.getDjUserIds() != null ? settings.getDjUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
-      embed.addField("Banned IDs", settings.getBannedUserIds() != null ? settings.getBannedUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
-      embed.addField("Playlist folder paths", settings.getPlaylistFolderPaths() != null ? String.join(", ", settings.getPlaylistFolderPaths()) : notSetValue, false);
-      embed.addField("Prefixes", settings.getPrefixes() != null ? String.join(", ", settings.getPrefixes()) : notSetValue, false);
-
-      if (settings.getNameAliases() != null && !settings.getNameAliases().isEmpty()) {
-        StringBuilder aliasesBuilder = new StringBuilder();
-        settings.getNameAliases().forEach((key, value) -> aliasesBuilder.append(key).append(": ").append(String.join(", ", value)).append("\n"));
-        embed.addField("Name aliases", aliasesBuilder.toString(), false);
-      } else {
-        embed.addField("Name aliases", notSetValue, false);
-      }
-
-      messageSender.sendPrivateMessage(context.getUser(), embed);
-      log.debug("User show settings" + context.getUser());
-    } else {
+    if (checkUserPermission(context.getUser()) == false) {
       EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
       messageSender.sendPrivateMessage(context.getUser(), embed);
       log.debug("User have not permission for show settings" + context.getUser());
+      
+      return;
     }
+
+    EmbedBuilder embed = messageFormatter.createAltInfoEmbed("Сurrent bot settings:");
+    String notSetValue = "Not set";
+    String newLine = System.lineSeparator();
+
+    embed.addField("Volume", String.valueOf(settings.getVolume()), true);
+    embed.addField("Owner ID", settings.getOwnerUserId() != null ? settings.getOwnerUserId().toString() : notSetValue, true);
+    embed.addField("Alone time until stop", settings.getAloneTimeUntilStop() != null ? settings.getAloneTimeUntilStop().toString() : notSetValue, true);
+    embed.addField("Bot status", settings.getBotStatus() != null ? settings.getBotStatus() : notSetValue, true);
+    embed.addField("Bot activity", settings.getBotActivity() != null ? settings.getBotActivity() : notSetValue, true);
+    embed.addField("Song in status", String.valueOf(settings.isSongInStatus()), true);
+    embed.addField("Stay in channel", String.valueOf(settings.isStayInChannel()), true);
+    embed.addField("Update alerts", String.valueOf(settings.isUpdateAlerts()), true);
+    embed.addField("Allowed text channel IDs", settings.getAllowedTextChannelIds() != null ? settings.getAllowedTextChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
+    embed.addField("Allowed voice channel IDs", settings.getAllowedVoiceChannelIds() != null ? settings.getAllowedVoiceChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
+    embed.addField("Admin IDs", settings.getAdminUserIds() != null ? settings.getAdminUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
+    embed.addField("DJ IDs", settings.getDjUserIds() != null ? settings.getDjUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
+    embed.addField("Banned IDs", settings.getBannedUserIds() != null ? settings.getBannedUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
+    embed.addField("Playlist folder paths", settings.getPlaylistFolderPaths() != null ? String.join(", ", settings.getPlaylistFolderPaths()) : notSetValue, false);
+    embed.addField("Prefixes", settings.getPrefixes() != null ? String.join(", ", settings.getPrefixes()) : notSetValue, false);
+
+    if (settings.getNameAliases() != null && !settings.getNameAliases().isEmpty()) {
+      StringBuilder aliasesBuilder = new StringBuilder();
+      settings.getNameAliases().forEach((key, value) -> aliasesBuilder.append(key).append(": ").append(String.join(", ", value)).append(newLine));
+      embed.addField("Name aliases", aliasesBuilder.toString(), false);
+    } else {
+      embed.addField("Name aliases", notSetValue, false);
+    }
+
+    messageSender.sendPrivateMessage(context.getUser(), embed);
+    log.debug("User show settings" + context.getUser());
   }
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
-
+    return;
   }
 
   @Override
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
-
+    return;
   }
 }

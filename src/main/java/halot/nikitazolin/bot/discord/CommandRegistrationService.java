@@ -41,7 +41,11 @@ public class CommandRegistrationService {
   private void registerCommands(Optional<JDA> jda, List<CommandData> commandsToRegistration) {
     jda.ifPresentOrElse(jdaL -> {
       jdaL.updateCommands().addCommands(commandsToRegistration).queue();
-    }, () -> System.out.println("JDA is not present!"));
+      log.info("Commands registered");
+    }, () -> {
+      log.error("JDA is not present!");
+      System.out.println("JDA is not present!");
+    });
   }
 
   private List<CommandData> preparateCommands(List<BotCommand> allCommands) {
@@ -52,6 +56,7 @@ public class CommandRegistrationService {
       commandsData.add(commandData);
       commandCollector.fillActiveCommand(command);
     }
+
     return commandsData;
   }
 
@@ -59,8 +64,7 @@ public class CommandRegistrationService {
     if (botCommand.options().length > 0) {
       log.info("Registering command " + botCommand.name() + " with " + botCommand.options().length + " options!");
 
-      return Commands.slash(botCommand.name(), botCommand.description()).addOptions(botCommand.options())
-          .setGuildOnly(botCommand.guildOnly());
+      return Commands.slash(botCommand.name(), botCommand.description()).addOptions(botCommand.options()).setGuildOnly(botCommand.guildOnly());
     } else {
       log.info("Registering command " + botCommand.name() + " with no options!");
 

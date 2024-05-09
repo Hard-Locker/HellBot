@@ -39,8 +39,8 @@ public class SettingsLoader {
       settings.setVolume(defaultIfNull(loadedConfig.getVolume(), 0));
       settings.setOwnerUserId(defaultIfNull(loadedConfig.getOwnerUserId(), 0L));
       settings.setAloneTimeUntilStop(defaultIfNull(loadedConfig.getAloneTimeUntilStop(), 0L));
-      settings.setBotStatusAtStart(loadedConfig.getBotStatusAtStart());
-      settings.setBotActivityAtStart(loadedConfig.getBotActivityAtStart());
+      settings.setBotStatus(loadedConfig.getBotStatus());
+      settings.setBotActivity(loadedConfig.getBotActivity());
       settings.setSongInStatus(loadedConfig.isSongInStatus());
       settings.setStayInChannel(loadedConfig.isStayInChannel());
       settings.setUpdateAlerts(loadedConfig.isUpdateAlerts());

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -64,8 +65,18 @@ public class PlayCommand extends BotCommand {
   }
 
   @Override
-  public String requiredRole() {
-    return null;
+  public boolean checkUserPermission(User user) {
+    List<Long> allowedIds = new ArrayList<>();
+
+    if (settings.getBannedUserIds() != null) {
+      allowedIds.addAll(settings.getBannedUserIds());
+    }
+
+    if (!allowedIds.contains(user.getIdLong())) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
@@ -85,8 +96,15 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    List<String> links = context.getCommandArguments().getString();
+    if (checkUserPermission(context.getUser()) == false) {
+      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
+      messageSender.sendPrivateMessage(context.getUser(), embed);
+      log.debug("User have not permission for change volume" + context.getUser());
 
+      return;
+    }
+
+    List<String> links = context.getCommandArguments().getString();
     guildAudioService.getPlayerService().fillQueue(links, context);
 
     if (guildAudioService.connectToVoiceChannel(context) == false) {
@@ -105,11 +123,11 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
-
+    return;
   }
 
   @Override
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
-
+    return;
   }
 }

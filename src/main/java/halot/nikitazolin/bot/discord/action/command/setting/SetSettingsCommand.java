@@ -14,12 +14,15 @@ import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -34,6 +37,7 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 @RequiredArgsConstructor
 public class SetSettingsCommand extends BotCommand {
 
+  private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
   private final SettingsSaver settingsSaver;
@@ -42,8 +46,22 @@ public class SetSettingsCommand extends BotCommand {
   private final String commandName = "set";
   private final String close = "close";
   private final String aloneTime = "aloneTime";
-  private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers;
-  private Map<String, Consumer<ModalInteractionEvent>> modalHandlers;
+  private final String botStatus = "botStatus";
+  private final String botActivity = "botActivity";
+  private final String songInStatus = "songInStatus";
+  private final String stayInChannel = "stayInChannel";
+  private final String updateAlerts = "updateAlerts";
+  private final String allowedTextChannelIds = "allowedTextChannelIds";
+  private final String allowedVoiceChannelIds = "allowedVoiceChannelIds";
+  private final String adminUserIds = "adminUserIds";
+  private final String djUserIds = "djUserIds";
+  private final String bannedUserIds = "bannedUserIds";
+  private final String playlistFolderPaths = "playlistFolderPaths";
+  private final String prefixes = "prefixes";
+  private final String nameAliases = "nameAliases";
+
+  private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
+  private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
 
   @Override
   public String name() {
@@ -75,8 +93,22 @@ public class SetSettingsCommand extends BotCommand {
   }
 
   @Override
-  public String requiredRole() {
-    return null;
+  public boolean checkUserPermission(User user) {
+    List<Long> allowedIds = new ArrayList<>();
+
+    if (settings.getOwnerUserId() != null) {
+      allowedIds.add(settings.getOwnerUserId());
+    }
+
+    if (settings.getAdminUserIds() != null) {
+      allowedIds.addAll(settings.getAdminUserIds());
+    }
+
+    if (allowedIds.contains(user.getIdLong())) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
@@ -96,30 +128,50 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    Button closeButton = Button.danger(close, "Close settings");
-    Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
-    List<Button> buttons = List.of(closeButton, aloneTimeButton);
+    if (checkUserPermission(context.getUser()) == true) {
+      Button closeButton = Button.danger(close, "Close settings");
+      Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
+      List<Button> buttons = List.of(closeButton, aloneTimeButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
-        buttons);
+      Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
+          buttons);
 
-    buttonHandlers = new HashMap<>();
-    buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(aloneTime, this::makeAloneTimeUntilStop);
+      buttonHandlers.put(close, this::selectClose);
+      buttonHandlers.put(aloneTime, this::makeAloneTimeUntilStop);
 
-    modalHandlers = new HashMap<>();
-    modalHandlers.put(aloneTime, this::setAloneTimeUntilStop);
+      modalHandlers.put(aloneTime, this::setAloneTimeUntilStop);
 
-    actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName));
+      actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName));
+    } else {
+      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
+      messageSender.sendPrivateMessage(context.getUser(), embed);
+      log.debug("User have not permission for use settings" + context.getUser());
+    }
   }
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+    if (checkUserPermission(buttonEvent.getUser()) == false) {
+      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
+      messageSender.sendPrivateMessage(buttonEvent.getUser(), embed);
+      log.debug("User have not permission for use settings" + buttonEvent.getUser());
+
+      return;
+    }
+
     String componentId = buttonEvent.getComponentId();
     buttonHandlers.getOrDefault(componentId, this::handleUnknownButton).accept(buttonEvent);
   }
 
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
+    if (checkUserPermission(modalEvent.getUser()) == false) {
+      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
+      messageSender.sendPrivateMessage(modalEvent.getUser(), embed);
+      log.debug("User have not permission for use settings" + modalEvent.getUser());
+
+      return;
+    }
+
     String modalId = modalEvent.getModalId();
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
@@ -147,8 +199,8 @@ public class SetSettingsCommand extends BotCommand {
     settings.setAloneTimeUntilStop(time);
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-    modalEvent.reply("Alone time set to " + time).setEphemeral(true).queue();
-    log.debug("User changed alone time to " + time);
+    modalEvent.reply("Alone time set to " + time + " seconds").setEphemeral(true).queue();
+    log.debug("User changed alone time to {} seconds", time);
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {

@@ -4,12 +4,12 @@ import java.util.List;
 
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-public abstract class BotCommand extends ListenerAdapter {
+public abstract class BotCommand {
 
   public abstract String name();
 
@@ -19,7 +19,7 @@ public abstract class BotCommand extends ListenerAdapter {
 
   public abstract String description();
 
-  public abstract String requiredRole();
+  public abstract boolean checkUserPermission(User user);
 
   public abstract Permission neededPermission();
 

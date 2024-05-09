@@ -15,12 +15,15 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -37,6 +40,7 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 public class VolumeCommand extends BotCommand {
 
   private final PlayerService playerService;
+  private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
   private final SettingsSaver settingsSaver;
@@ -78,8 +82,18 @@ public class VolumeCommand extends BotCommand {
   }
 
   @Override
-  public String requiredRole() {
-    return null;
+  public boolean checkUserPermission(User user) {
+    List<Long> allowedIds = new ArrayList<>();
+
+    if (settings.getBannedUserIds() != null) {
+      allowedIds.addAll(settings.getBannedUserIds());
+    }
+
+    if (!allowedIds.contains(user.getIdLong())) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
@@ -99,6 +113,14 @@ public class VolumeCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
+    if (checkUserPermission(context.getUser()) == false) {
+      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
+      messageSender.sendPrivateMessage(context.getUser(), embed);
+      log.debug("User have not permission for change volume" + context.getUser());
+
+      return;
+    }
+
     List<String> args = context.getCommandArguments().getString();
 
     if (args.isEmpty()) {

@@ -16,8 +16,8 @@ public class Settings {
   private int volume;
   private Long ownerUserId;
   private Long aloneTimeUntilStop;
-  private String botStatusAtStart;
-  private String botActivityAtStart;
+  private String botStatus;
+  private String botActivity;
   private boolean songInStatus;
   private boolean stayInChannel;
   private boolean updateAlerts;
