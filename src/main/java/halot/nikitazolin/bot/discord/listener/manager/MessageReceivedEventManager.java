@@ -34,11 +34,14 @@ public class MessageReceivedEventManager {
     }
 
     Message message = messageEvent.getMessage();
+    // Separate command from message
     String[] messageParts = message.getContentRaw().trim().split(" ", 2);
     List<String> arguments = new ArrayList<>();
 
     if (messageParts.length > 1) {
-      String[] parts = messageParts[1].split("\\n");
+      String newLine = "\\r\\n|\\n|\\r";
+      // Split message into parts using newline character
+      String[] parts = messageParts[1].split(newLine);
       arguments.addAll(Arrays.asList(parts));
     }
 

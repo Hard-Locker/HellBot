@@ -2,6 +2,8 @@ package halot.nikitazolin.bot.discord.action.command.music;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -60,7 +63,7 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Skip current music";
+    return "Skip track. Optionally, you can specify the position of some tracks to remove them";
   }
 
   @Override
@@ -90,7 +93,7 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] {};
+    return new OptionData[] { new OptionData(OptionType.STRING, "positions", "Track positions to skip", false) };
   }
 
   @Override
@@ -103,7 +106,28 @@ public class SkipCommand extends BotCommand {
       return;
     }
 
-    playerService.skipTrack();
+    if (playerService.getQueue().isEmpty() == true) {
+      EmbedBuilder embed = messageFormatter.createWarningEmbed(
+          context.getUser().getAsMention() + " This command can be used if playing queue have tracks");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+      log.debug("User try skip track in empty queue" + context.getUser());
+
+      return;
+    }
+
+    List<String> args = context.getCommandArguments().getString();
+
+    if (args.isEmpty()) {
+      playerService.skipTrack();
+    } else {
+      List<Integer> positions = new ArrayList<>();
+
+      for (String element : args) {
+        positions.addAll(parsePositions(element));
+      }
+
+      playerService.skipTracks(positions);
+    }
 
     EmbedBuilder embed = messageFormatter.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
@@ -119,5 +143,28 @@ public class SkipCommand extends BotCommand {
   @Override
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
     return;
+  }
+
+  private List<Integer> parsePositions(String input) {
+    List<Integer> positions = new ArrayList<>();
+    Pattern pattern = Pattern.compile("(\\d+)(?:-(\\d+))?");
+    Matcher matcher = pattern.matcher(input);
+
+    while (matcher.find()) {
+      int start = Integer.parseInt(matcher.group(1));
+      String endGroup = matcher.group(2);
+
+      if (endGroup != null) {
+        int end = Integer.parseInt(endGroup);
+
+        for (int i = start; i <= end; i++) {
+          positions.add(i);
+        }
+      } else {
+        positions.add(start);
+      }
+    }
+
+    return positions;
   }
 }

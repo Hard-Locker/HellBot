@@ -1,6 +1,8 @@
 package halot.nikitazolin.bot.discord.audio.player;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -70,7 +72,8 @@ public class PlayerService implements AudioSendHandler {
     if ((audioPlayer.isPaused() == false) && (audioPlayer.getPlayingTrack() == null)) {
       AudioItemContext audioItemContext = queue.poll();
 
-      audioPlayerManager.loadItem(audioItemContext.url(), new AudioLoadResultManager(audioPlayer, audioItemContext.context(), databaseService));
+      audioPlayerManager.loadItem(audioItemContext.url(),
+          new AudioLoadResultManager(audioPlayer, audioItemContext.context(), databaseService));
     } else if (audioPlayer.isPaused() == true) {
       audioPlayer.setPaused(false);
     }
@@ -86,7 +89,21 @@ public class PlayerService implements AudioSendHandler {
   }
 
   public void skipTracks(List<Integer> positions) {
-    // TODO
+    if (positions.isEmpty() == true) {
+      return;
+    }
+
+    List<AudioItemContext> tempList = new ArrayList<>(queue);
+    Collections.sort(positions, Collections.reverseOrder());
+
+    for (int position : positions) {
+      if (position >= 0 && position < tempList.size()) {
+        tempList.remove(position);
+      }
+    }
+
+    queue.clear();
+    queue.addAll(tempList);
   }
 
   public void pause() {
