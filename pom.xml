@@ -4,16 +4,25 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
   <artifactId>hell-bot</artifactId>
-  <version>0.4.1</version>
+  <version>0.5.0</version>
   <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
 
   <repositories>
     <repository>
+      <id>arbjergDev-releases</id>
+      <name>Lavalink Repository</name>
+      <url>https://maven.lavalink.dev/releases</url>
+    </repository>
+
+    <!-- Repository for old lavaplayer with old youtube manager -->
+    <!--
+    <repository>
       <id>arbjergDev-snapshots</id>
       <name>Lavalink Repository</name>
       <url>https://maven.lavalink.dev/snapshots</url>
     </repository>
+    -->
 
     <repository>
       <id>jitpack</id>
@@ -28,7 +37,32 @@
       <version>5.0.0-beta.22</version>
     </dependency>
 
+    <dependency>
+      <groupId>dev.arbjerg</groupId>
+      <artifactId>lavaplayer</artifactId>
+      <version>2.1.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+
+        <exclusion>
+          <groupId>com.github.walkyst</groupId>
+          <artifactId>JAADec-fork</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>dev.lavalink.youtube</groupId>
+      <artifactId>v2</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+
+    <!-- Dependency for old lavaplayer with old youtube manager -->
     <!-- https://maven.lavalink.dev/snapshots -->
+    <!--
     <dependency>
       <groupId>dev.arbjerg</groupId>
       <artifactId>lavaplayer</artifactId>
@@ -45,6 +79,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+    -->
 
     <dependency>
       <groupId>org.yaml</groupId>
