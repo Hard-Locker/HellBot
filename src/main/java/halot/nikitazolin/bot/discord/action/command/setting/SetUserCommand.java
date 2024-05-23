@@ -22,20 +22,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetSettingsCommand extends BotCommand {
+public class SetUserCommand extends BotCommand {
 
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
@@ -43,19 +43,11 @@ public class SetSettingsCommand extends BotCommand {
   private final SettingsSaver settingsSaver;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "set";
+  private final String commandName = "user";
   private final String close = "close";
-  private final String aloneTime = "aloneTime";
-  private final String botStatus = "botStatus";
-  private final String botActivity = "botActivity";
-  private final String songInStatus = "songInStatus";
-  private final String stayInChannel = "stayInChannel";
-  private final String updateAlerts = "updateAlerts";
-  private final String allowedTextChannelIds = "allowedTextChannelIds";
-  private final String allowedVoiceChannelIds = "allowedVoiceChannelIds";
-  private final String playlistFolderPaths = "playlistFolderPaths";
-  private final String prefixes = "prefixes";
-  private final String nameAliases = "nameAliases";
+  private final String adminUserIds = "adminUserIds";
+  private final String djUserIds = "djUserIds";
+  private final String bannedUserIds = "bannedUserIds";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
@@ -86,7 +78,7 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "You can change any settings";
+    return "Change user settings";
   }
 
   @Override
@@ -134,46 +126,21 @@ public class SetSettingsCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
-    Button botStatusButton = Button.primary(botStatus, "Set bot status");
-    Button botActivityButton = Button.primary(botActivity, "Set bot activity");
-    Button songInStatusButton = Button.primary(songInStatus, "Set song in status");
-    Button stayInChannelButton = Button.primary(stayInChannel, "Set stay in channel");
-    Button updateAlertsButton = Button.primary(updateAlerts, "Set update alerts");
-    Button allowedTextChannelIdsButton = Button.primary(allowedTextChannelIds, "Set allowed text channel");
-    Button allowedVoiceChannelIdsButton = Button.primary(allowedVoiceChannelIds, "Set allowed voice channel");
-    Button playlistFolderPathsButton = Button.primary(playlistFolderPaths, "Set playlist folders");
-    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
-    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
-    List<Button> buttons = List.of(closeButton, aloneTimeButton, songInStatusButton, stayInChannelButton, updateAlertsButton);
+    Button adminUserIdsButton = Button.primary(adminUserIds, "Set admin");
+    Button djUserIdsButton = Button.primary(djUserIds, "Set DJ");
+    Button bannedUserIdsButton = Button.primary(bannedUserIds, "Ban user");
+    List<Button> buttons = List.of(closeButton, adminUserIdsButton, djUserIdsButton, bannedUserIdsButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
-        buttons);
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which role need update?", buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(aloneTime, this::makeModalAloneTime);
-//    buttonHandlers.put(botStatus, this::make);
-//    buttonHandlers.put(botActivity, this::make);
-//    buttonHandlers.put(songInStatus, this::make);
-//    buttonHandlers.put(stayInChannel, this::make);
-//    buttonHandlers.put(updateAlerts, this::make);
-//    buttonHandlers.put(allowedTextChannelIds, this::make);
-//    buttonHandlers.put(allowedVoiceChannelIds, this::make);
-//    buttonHandlers.put(playlistFolderPaths, this::make);
-//    buttonHandlers.put(prefixes, this::make);
-//    buttonHandlers.put(nameAliases, this::make);
+    buttonHandlers.put(adminUserIds, this::makeModalAdminUser);
+    buttonHandlers.put(djUserIds, this::makeModalDjUser);
+    buttonHandlers.put(bannedUserIds, this::makeModalBannedUser);
 
-    modalHandlers.put(aloneTime, this::handleModalAloneTime);
-//    modalHandlers.put(botStatus, this::set);
-//    modalHandlers.put(botActivity, this::set);
-//    modalHandlers.put(songInStatus, this::set);
-//    modalHandlers.put(stayInChannel, this::set);
-//    modalHandlers.put(updateAlerts, this::set);
-//    modalHandlers.put(allowedTextChannelIds, this::set);
-//    modalHandlers.put(allowedVoiceChannelIds, this::set);
-//    modalHandlers.put(playlistFolderPaths, this::set);
-//    modalHandlers.put(prefixes, this::set);
-//    modalHandlers.put(nameAliases, this::set);
+    modalHandlers.put(adminUserIds, this::handleModalAdminUser);
+    modalHandlers.put(djUserIds, this::handleModalDjUser);
+    modalHandlers.put(bannedUserIds, this::handleModalBanUser);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
@@ -205,31 +172,57 @@ public class SetSettingsCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
+  private void makeModalAdminUser(ButtonInteractionEvent buttonEvent) {
+    List<Member> members = buttonEvent.getGuild().getMembers();
+    StringSelectMenu.Builder menuBuilder = StringSelectMenu.create(adminUserIds)
+        .setPlaceholder("Choose users to set as admin").setRequiredRange(1, members.size());
+
+    for (Member member : members) {
+      menuBuilder.addOption(member.getEffectiveName(), member.getId());
+    }
+    
+    StringSelectMenu menu = menuBuilder.build();
+
+    buttonEvent.reply("Please pick your class below").setEphemeral(true).addActionRow(menu).queue();
+
+//    Modal modal = Modal.create(adminUserIds, "Set admin users").addActionRow(menu).build();
+//    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened admin changer modal with user selection");
+  }
+
+  private void handleModalAdminUser(ModalInteractionEvent modalEvent) {
+    String selectedUserId = modalEvent.getValues().get(0).getAsString();
+    User selectedUser = modalEvent.getJDA().getUserById(selectedUserId);
+
+    if (selectedUser != null) {
+      settings.getAdminUserIds().add(selectedUser.getIdLong());
+      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+      modalEvent.reply("User " + selectedUser.getName() + " has been added as admin.").setEphemeral(true).queue();
+    } else {
+      modalEvent.reply("Failed to find the selected user.").setEphemeral(true).queue();
+    }
+  }
+
+  private void makeModalDjUser(ButtonInteractionEvent buttonEvent) {
+    // TODO
+  }
+
+  private void handleModalDjUser(ModalInteractionEvent modalEvent) {
+    // TODO
+  }
+
+  private void makeModalBannedUser(ButtonInteractionEvent buttonEvent) {
+    // TODO
+  }
+
+  private void handleModalBanUser(ModalInteractionEvent modalEvent) {
+    // TODO
+  }
+
   private void selectClose(ButtonInteractionEvent buttonEvent) {
     buttonEvent.reply("Settings closed").setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
-  }
-
-  private void makeModalAloneTime(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(aloneTime, "Set alone time in seconds until stop bot").addActionRow(TextInput
-            .create("aloneTimeInput", "Time (seconds 0-4000)", TextInputStyle.SHORT).setRequiredRange(0, 4000).build())
-        .build();
-
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened alone time modal");
-  }
-
-  private void handleModalAloneTime(ModalInteractionEvent modalEvent) {
-    String inputTime = modalEvent.getValue("aloneTimeInput").getAsString();
-    Long time = Long.parseLong(inputTime);
-
-    settings.setAloneTimeUntilStop(time);
-    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-
-    modalEvent.reply("Alone time set to " + time + " seconds").setEphemeral(true).queue();
-    log.debug("User changed alone time to {} seconds", time);
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {

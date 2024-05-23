@@ -85,11 +85,19 @@ public class VolumeCommand extends BotCommand {
   public boolean checkUserPermission(User user) {
     List<Long> allowedIds = new ArrayList<>();
 
-    if (settings.getBannedUserIds() != null) {
-      allowedIds.addAll(settings.getBannedUserIds());
+    if (settings.getOwnerUserId() != null) {
+      allowedIds.add(settings.getOwnerUserId());
     }
 
-    if (!allowedIds.contains(user.getIdLong())) {
+    if (settings.getAdminUserIds() != null) {
+      allowedIds.addAll(settings.getAdminUserIds());
+    }
+
+    if (settings.getDjUserIds() != null) {
+      allowedIds.addAll(settings.getDjUserIds());
+    }
+
+    if (allowedIds.contains(user.getIdLong())) {
       return true;
     } else {
       return false;
@@ -146,10 +154,10 @@ public class VolumeCommand extends BotCommand {
 
     buttonHandlers = new HashMap<>();
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(volume, this::makeVolumeModal);
+    buttonHandlers.put(volume, this::makeModalVolume);
 
     modalHandlers = new HashMap<>();
-    modalHandlers.put(volume, this::handleVolumeModal);
+    modalHandlers.put(volume, this::handleModalVolume);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 30000));
   }
@@ -172,13 +180,7 @@ public class VolumeCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
-    buttonEvent.getMessage().delete().queue();
-    log.debug("Settings closed");
-  }
-
-  private void makeVolumeModal(ButtonInteractionEvent buttonEvent) {
+  private void makeModalVolume(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
         .create(volume, "Set Volume").addActionRow(TextInput
             .create("volumeInput", "Volume Level (0-150)", TextInputStyle.SHORT).setRequiredRange(0, 150).build())
@@ -188,7 +190,7 @@ public class VolumeCommand extends BotCommand {
     log.debug("Opened volume modal");
   }
 
-  private void handleVolumeModal(ModalInteractionEvent modalEvent) {
+  private void handleModalVolume(ModalInteractionEvent modalEvent) {
     String input = modalEvent.getValue("volumeInput").getAsString();
 
     try {
@@ -200,6 +202,12 @@ public class VolumeCommand extends BotCommand {
     } catch (IndexOutOfBoundsException e) {
       log.warn("Error accessing the first argument for volume level", e);
     }
+  }
+
+  private void selectClose(ButtonInteractionEvent buttonEvent) {
+    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.getMessage().delete().queue();
+    log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
