@@ -187,7 +187,7 @@ public class SetSettingsCommand extends BotCommand {
 //    modalHandlers.put(prefixes, this::set);
 //    modalHandlers.put(nameAliases, this::set);
 
-    actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName));
+    actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
 
   @Override

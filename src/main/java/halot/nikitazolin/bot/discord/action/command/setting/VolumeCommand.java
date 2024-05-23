@@ -151,7 +151,7 @@ public class VolumeCommand extends BotCommand {
     modalHandlers = new HashMap<>();
     modalHandlers.put(volume, this::handleVolumeModal);
 
-    actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName));
+    actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 30000));
   }
 
   private void updateVolume(int volumeLevel) {

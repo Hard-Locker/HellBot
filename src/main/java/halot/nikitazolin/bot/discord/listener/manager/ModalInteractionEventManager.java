@@ -35,7 +35,7 @@ public class ModalInteractionEventManager {
 
     if (actionMessage == null) {
       log.debug("Not found target message");
-      
+
       return;
     }
 

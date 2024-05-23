@@ -4,9 +4,15 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
   <artifactId>hell-bot</artifactId>
-  <version>0.5.0</version>
+  <version>0.5.1</version>
   <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
+
+  <properties>
+    <java.version>21</java.version>
+    <spring.version>6.1.6</spring.version>
+    <spring.boot.version>3.2.5</spring.boot.version>
+  </properties>
 
   <repositories>
     <repository>
@@ -14,15 +20,6 @@
       <name>Lavalink Repository</name>
       <url>https://maven.lavalink.dev/releases</url>
     </repository>
-
-    <!-- Repository for old lavaplayer with old youtube manager -->
-    <!--
-    <repository>
-      <id>arbjergDev-snapshots</id>
-      <name>Lavalink Repository</name>
-      <url>https://maven.lavalink.dev/snapshots</url>
-    </repository>
-    -->
 
     <repository>
       <id>jitpack</id>
@@ -60,26 +57,17 @@
       <version>1.2.0</version>
     </dependency>
 
-    <!-- Dependency for old lavaplayer with old youtube manager -->
-    <!-- https://maven.lavalink.dev/snapshots -->
-    <!--
     <dependency>
-      <groupId>dev.arbjerg</groupId>
-      <artifactId>lavaplayer</artifactId>
-      <version>afec211f05c9dcf0b6ee44276a02f0316ea2458a-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-
-        <exclusion>
-          <groupId>com.github.walkyst</groupId>
-          <artifactId>JAADec-fork</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>4.0.2</version>
     </dependency>
-    -->
+
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>4.0.5</version>
+    </dependency>
 
     <dependency>
       <groupId>org.yaml</groupId>
@@ -87,28 +75,24 @@
       <version>2.2</version>
     </dependency>
 
-    <!-- Test -->
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.10.2</version>
-      <scope>test</scope>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>4.21.0</version>
     </dependency>
 
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>5.10.2</version>
-      <scope>test</scope>
+      <groupId>io.github.bonigarcia</groupId>
+      <artifactId>webdrivermanager</artifactId>
+      <version>5.8.0</version>
     </dependency>
 
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>5.11.0</version>
-      <scope>test</scope>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.32</version>
+      <scope>provided</scope>
     </dependency>
-    <!-- //////////////// -->
 
     <!-- LOG -->
     <dependency>
@@ -150,8 +134,10 @@
       <version>5.12.1</version>
     </dependency>
     <!-- /Firebird -->
+    <!-- /Database -->
 
     <!-- Flyway -->
+
     <!-- Need for H2 database -->
     <dependency>
       <groupId>org.flywaydb</groupId>
@@ -171,61 +157,87 @@
       <version>10.11.0</version>
     </dependency>
     <!-- /Flyway -->
-    <!-- /Database -->
-
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.32</version>
-      <scope>provided</scope>
-    </dependency>
 
     <!-- Spring Framework -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-      <version>6.1.5</version>
+      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>6.1.5</version>
+      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>6.1.5</version>
+      <version>${spring.version}</version>
     </dependency>
 
     <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-      <version>3.2.4</version>
+      <version>${spring.boot.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
-      <version>3.2.4</version>
+      <version>${spring.boot.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
-      <version>3.2.4</version>
+      <version>${spring.boot.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>3.2.4</version>
+      <version>${spring.boot.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- //////////////// -->
 
+    <dependency>
+      <groupId>org.hibernate.orm</groupId>
+      <artifactId>hibernate-core</artifactId>
+      <version>6.5.1.Final</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>5.6.15.Final</version>
+    </dependency>
+
+    <!-- Test -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.11.0</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- //////////////// -->
   </dependencies>
   <build>
     <plugins>
@@ -233,7 +245,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.2.4</version>
+        <version>${spring.boot.version}</version>
         <executions>
           <execution>
             <goals>

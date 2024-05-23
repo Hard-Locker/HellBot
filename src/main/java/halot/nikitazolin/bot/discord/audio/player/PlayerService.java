@@ -156,15 +156,15 @@ public class PlayerService implements AudioSendHandler {
     audioPlayerManager.shutdown();
   }
 
-  public void fillQueue(List<String> identifiers, BotCommandContext context) {
-    for (String identifier : identifiers) {
-      AudioItemContext audioItemContext = new AudioItemContext(identifier, context);
+  public void fillQueue(List<String> links, BotCommandContext context) {
+    for (String link : links) {
+      AudioItemContext audioItemContext = new AudioItemContext(link, context);
       boolean result = queue.offer(audioItemContext);
 
       if (result == true) {
-        log.debug("Add link {} to queue", identifier);
+        log.debug("Add link {} to queue", link);
       } else {
-        log.warn("Problem with adding link {} to queue", identifier);
+        log.warn("Problem with adding link {} to queue", link);
       }
     }
   }
