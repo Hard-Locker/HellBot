@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -25,10 +24,6 @@ public class MessageSender {
 
   public void sendMessage(TextChannel textChannel, MessageCreateData messageCreateData) {
     textChannel.sendMessage(messageCreateData).queue();
-  }
-
-  public void sendMessagesEmbed(TextChannel textChannel, List<MessageEmbed> messagesEmbed) {
-    textChannel.sendMessageEmbeds(messagesEmbed).queue();
   }
 
   public void sendMessageEmbed(TextChannel textChannel, EmbedBuilder embedBuilder) {
@@ -59,6 +54,31 @@ public class MessageSender {
       return null;
     }
   }
+
+//  public Long sendMessageWithButtons(TextChannel textChannel, MessageCreateData messageCreateData,
+//      List<Button> buttons) {
+//    CompletableFuture<Long> futureMessageId = new CompletableFuture<>();
+//    MessageCreateData fullMessageCreateData = new MessageCreateBuilder().setContent(messageCreateData.getContent())
+//        .setActionRow(buttons).build();
+//
+//    textChannel.sendMessage(fullMessageCreateData).queue(messageSent -> {
+//      Long messageId = messageSent.getIdLong();
+//      log.debug("Message sent with ID: " + messageId);
+//      futureMessageId.complete(messageId);
+//    }, error -> {
+//      log.error("Failed to send message: " + error.getMessage());
+//      futureMessageId.complete(null);
+//    });
+//
+//    try {
+//      return futureMessageId.get();
+//    } catch (InterruptedException | ExecutionException e) {
+//      log.error("Error waiting for the message to be sent: ", e);
+//      Thread.currentThread().interrupt();
+//
+//      return null;
+//    }
+//  }
 
   public void sendPrivateMessage(User user, EmbedBuilder embedBuilder) {
     MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
