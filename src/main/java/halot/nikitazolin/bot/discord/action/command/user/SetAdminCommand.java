@@ -196,10 +196,12 @@ public class SetAdminCommand extends BotCommand {
       Long userId = Long.parseLong(input);
 
       modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
-        settings.getAdminUserIds().add(userId);
-        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+        if (settings.getAdminUserIds() != null) {
+          settings.getAdminUserIds().add(userId);
+          settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent.reply(user.getAsMention() + " has been added as admin").setEphemeral(true).queue();
+          modalEvent.reply(user.getAsMention() + " has been added as admin").setEphemeral(true).queue();
+        }
       }, throwable -> {
         modalEvent.reply("User not found").setEphemeral(true).queue();
         log.debug("Failed to retrieve user", throwable);
@@ -218,7 +220,7 @@ public class SetAdminCommand extends BotCommand {
     try {
       Long userId = Long.parseLong(input);
 
-      if (settings.getAdminUserIds().contains(userId)) {
+      if (settings.getAdminUserIds() != null && settings.getAdminUserIds().contains(userId)) {
         settings.getAdminUserIds().remove(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 

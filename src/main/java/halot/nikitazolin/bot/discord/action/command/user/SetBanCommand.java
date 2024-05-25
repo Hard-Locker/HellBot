@@ -196,10 +196,12 @@ public class SetBanCommand extends BotCommand {
       Long userId = Long.parseLong(input);
 
       modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
-        settings.getBannedUserIds().add(userId);
-        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+        if (settings.getBannedUserIds() != null) {
+          settings.getBannedUserIds().add(userId);
+          settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent.reply(user.getAsMention() + " has been banned").setEphemeral(true).queue();
+          modalEvent.reply(user.getAsMention() + " has been banned").setEphemeral(true).queue();
+        }
       }, throwable -> {
         modalEvent.reply("User not found").setEphemeral(true).queue();
         log.debug("Failed to retrieve user", throwable);
@@ -218,7 +220,7 @@ public class SetBanCommand extends BotCommand {
     try {
       Long userId = Long.parseLong(input);
 
-      if (settings.getBannedUserIds().contains(userId)) {
+      if (settings.getBannedUserIds() != null && settings.getBannedUserIds().contains(userId)) {
         settings.getBannedUserIds().remove(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 

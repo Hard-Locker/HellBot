@@ -196,10 +196,12 @@ public class SetDjCommand extends BotCommand {
       Long userId = Long.parseLong(input);
 
       modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
-        settings.getDjUserIds().add(userId);
-        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+        if (settings.getDjUserIds() != null) {
+          settings.getDjUserIds().add(userId);
+          settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent.reply(user.getAsMention() + " has been added as DJ").setEphemeral(true).queue();
+          modalEvent.reply(user.getAsMention() + " has been added as DJ").setEphemeral(true).queue();
+        }
       }, throwable -> {
         modalEvent.reply("User not found").setEphemeral(true).queue();
         log.debug("Failed to retrieve user", throwable);
@@ -218,7 +220,7 @@ public class SetDjCommand extends BotCommand {
     try {
       Long userId = Long.parseLong(input);
 
-      if (settings.getDjUserIds().contains(userId)) {
+      if (settings.getDjUserIds() != null && settings.getDjUserIds().contains(userId)) {
         settings.getDjUserIds().remove(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
