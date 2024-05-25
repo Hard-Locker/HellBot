@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 public class AboutCommand extends BotCommand {
 
   private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
 
   private final String commandName = "about";
@@ -81,10 +83,10 @@ public class AboutCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-//    EmbedBuilder embed = messageUtil.createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
-//    context.sendMessageEmbed(embed);
-//
-//    log.debug("User get hello" + context.getUser());
+    EmbedBuilder embed = messageFormatter.createInfoEmbed("There will be information about the bot here");
+    messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+
+    log.debug("User get hello" + context.getUser());
   }
 
   @Override
