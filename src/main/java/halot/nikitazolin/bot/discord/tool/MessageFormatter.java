@@ -3,7 +3,6 @@ package halot.nikitazolin.bot.discord.tool;
 import java.awt.Color;
 import java.time.Instant;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.jda.JdaMaker;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 @Component
-@Scope("prototype")
 @RequiredArgsConstructor
 public class MessageFormatter {
 

@@ -132,8 +132,8 @@ public class SetAdminCommand extends BotCommand {
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which role need update?", buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(addAdmin, this::makeAddAdmin);
-    buttonHandlers.put(removeAdmin, this::makeRemoveAdmin);
+    buttonHandlers.put(addAdmin, this::makeModalAddAdmin);
+    buttonHandlers.put(removeAdmin, this::makeModalRemoveAdmin);
 
     modalHandlers.put(addAdmin, this::handleModalAddAdmin);
     modalHandlers.put(removeAdmin, this::handleModalRemoveAdmin);
@@ -168,24 +168,24 @@ public class SetAdminCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void makeAddAdmin(ButtonInteractionEvent buttonEvent) {
+  private void makeModalAddAdmin(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
         .create(addAdmin, "Add admin").addActionRow(TextInput
             .create(addAdmin, "Enter user ID to add admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened admin adding modal");
+    log.debug("Opened {} modal", addAdmin);
   }
 
-  private void makeRemoveAdmin(ButtonInteractionEvent buttonEvent) {
+  private void makeModalRemoveAdmin(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
         .create(removeAdmin, "Remove admin").addActionRow(TextInput
             .create(removeAdmin, "Enter user ID to remove admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened admin remove modal");
+    log.debug("Opened {} modal", removeAdmin);
   }
 
   private void handleModalAddAdmin(ModalInteractionEvent modalEvent) {

@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.action.command.user;
+package halot.nikitazolin.bot.discord.action.command.setting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,14 +9,13 @@ import java.util.function.Consumer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.ApplicationRunnerImpl;
 import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.ActivityManager;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
-import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,18 +34,20 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetBanCommand extends BotCommand {
+public class SetActivityCommand extends BotCommand {
 
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
-  private final SettingsSaver settingsSaver;
+  private final ActivityManager activityManager;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "ban";
+  private final String commandName = "activity";
   private final String close = "close";
-  private final String ban = "banUser";
-  private final String unban = "unbanUser";
+  private final String playing = "playing";
+  private final String streaming = "streaming";
+  private final String listening = "listening";
+  private final String watching = "watching";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
@@ -77,7 +78,7 @@ public class SetBanCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Ban user";
+    return "Set bot activity";
   }
 
   @Override
@@ -125,18 +126,25 @@ public class SetBanCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button banUserButton = Button.primary(ban, "Ban user");
-    Button unbanUserButton = Button.primary(unban, "Unban user");
-    List<Button> buttons = List.of(closeButton, banUserButton, unbanUserButton);
+    Button playingButton = Button.primary(playing, "Set Playing");
+    Button streamingButton = Button.primary(streaming, "Set Streaming");
+    Button listeningButton = Button.primary(listening, "Set Listening");
+    Button watchingButton = Button.primary(watching, "Set Watching");
+    List<Button> buttons = List.of(closeButton, playingButton, streamingButton, listeningButton, watchingButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which user need ban?", buttons);
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which activity need set?",
+        buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(ban, this::makeModalBanUser);
-    buttonHandlers.put(unban, this::makeModalUnbanUser);
+    buttonHandlers.put(playing, this::makeModalPlayingActivity);
+    buttonHandlers.put(streaming, this::makeModalStreamingActivity);
+    buttonHandlers.put(listening, this::makeModalListeningActivity);
+    buttonHandlers.put(watching, this::makeModalWatchingActivity);
 
-    modalHandlers.put(ban, this::handleModalBanUser);
-    modalHandlers.put(unban, this::handleModalUnbanUser);
+    modalHandlers.put(playing, this::handleModalPlayingActivity);
+    modalHandlers.put(streaming, this::handleModalStreamingActivity);
+    modalHandlers.put(listening, this::handleModalListeningActivity);
+    modalHandlers.put(watching, this::handleModalWatchingActivity);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
@@ -168,76 +176,76 @@ public class SetBanCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void makeModalBanUser(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(ban, "Ban user")
+  private void makeModalPlayingActivity(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal.create(playing, "Set Playing activity")
         .addActionRow(
-            TextInput.create(ban, "Enter user ID to ban", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+            TextInput.create(playing, "Enter game name", TextInputStyle.SHORT).setRequiredRange(0, 100).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened {} modal", ban);
+    log.debug("Opened {} modal", playing);
   }
 
-  private void makeModalUnbanUser(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(unban, "Remove ban").addActionRow(TextInput
-            .create(unban, "Enter user ID to remove ban", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+  private void makeModalStreamingActivity(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal.create(streaming, "Set Streaming activity")
+        .addActionRow(
+            TextInput.create(streaming, "Enter streaming url", TextInputStyle.SHORT).setRequiredRange(0, 100).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened {} modal", unban);
+    log.debug("Opened {} modal", streaming);
   }
 
-  private void handleModalBanUser(ModalInteractionEvent modalEvent) {
-    log.debug("Processing modal: {}", ban);
-    String input = modalEvent.getValue(ban).getAsString();
+  private void makeModalListeningActivity(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal.create(listening, "Set Listening activity")
+        .addActionRow(
+            TextInput.create(listening, "Enter song name", TextInputStyle.SHORT).setRequiredRange(0, 100).build())
+        .build();
 
-    try {
-      Long userId = Long.parseLong(input);
-
-      modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
-        if (settings.getBannedUserIds() != null) {
-          settings.getBannedUserIds().add(userId);
-          settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-
-          modalEvent.reply(user.getAsMention() + " has been banned").setEphemeral(true).queue();
-        }
-      }, throwable -> {
-        modalEvent.reply("User not found").setEphemeral(true).queue();
-        log.debug("Failed to retrieve user", throwable);
-      });
-    } catch (NumberFormatException e) {
-      log.debug("Error parsing user ID from arguments", e);
-    } catch (IndexOutOfBoundsException e) {
-      log.debug("Error accessing the first argument for user ID", e);
-    }
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", listening);
   }
 
-  private void handleModalUnbanUser(ModalInteractionEvent modalEvent) {
-    log.debug("Processing modal: {}", unban);
-    String input = modalEvent.getValue(unban).getAsString();
+  private void makeModalWatchingActivity(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal.create(watching, "Set Watching activity")
+        .addActionRow(
+            TextInput.create(watching, "Enter video name", TextInputStyle.SHORT).setRequiredRange(0, 100).build())
+        .build();
 
-    try {
-      Long userId = Long.parseLong(input);
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", watching);
+  }
 
-      if (settings.getBannedUserIds() != null && settings.getBannedUserIds().contains(userId)) {
-        settings.getBannedUserIds().remove(userId);
-        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+  private void handleModalPlayingActivity(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", playing);
+    String input = modalEvent.getValue(playing).getAsString();
 
-        modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
-          modalEvent.reply(user.getAsMention() + " has been unbanned").setEphemeral(true).queue();
-        }, throwable -> {
-          modalEvent.reply("User not found in this list").setEphemeral(true).queue();
-          log.debug("Failed to retrieve user", throwable);
-        });
-      } else {
-        modalEvent.reply("Failed to find user").setEphemeral(true).queue();
-      }
-    } catch (NumberFormatException e) {
-      log.debug("Error parsing user ID from arguments", e);
-    } catch (IndexOutOfBoundsException e) {
-      log.debug("Error accessing the first argument for user ID", e);
-    }
+    activityManager.setPlaying(input);
+    modalEvent.reply("Activity updated").setEphemeral(true).queue();
+  }
+
+  private void handleModalStreamingActivity(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", streaming);
+    String input = modalEvent.getValue(streaming).getAsString();
+
+    activityManager.setStreaming(input);
+    modalEvent.reply("Activity updated").setEphemeral(true).queue();
+  }
+
+  private void handleModalListeningActivity(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", listening);
+    String input = modalEvent.getValue(listening).getAsString();
+
+    activityManager.setListening(input);
+    modalEvent.reply("Activity updated").setEphemeral(true).queue();
+  }
+
+  private void handleModalWatchingActivity(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", watching);
+    String input = modalEvent.getValue(watching).getAsString();
+
+    activityManager.setWatching(input);
+    modalEvent.reply("Activity updated").setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

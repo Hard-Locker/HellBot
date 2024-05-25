@@ -132,8 +132,8 @@ public class SetDjCommand extends BotCommand {
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which role need update?", buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(addDj, this::makeAddDj);
-    buttonHandlers.put(removeDj, this::makeRemoveDj);
+    buttonHandlers.put(addDj, this::makeModalAddDj);
+    buttonHandlers.put(removeDj, this::makeModalRemoveDj);
 
     modalHandlers.put(addDj, this::handleModalAddDj);
     modalHandlers.put(removeDj, this::handleModalRemoveDj);
@@ -168,24 +168,24 @@ public class SetDjCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void makeAddDj(ButtonInteractionEvent buttonEvent) {
+  private void makeModalAddDj(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal.create(addDj, "Add DJ")
         .addActionRow(
             TextInput.create(addDj, "Enter user ID to add DJ", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened DJ adding modal");
+    log.debug("Opened {} modal", addDj);
   }
 
-  private void makeRemoveDj(ButtonInteractionEvent buttonEvent) {
+  private void makeModalRemoveDj(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
         .create(removeDj, "Remove DJ").addActionRow(TextInput
             .create(removeDj, "Enter user ID to remove DJ", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened DJ remove modal");
+    log.debug("Opened {} modal", removeDj);
   }
 
   private void handleModalAddDj(ModalInteractionEvent modalEvent) {

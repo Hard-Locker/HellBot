@@ -141,7 +141,8 @@ public class SetSettingsCommand extends BotCommand {
     Button playlistFolderPathsButton = Button.primary(playlistFolderPaths, "Set playlist folders");
     Button prefixesButton = Button.primary(prefixes, "Set prefixes");
     Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
-    List<Button> buttons = List.of(closeButton, aloneTimeButton, songInStatusButton, stayInChannelButton, updateAlertsButton);
+    List<Button> buttons = List.of(closeButton, aloneTimeButton, songInStatusButton, stayInChannelButton,
+        updateAlertsButton);
 
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
         buttons);
@@ -197,31 +198,39 @@ public class SetSettingsCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
+  private void makeModalAloneTime(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal.create(aloneTime, "Set alone time in seconds until stop bot")
+        .addActionRow(
+            TextInput.create(aloneTime, "Time (seconds 0-99999)", TextInputStyle.SHORT).setRequiredRange(0, 5).build())
+        .build();
+
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", aloneTime);
+  }
+
+  private void handleModalAloneTime(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", aloneTime);
+    String inputTime = modalEvent.getValue(aloneTime).getAsString();
+
+    try {
+      Long time = Long.parseLong(inputTime);
+
+      settings.setAloneTimeUntilStop(time);
+      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+
+      modalEvent.reply("Alone time set to " + time + " seconds").setEphemeral(true).queue();
+      log.debug("User changed alone time to {} seconds", time);
+    } catch (NumberFormatException e) {
+      log.debug("Error parsing user ID from arguments", e);
+    } catch (IndexOutOfBoundsException e) {
+      log.debug("Error accessing the first argument for user ID", e);
+    }
+  }
+  
   private void selectClose(ButtonInteractionEvent buttonEvent) {
     buttonEvent.reply("Settings closed").setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
-  }
-
-  private void makeModalAloneTime(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(aloneTime, "Set alone time in seconds until stop bot").addActionRow(TextInput
-            .create("aloneTimeInput", "Time (seconds 0-4000)", TextInputStyle.SHORT).setRequiredRange(0, 4000).build())
-        .build();
-
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened alone time modal");
-  }
-
-  private void handleModalAloneTime(ModalInteractionEvent modalEvent) {
-    String inputTime = modalEvent.getValue("aloneTimeInput").getAsString();
-    Long time = Long.parseLong(inputTime);
-
-    settings.setAloneTimeUntilStop(time);
-    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-
-    modalEvent.reply("Alone time set to " + time + " seconds").setEphemeral(true).queue();
-    log.debug("User changed alone time to {} seconds", time);
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {

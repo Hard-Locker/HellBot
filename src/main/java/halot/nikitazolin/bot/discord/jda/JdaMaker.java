@@ -25,7 +25,7 @@ public class JdaMaker {
   private final AuthorizationData authorizationData;
   
   private String token;
-  private String status = "on you";
+  private String status = "/about";
   private final List<GatewayIntent> gatewayIntents = List.of(
       GatewayIntent.GUILD_MESSAGES,
       GatewayIntent.DIRECT_MESSAGES,

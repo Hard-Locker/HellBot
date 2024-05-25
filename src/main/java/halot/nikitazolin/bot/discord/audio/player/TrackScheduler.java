@@ -11,6 +11,8 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
+import halot.nikitazolin.bot.discord.tool.ActivityManager;
+import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,9 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
   private final PlayerService playerService;
+  private final Settings settings;
+  private final ActivityManager activityManager;
 
 //  private boolean isRepeat = false;
-  
+
   @Override
   public void onEvent(AudioEvent event) {
     super.onEvent(event);
@@ -41,14 +45,19 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
 
   @Override
   public void onTrackStart(AudioPlayer player, AudioTrack track) {
-    
+    if (settings.isSongInStatus() == true) {
+      AudioTrack audioTrack = playerService.getAudioPlayer().getPlayingTrack();
+      String song = audioTrack.getInfo().author + " - " + audioTrack.getInfo().title;
+
+      activityManager.setListening(song);
+    }
   }
 
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
     if (endReason == AudioTrackEndReason.FINISHED) {
       log.trace("Track ended, try start new track");
-      
+
       playerService.play();
     }
   }

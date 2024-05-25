@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
   <artifactId>hell-bot</artifactId>
-  <version>0.5.7</version>
+  <version>0.5.8</version>
   <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
 
@@ -85,6 +85,12 @@
       <groupId>io.github.bonigarcia</groupId>
       <artifactId>webdrivermanager</artifactId>
       <version>5.8.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.17.2</version>
     </dependency>
 
     <dependency>

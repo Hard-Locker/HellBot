@@ -136,6 +136,7 @@ public class VolumeCommand extends BotCommand {
     } else {
       try {
         int volumeLevel = Integer.parseInt(args.get(0));
+
         updateVolume(volumeLevel);
       } catch (NumberFormatException e) {
         log.warn("Error parsing volume level from arguments", e);
@@ -181,20 +182,21 @@ public class VolumeCommand extends BotCommand {
   }
 
   private void makeModalVolume(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(volume, "Set Volume").addActionRow(TextInput
-            .create("volumeInput", "Volume Level (0-150)", TextInputStyle.SHORT).setRequiredRange(0, 150).build())
+    Modal modal = Modal.create(volume, "Set Volume")
+        .addActionRow(
+            TextInput.create(volume, "Volume Level (0-150)", TextInputStyle.SHORT).setRequiredRange(0, 3).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened volume modal");
+    log.debug("Opened {} modal", volume);
   }
 
   private void handleModalVolume(ModalInteractionEvent modalEvent) {
-    String input = modalEvent.getValue("volumeInput").getAsString();
+    String input = modalEvent.getValue(volume).getAsString();
 
     try {
       int volumeLevel = Integer.parseInt(input);
+
       updateVolume(volumeLevel);
       modalEvent.reply("Current volume level: " + volumeLevel).setEphemeral(true).queue();
     } catch (NumberFormatException e) {
