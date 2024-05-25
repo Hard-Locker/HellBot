@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.action.command.setting;
+package halot.nikitazolin.bot.discord.action.command.user;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -36,7 +35,7 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class BanCommand extends BotCommand {
+public class SetAdminCommand extends BotCommand {
 
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
@@ -44,10 +43,10 @@ public class BanCommand extends BotCommand {
   private final SettingsSaver settingsSaver;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "ban";
+  private final String commandName = "setadmin";
   private final String close = "close";
-  private final String ban = "banUser";
-  private final String unban = "unbanUser";
+  private final String addAdmin = "addAdminUser";
+  private final String removeAdmin = "removeAdminUser";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
@@ -78,7 +77,7 @@ public class BanCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Ban user";
+    return "Set admin";
   }
 
   @Override
@@ -126,18 +125,18 @@ public class BanCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button banUserButton = Button.primary(ban, "Ban user");
-    Button unbanUserButton = Button.primary(unban, "Unban user");
-    List<Button> buttons = List.of(closeButton, banUserButton, unbanUserButton);
+    Button addAdminButton = Button.primary(addAdmin, "Add admin");
+    Button removeAdminButton = Button.primary(removeAdmin, "Remove admin");
+    List<Button> buttons = List.of(closeButton, addAdminButton, removeAdminButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which user need ban?", buttons);
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which role need update?", buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(ban, this::makeBanUser);
-    buttonHandlers.put(unban, this::makeUnbanUser);
+    buttonHandlers.put(addAdmin, this::makeAddAdmin);
+    buttonHandlers.put(removeAdmin, this::makeRemoveAdmin);
 
-    modalHandlers.put(ban, this::handleModalBanUser);
-    modalHandlers.put(unban, this::handleModalUnbanUser);
+    modalHandlers.put(addAdmin, this::handleModalAddAdmin);
+    modalHandlers.put(removeAdmin, this::handleModalRemoveAdmin);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
@@ -169,68 +168,73 @@ public class BanCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void makeBanUser(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(ban, "Ban user")
-        .addActionRow(
-            TextInput.create(ban, "Enter user ID to ban", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
-        .build();
-
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened ban modal");
-  }
-
-  private void makeUnbanUser(ButtonInteractionEvent buttonEvent) {
+  private void makeAddAdmin(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
-        .create(unban, "Remove ban").addActionRow(TextInput
-            .create(unban, "Enter user ID to remove ban", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+        .create(addAdmin, "Add admin").addActionRow(TextInput
+            .create(addAdmin, "Enter user ID to add admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened ban modal");
+    log.debug("Opened admin adding modal");
   }
 
-  private void handleModalBanUser(ModalInteractionEvent modalEvent) {
-    String adminAdd = modalEvent.getValue(ban).getAsString();
-    List<Member> members = modalEvent.getGuild().getMembers();
-    List<Long> memberIds = members.stream().map(Member::getIdLong).toList();
+  private void makeRemoveAdmin(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal
+        .create(removeAdmin, "Remove admin").addActionRow(TextInput
+            .create(removeAdmin, "Enter user ID to remove admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+        .build();
+
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened admin remove modal");
+  }
+
+  private void handleModalAddAdmin(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", addAdmin);
+    String input = modalEvent.getValue(addAdmin).getAsString();
 
     try {
-      long userId = Long.parseLong(adminAdd);
+      Long userId = Long.parseLong(input);
 
-      if (memberIds.contains(userId)) {
-        settings.getBannedUserIds().add(userId);
+      modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
+        settings.getAdminUserIds().add(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        User user = modalEvent.getJDA().getUserById(userId);
-        modalEvent.reply(user.getAsMention() + " has been banned.").setEphemeral(true).queue();
-      } else {
-        modalEvent.reply("Failed to find user.").setEphemeral(true).queue();
-      }
+
+        modalEvent.reply(user.getAsMention() + " has been added as admin").setEphemeral(true).queue();
+      }, throwable -> {
+        modalEvent.reply("User not found").setEphemeral(true).queue();
+        log.debug("Failed to retrieve user", throwable);
+      });
     } catch (NumberFormatException e) {
-      log.warn("Error parsing user ID from arguments", e);
+      log.debug("Error parsing user ID from arguments", e);
     } catch (IndexOutOfBoundsException e) {
-      log.warn("Error accessing the first argument for user ID", e);
+      log.debug("Error accessing the first argument for user ID", e);
     }
   }
 
-  private void handleModalUnbanUser(ModalInteractionEvent modalEvent) {
-    String adminRemove = modalEvent.getValue(unban).getAsString();
-    List<Long> adminIds = settings.getAdminUserIds();
+  private void handleModalRemoveAdmin(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", removeAdmin);
+    String input = modalEvent.getValue(removeAdmin).getAsString();
 
     try {
-      long userId = Long.parseLong(adminRemove);
+      Long userId = Long.parseLong(input);
 
-      if (adminIds.contains(userId)) {
-        settings.getBannedUserIds().remove(userId);
+      if (settings.getAdminUserIds().contains(userId)) {
+        settings.getAdminUserIds().remove(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        User user = modalEvent.getJDA().getUserById(userId);
-        modalEvent.reply(user.getAsMention() + " has been unbanned").setEphemeral(true).queue();
+
+        modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
+          modalEvent.reply(user.getAsMention() + " has been remove as admin").setEphemeral(true).queue();
+        }, throwable -> {
+          modalEvent.reply("User not found in this list").setEphemeral(true).queue();
+          log.debug("Failed to retrieve user", throwable);
+        });
       } else {
-        modalEvent.reply("Failed to find user.").setEphemeral(true).queue();
+        modalEvent.reply("Failed to find user").setEphemeral(true).queue();
       }
     } catch (NumberFormatException e) {
-      log.warn("Error parsing user ID from arguments", e);
+      log.debug("Error parsing user ID from arguments", e);
     } catch (IndexOutOfBoundsException e) {
-      log.warn("Error accessing the first argument for user ID", e);
+      log.debug("Error accessing the first argument for user ID", e);
     }
   }
 

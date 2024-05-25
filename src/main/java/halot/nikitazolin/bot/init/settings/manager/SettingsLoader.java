@@ -2,6 +2,8 @@ package halot.nikitazolin.bot.init.settings.manager;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -44,14 +46,23 @@ public class SettingsLoader {
       settings.setSongInStatus(loadedConfig.isSongInStatus());
       settings.setStayInChannel(loadedConfig.isStayInChannel());
       settings.setUpdateAlerts(loadedConfig.isUpdateAlerts());
-      settings.setAllowedTextChannelIds(loadedConfig.getAllowedTextChannelIds());
-      settings.setAllowedVoiceChannelIds(loadedConfig.getAllowedVoiceChannelIds());
-      settings.setAdminUserIds(loadedConfig.getAdminUserIds());
-      settings.setDjUserIds(loadedConfig.getDjUserIds());
-      settings.setBannedUserIds(loadedConfig.getBannedUserIds());
-      settings.setPlaylistFolderPaths(loadedConfig.getPlaylistFolderPaths());
-      settings.setPrefixes(loadedConfig.getPrefixes());
-      settings.setNameAliases(loadedConfig.getNameAliases());
+      settings.setAllowedTextChannelIds(defaultIfNull(loadedConfig.getAllowedTextChannelIds(), new ArrayList<>()));
+      settings.setAllowedVoiceChannelIds(defaultIfNull(loadedConfig.getAllowedVoiceChannelIds(), new ArrayList<>()));
+      settings.setAdminUserIds(defaultIfNull(loadedConfig.getAdminUserIds(), new ArrayList<>()));
+      settings.setDjUserIds(defaultIfNull(loadedConfig.getDjUserIds(), new ArrayList<>()));
+      settings.setBannedUserIds(defaultIfNull(loadedConfig.getBannedUserIds(), new ArrayList<>()));
+      settings.setPlaylistFolderPaths(defaultIfNull(loadedConfig.getPlaylistFolderPaths(), new ArrayList<>()));
+      settings.setPrefixes(defaultIfNull(loadedConfig.getPrefixes(), new ArrayList<>()));
+      settings.setNameAliases(defaultIfNull(loadedConfig.getNameAliases(), new HashMap<>()));
+
+//      settings.setAllowedTextChannelIds(loadedConfig.getAllowedTextChannelIds());
+//      settings.setAllowedVoiceChannelIds(loadedConfig.getAllowedVoiceChannelIds());
+//      settings.setAdminUserIds(loadedConfig.getAdminUserIds());
+//      settings.setDjUserIds(loadedConfig.getDjUserIds());
+//      settings.setBannedUserIds(loadedConfig.getBannedUserIds());
+//      settings.setPlaylistFolderPaths(loadedConfig.getPlaylistFolderPaths());
+//      settings.setPrefixes(loadedConfig.getPrefixes());
+//      settings.setNameAliases(loadedConfig.getNameAliases());
     } catch (Exception e) {
       log.error("Error applying settings: {}", e.getMessage());
     }

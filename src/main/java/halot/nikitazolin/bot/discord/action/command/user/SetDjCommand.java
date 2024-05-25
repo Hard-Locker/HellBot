@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.action.command.setting;
+package halot.nikitazolin.bot.discord.action.command.user;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -36,7 +35,7 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetUserCommand extends BotCommand {
+public class SetDjCommand extends BotCommand {
 
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
@@ -44,10 +43,8 @@ public class SetUserCommand extends BotCommand {
   private final SettingsSaver settingsSaver;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "user";
+  private final String commandName = "setdj";
   private final String close = "close";
-  private final String addAdmin = "addAdminUser";
-  private final String removeAdmin = "removeAdminUser";
   private final String addDj = "addDjUser";
   private final String removeDj = "removeDjUser";
 
@@ -80,7 +77,7 @@ public class SetUserCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Change user settings";
+    return "Set DJ";
   }
 
   @Override
@@ -128,22 +125,16 @@ public class SetUserCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button addAdminButton = Button.primary(addAdmin, "Add admin");
-    Button removeAdminButton = Button.primary(removeAdmin, "Remove admin");
     Button addDjButton = Button.primary(addDj, "Add DJ");
     Button removeDjButton = Button.primary(removeDj, "Remove DJ");
-    List<Button> buttons = List.of(closeButton, addAdminButton, removeAdminButton, addDjButton, removeDjButton);
+    List<Button> buttons = List.of(closeButton, addDjButton, removeDjButton);
 
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which role need update?", buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(addAdmin, this::makeAddAdmin);
-    buttonHandlers.put(removeAdmin, this::makeRemoveAdmin);
     buttonHandlers.put(addDj, this::makeAddDj);
     buttonHandlers.put(removeDj, this::makeRemoveDj);
 
-    modalHandlers.put(addAdmin, this::handleModalAddAdmin);
-    modalHandlers.put(removeAdmin, this::handleModalRemoveAdmin);
     modalHandlers.put(addDj, this::handleModalAddDj);
     modalHandlers.put(removeDj, this::handleModalRemoveDj);
 
@@ -177,71 +168,6 @@ public class SetUserCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void makeAddAdmin(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(addAdmin, "Add admin").addActionRow(TextInput
-            .create(addAdmin, "Enter user ID to add admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
-        .build();
-
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened admin adding modal");
-  }
-
-  private void makeRemoveAdmin(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(removeAdmin, "Remove admin").addActionRow(TextInput
-            .create(removeAdmin, "Enter user ID to remove admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
-        .build();
-
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened admin remove modal");
-  }
-
-  private void handleModalAddAdmin(ModalInteractionEvent modalEvent) {
-    String adminAdd = modalEvent.getValue(addAdmin).getAsString();
-    List<Member> members = modalEvent.getGuild().getMembers();
-    List<Long> memberIds = members.stream().map(Member::getIdLong).toList();
-
-    try {
-      long userId = Long.parseLong(adminAdd);
-
-      if (memberIds.contains(userId)) {
-        settings.getAdminUserIds().add(userId);
-        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        User user = modalEvent.getJDA().getUserById(userId);
-        modalEvent.reply(user.getAsMention() + " has been added as admin.").setEphemeral(true).queue();
-      } else {
-        modalEvent.reply("Failed to find user.").setEphemeral(true).queue();
-      }
-    } catch (NumberFormatException e) {
-      log.warn("Error parsing user ID from arguments", e);
-    } catch (IndexOutOfBoundsException e) {
-      log.warn("Error accessing the first argument for user ID", e);
-    }
-  }
-
-  private void handleModalRemoveAdmin(ModalInteractionEvent modalEvent) {
-    String adminRemove = modalEvent.getValue(removeAdmin).getAsString();
-    List<Long> adminIds = settings.getAdminUserIds();
-
-    try {
-      long userId = Long.parseLong(adminRemove);
-
-      if (adminIds.contains(userId)) {
-        settings.getAdminUserIds().remove(userId);
-        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        User user = modalEvent.getJDA().getUserById(userId);
-        modalEvent.reply(user.getAsMention() + " has been remove as admin.").setEphemeral(true).queue();
-      } else {
-        modalEvent.reply("Failed to find user.").setEphemeral(true).queue();
-      }
-    } catch (NumberFormatException e) {
-      log.warn("Error parsing user ID from arguments", e);
-    } catch (IndexOutOfBoundsException e) {
-      log.warn("Error accessing the first argument for user ID", e);
-    }
-  }
-
   private void makeAddDj(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal.create(addDj, "Add DJ")
         .addActionRow(
@@ -263,47 +189,52 @@ public class SetUserCommand extends BotCommand {
   }
 
   private void handleModalAddDj(ModalInteractionEvent modalEvent) {
-    String adminAdd = modalEvent.getValue(addDj).getAsString();
-    List<Member> members = modalEvent.getGuild().getMembers();
-    List<Long> memberIds = members.stream().map(Member::getIdLong).toList();
+    log.debug("Processing modal: {}", addDj);
+    String input = modalEvent.getValue(addDj).getAsString();
 
     try {
-      long userId = Long.parseLong(adminAdd);
+      Long userId = Long.parseLong(input);
 
-      if (memberIds.contains(userId)) {
+      modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
         settings.getDjUserIds().add(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        User user = modalEvent.getJDA().getUserById(userId);
+
         modalEvent.reply(user.getAsMention() + " has been added as DJ").setEphemeral(true).queue();
-      } else {
-        modalEvent.reply("Failed to find user.").setEphemeral(true).queue();
-      }
+      }, throwable -> {
+        modalEvent.reply("User not found").setEphemeral(true).queue();
+        log.debug("Failed to retrieve user", throwable);
+      });
     } catch (NumberFormatException e) {
-      log.warn("Error parsing user ID from arguments", e);
+      log.debug("Error parsing user ID from arguments", e);
     } catch (IndexOutOfBoundsException e) {
-      log.warn("Error accessing the first argument for user ID", e);
+      log.debug("Error accessing the first argument for user ID", e);
     }
   }
 
   private void handleModalRemoveDj(ModalInteractionEvent modalEvent) {
-    String adminRemove = modalEvent.getValue(removeDj).getAsString();
-    List<Long> adminIds = settings.getAdminUserIds();
+    log.debug("Processing modal: {}", removeDj);
+    String input = modalEvent.getValue(removeDj).getAsString();
 
     try {
-      long userId = Long.parseLong(adminRemove);
+      Long userId = Long.parseLong(input);
 
-      if (adminIds.contains(userId)) {
+      if (settings.getDjUserIds().contains(userId)) {
         settings.getDjUserIds().remove(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        User user = modalEvent.getJDA().getUserById(userId);
-        modalEvent.reply(user.getAsMention() + " has been remove as DJ").setEphemeral(true).queue();
+
+        modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
+          modalEvent.reply(user.getAsMention() + " has been remove as DJ").setEphemeral(true).queue();
+        }, throwable -> {
+          modalEvent.reply("User not found in this list").setEphemeral(true).queue();
+          log.debug("Failed to retrieve user", throwable);
+        });
       } else {
-        modalEvent.reply("Failed to find user.").setEphemeral(true).queue();
+        modalEvent.reply("Failed to find user").setEphemeral(true).queue();
       }
     } catch (NumberFormatException e) {
-      log.warn("Error parsing user ID from arguments", e);
+      log.debug("Error parsing user ID from arguments", e);
     } catch (IndexOutOfBoundsException e) {
-      log.warn("Error accessing the first argument for user ID", e);
+      log.debug("Error accessing the first argument for user ID", e);
     }
   }
 

@@ -55,30 +55,30 @@ public class MessageSender {
     }
   }
 
-//  public Long sendMessageWithButtons(TextChannel textChannel, MessageCreateData messageCreateData,
-//      List<Button> buttons) {
-//    CompletableFuture<Long> futureMessageId = new CompletableFuture<>();
-//    MessageCreateData fullMessageCreateData = new MessageCreateBuilder().setContent(messageCreateData.getContent())
-//        .setActionRow(buttons).build();
-//
-//    textChannel.sendMessage(fullMessageCreateData).queue(messageSent -> {
-//      Long messageId = messageSent.getIdLong();
-//      log.debug("Message sent with ID: " + messageId);
-//      futureMessageId.complete(messageId);
-//    }, error -> {
-//      log.error("Failed to send message: " + error.getMessage());
-//      futureMessageId.complete(null);
-//    });
-//
-//    try {
-//      return futureMessageId.get();
-//    } catch (InterruptedException | ExecutionException e) {
-//      log.error("Error waiting for the message to be sent: ", e);
-//      Thread.currentThread().interrupt();
-//
-//      return null;
-//    }
-//  }
+  public Long sendMessageWithButtons(TextChannel textChannel, MessageCreateData messageCreateData,
+      List<Button> buttons) {
+    CompletableFuture<Long> futureMessageId = new CompletableFuture<>();
+    MessageCreateData fullMessageCreateData = new MessageCreateBuilder().setContent(messageCreateData.getContent())
+        .setActionRow(buttons).build();
+
+    textChannel.sendMessage(fullMessageCreateData).queue(messageSent -> {
+      Long messageId = messageSent.getIdLong();
+      log.debug("Message sent with ID: " + messageId);
+      futureMessageId.complete(messageId);
+    }, error -> {
+      log.error("Failed to send message: " + error.getMessage());
+      futureMessageId.complete(null);
+    });
+
+    try {
+      return futureMessageId.get();
+    } catch (InterruptedException | ExecutionException e) {
+      log.error("Error waiting for the message to be sent: ", e);
+      Thread.currentThread().interrupt();
+
+      return null;
+    }
+  }
 
   public void sendPrivateMessage(User user, EmbedBuilder embedBuilder) {
     MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();

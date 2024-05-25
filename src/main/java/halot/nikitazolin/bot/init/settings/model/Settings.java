@@ -1,7 +1,9 @@
 package halot.nikitazolin.bot.init.settings.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,12 +23,12 @@ public class Settings {
   private boolean songInStatus;
   private boolean stayInChannel;
   private boolean updateAlerts;
-  private List<Long> allowedTextChannelIds;
-  private List<Long> allowedVoiceChannelIds;
-  private List<Long> adminUserIds;
-  private List<Long> djUserIds;
-  private List<Long> bannedUserIds;
-  private List<String> playlistFolderPaths;
-  private List<String> prefixes;
-  private HashMap<String, List<String>> nameAliases;
+  private List<Long> allowedTextChannelIds = new ArrayList<>();
+  private List<Long> allowedVoiceChannelIds = new ArrayList<>();
+  private List<Long> adminUserIds = new ArrayList<>();
+  private List<Long> djUserIds = new ArrayList<>();
+  private List<Long> bannedUserIds = new ArrayList<>();
+  private List<String> playlistFolderPaths = new ArrayList<>();
+  private List<String> prefixes = new ArrayList<>();
+  private Map<String, List<String>> nameAliases = new HashMap<>();
 }
