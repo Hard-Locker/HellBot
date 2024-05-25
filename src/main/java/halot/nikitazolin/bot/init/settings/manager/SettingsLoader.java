@@ -38,14 +38,14 @@ public class SettingsLoader {
 
   private void safelyAssignSettings(Settings loadedConfig) {
     try {
-      settings.setVolume(defaultIfNull(loadedConfig.getVolume(), 0));
+      settings.setVolume(defaultIfNull(loadedConfig.getVolume(), 100));
       settings.setOwnerUserId(defaultIfNull(loadedConfig.getOwnerUserId(), 0L));
-      settings.setAloneTimeUntilStop(defaultIfNull(loadedConfig.getAloneTimeUntilStop(), 0L));
-      settings.setBotStatus(loadedConfig.getBotStatus());
-      settings.setBotActivity(loadedConfig.getBotActivity());
-      settings.setSongInStatus(loadedConfig.isSongInStatus());
-      settings.setStayInChannel(loadedConfig.isStayInChannel());
-      settings.setUpdateAlerts(loadedConfig.isUpdateAlerts());
+      settings.setAloneTimeUntilStop(defaultIfNull(loadedConfig.getAloneTimeUntilStop(), 120L));
+      settings.setBotStatus(defaultIfNull(loadedConfig.getBotStatus(), ""));
+      settings.setBotActivity(defaultIfNull(loadedConfig.getBotActivity(), ""));
+      settings.setSongInStatus(defaultIfNull(loadedConfig.isSongInStatus(), false));
+      settings.setStayInChannel(defaultIfNull(loadedConfig.isStayInChannel(), true));
+      settings.setUpdateAlerts(defaultIfNull(loadedConfig.isUpdateAlerts(), true));
       settings.setAllowedTextChannelIds(defaultIfNull(loadedConfig.getAllowedTextChannelIds(), new ArrayList<>()));
       settings.setAllowedVoiceChannelIds(defaultIfNull(loadedConfig.getAllowedVoiceChannelIds(), new ArrayList<>()));
       settings.setAdminUserIds(defaultIfNull(loadedConfig.getAdminUserIds(), new ArrayList<>()));
@@ -54,15 +54,7 @@ public class SettingsLoader {
       settings.setPlaylistFolderPaths(defaultIfNull(loadedConfig.getPlaylistFolderPaths(), new ArrayList<>()));
       settings.setPrefixes(defaultIfNull(loadedConfig.getPrefixes(), new ArrayList<>()));
       settings.setNameAliases(defaultIfNull(loadedConfig.getNameAliases(), new HashMap<>()));
-
-//      settings.setAllowedTextChannelIds(loadedConfig.getAllowedTextChannelIds());
-//      settings.setAllowedVoiceChannelIds(loadedConfig.getAllowedVoiceChannelIds());
-//      settings.setAdminUserIds(loadedConfig.getAdminUserIds());
-//      settings.setDjUserIds(loadedConfig.getDjUserIds());
-//      settings.setBannedUserIds(loadedConfig.getBannedUserIds());
-//      settings.setPlaylistFolderPaths(loadedConfig.getPlaylistFolderPaths());
-//      settings.setPrefixes(loadedConfig.getPrefixes());
-//      settings.setNameAliases(loadedConfig.getNameAliases());
+      log.debug("Successfully applied settings");
     } catch (Exception e) {
       log.error("Error applying settings: {}", e.getMessage());
     }
