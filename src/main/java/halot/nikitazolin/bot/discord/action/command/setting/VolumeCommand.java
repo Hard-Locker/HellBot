@@ -151,7 +151,10 @@ public class VolumeCommand extends BotCommand {
     Button volumeButton = Button.primary(volume, "Set volume");
     List<Button> buttons = List.of(closeButton, volumeButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Volume setting", buttons);
+    int volumeLevel = settings.getVolume();
+    String title = "Volume setting. Current volume: " + volumeLevel;
+    
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), title, buttons);
 
     buttonHandlers = new HashMap<>();
     buttonHandlers.put(close, this::selectClose);

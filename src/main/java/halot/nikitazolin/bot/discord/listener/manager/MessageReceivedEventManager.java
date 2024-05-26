@@ -12,7 +12,7 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.CommandCollector;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.action.model.CommandArguments;
-import halot.nikitazolin.bot.discord.tool.SettingChecker;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message;
@@ -25,7 +25,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 public class MessageReceivedEventManager {
 
   private final CommandCollector commandCollector;
-  private final SettingChecker settingChecker;
+  private final AllowChecker allowChecker;
   private final DatabaseService databaseService;
 
   public void processingEvent(MessageReceivedEvent messageEvent) {
@@ -60,7 +60,7 @@ public class MessageReceivedEventManager {
       return;
     }
 
-    if (!settingChecker.checkAllowedTextChannel(messageEvent.getChannel().asTextChannel(), messageEvent.getAuthor())) {
+    if (!allowChecker.checkAllowedTextChannel(messageEvent.getChannel().asTextChannel(), messageEvent.getAuthor())) {
       return;
     }
 

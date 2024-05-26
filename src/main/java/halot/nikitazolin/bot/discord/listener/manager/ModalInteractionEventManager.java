@@ -9,7 +9,7 @@ import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.CommandCollector;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
-import halot.nikitazolin.bot.discord.tool.SettingChecker;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -21,10 +21,10 @@ public class ModalInteractionEventManager {
 
   private final ActionMessageCollector actionMessageCollector;
   private final CommandCollector commandCollector;
-  private final SettingChecker settingChecker;
+  private final AllowChecker allowChecker;
 
   public void processingEvent(ModalInteractionEvent modalEvent) {
-    if (!settingChecker.checkAllowedTextChannel(modalEvent.getChannel().asTextChannel(), modalEvent.getUser())) {
+    if (!allowChecker.checkAllowedTextChannel(modalEvent.getChannel().asTextChannel(), modalEvent.getUser())) {
       modalEvent.getHook().deleteOriginal().queue();
 
       return;

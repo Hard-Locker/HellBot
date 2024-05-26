@@ -11,7 +11,7 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.CommandCollector;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.action.model.CommandArguments;
-import halot.nikitazolin.bot.discord.tool.SettingChecker;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 public class SlashCommandInteractionEventManager {
 
   private final CommandCollector commandCollector;
-  private final SettingChecker settingChecker;
+  private final AllowChecker allowChecker;
   private final DatabaseService databaseService;
 
   public void processingEvent(SlashCommandInteractionEvent slashEvent) {
@@ -51,7 +51,7 @@ public class SlashCommandInteractionEventManager {
       return;
     }
 
-    if (!settingChecker.checkAllowedTextChannel(slashEvent.getChannel().asTextChannel(), slashEvent.getUser())) {
+    if (!allowChecker.checkAllowedTextChannel(slashEvent.getChannel().asTextChannel(), slashEvent.getUser())) {
       slashEvent.getHook().deleteOriginal().queue();
 
       return;

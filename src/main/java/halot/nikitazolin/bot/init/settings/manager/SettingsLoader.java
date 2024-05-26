@@ -38,12 +38,14 @@ public class SettingsLoader {
 
   private void safelyAssignSettings(Settings loadedConfig) {
     try {
+      settings.setLanguage(defaultIfNull(loadedConfig.getLanguage(), "en"));
       settings.setVolume(defaultIfNull(loadedConfig.getVolume(), 100));
       settings.setOwnerUserId(defaultIfNull(loadedConfig.getOwnerUserId(), 0L));
       settings.setAloneTimeUntilStop(defaultIfNull(loadedConfig.getAloneTimeUntilStop(), 120L));
-      settings.setBotStatus(defaultIfNull(loadedConfig.getBotStatus(), ""));
+      settings.setBotStatus(defaultIfNull(loadedConfig.getBotStatus(), "online"));
       settings.setBotActivity(defaultIfNull(loadedConfig.getBotActivity(), ""));
-      settings.setSongInStatus(defaultIfNull(loadedConfig.isSongInStatus(), false));
+      settings.setSongInStatus(defaultIfNull(loadedConfig.isSongInStatus(), true));
+      settings.setSongInTopic(defaultIfNull(loadedConfig.isSongInTopic(), false));
       settings.setStayInChannel(defaultIfNull(loadedConfig.isStayInChannel(), true));
       settings.setUpdateAlerts(defaultIfNull(loadedConfig.isUpdateAlerts(), true));
       settings.setAllowedTextChannelIds(defaultIfNull(loadedConfig.getAllowedTextChannelIds(), new ArrayList<>()));

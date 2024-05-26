@@ -9,7 +9,7 @@ import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.CommandCollector;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
-import halot.nikitazolin.bot.discord.tool.SettingChecker;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -21,10 +21,10 @@ public class ButtonEventManager {
 
   private final ActionMessageCollector actionMessageCollector;
   private final CommandCollector commandCollector;
-  private final SettingChecker settingChecker;
+  private final AllowChecker allowChecker;
 
   public void processingEvent(ButtonInteractionEvent buttonEvent) {
-    if (!settingChecker.checkAllowedTextChannel(buttonEvent.getChannel().asTextChannel(), buttonEvent.getUser())) {
+    if (!allowChecker.checkAllowedTextChannel(buttonEvent.getChannel().asTextChannel(), buttonEvent.getUser())) {
       buttonEvent.getHook().deleteOriginal().queue();
 
       return;

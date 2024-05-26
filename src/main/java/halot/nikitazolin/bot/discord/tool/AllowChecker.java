@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SettingChecker {
+public class AllowChecker {
 
   private final MessageFormatter messageFormatter;
   private final Settings settings;

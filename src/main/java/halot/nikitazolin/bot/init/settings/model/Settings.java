@@ -15,12 +15,14 @@ import lombok.Data;
 @Data
 public class Settings {
 
+  private String language = "en";
   private int volume = 100;
   private Long ownerUserId = null;
   private Long aloneTimeUntilStop = 120L;
-  private String botStatus = "";
+  private String botStatus = "online";
   private String botActivity = "";
-  private boolean songInStatus = false;
+  private boolean songInStatus = true;
+  private boolean songInTopic = false;
   private boolean stayInChannel = true;
   private boolean updateAlerts = true;
   private List<Long> allowedTextChannelIds = new ArrayList<>();
