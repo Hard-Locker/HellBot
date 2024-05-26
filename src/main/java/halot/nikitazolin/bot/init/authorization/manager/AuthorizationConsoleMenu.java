@@ -38,6 +38,7 @@ public class AuthorizationConsoleMenu {
   }
 
   //Now not used
+  @SuppressWarnings("unused")
   private void youtubeMenu(AuthorizationData authorizationData, String filePath) {
     log.info("Displaying YouTube authorization menu");
     boolean youtubeEnabled = getTwoOptionInput("-----YouTube authorization-----",

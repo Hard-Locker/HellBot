@@ -116,6 +116,7 @@ public class SettingsCommand extends BotCommand {
     embed.addField("Bot status", settings.getBotStatus() != null ? settings.getBotStatus() : notSetValue, true);
     embed.addField("Song in status", String.valueOf(settings.isSongInStatus()), true);
     embed.addField("Song in topic", String.valueOf(settings.isSongInTopic()), true);
+    embed.addField("Song in text channel", String.valueOf(settings.isSongInTextChannel()), true);
     embed.addField("Stay in channel", String.valueOf(settings.isStayInChannel()), true);
     embed.addField("Alone time until stop", settings.getAloneTimeUntilStop() != null ? settings.getAloneTimeUntilStop().toString() : notSetValue, true);
     embed.addField("Update alerts", String.valueOf(settings.isUpdateAlerts()), true);

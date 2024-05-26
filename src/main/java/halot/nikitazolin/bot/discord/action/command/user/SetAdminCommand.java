@@ -14,6 +14,7 @@ import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
@@ -30,6 +31,8 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Scope("prototype")
@@ -41,9 +44,10 @@ public class SetAdminCommand extends BotCommand {
   private final MessageSender messageSender;
   private final Settings settings;
   private final SettingsSaver settingsSaver;
+  private final DiscordDataReceiver discordDataReceiver;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "setadmin";
+  private final String commandName = "admin";
   private final String close = "close";
   private final String addAdmin = "addAdminUser";
   private final String removeAdmin = "removeAdminUser";
@@ -129,7 +133,23 @@ public class SetAdminCommand extends BotCommand {
     Button removeAdminButton = Button.primary(removeAdmin, "Remove admin");
     List<Button> buttons = List.of(closeButton, addAdminButton, removeAdminButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which role need update?", buttons);
+    String newLine = System.lineSeparator();
+    StringBuilder messageContent = new StringBuilder("**Admin setting**").append(newLine);
+
+    if (settings.getAdminUserIds() != null && !settings.getAdminUserIds().isEmpty()) {
+      messageContent.append("Current admin:").append(newLine);
+      List<User> users = discordDataReceiver.getUsersByIds(settings.getAdminUserIds());
+
+      for (User user : users) {
+        messageContent.append(user.getAsMention());
+        messageContent.append(" ID: ");
+        messageContent.append(user.getIdLong());
+        messageContent.append(newLine);
+      }
+    }
+
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(addAdmin, this::makeModalAddAdmin);
@@ -191,52 +211,54 @@ public class SetAdminCommand extends BotCommand {
   private void handleModalAddAdmin(ModalInteractionEvent modalEvent) {
     log.debug("Processing modal: {}", addAdmin);
     String input = modalEvent.getValue(addAdmin).getAsString();
+    Long userId = null;
 
     try {
-      Long userId = Long.parseLong(input);
-
-      modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
-        if (settings.getAdminUserIds() != null) {
-          settings.getAdminUserIds().add(userId);
-          settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-
-          modalEvent.reply(user.getAsMention() + " has been added as admin").setEphemeral(true).queue();
-        }
-      }, throwable -> {
-        modalEvent.reply("User not found").setEphemeral(true).queue();
-        log.debug("Failed to retrieve user", throwable);
-      });
+      userId = Long.parseLong(input);
     } catch (NumberFormatException e) {
       log.debug("Error parsing user ID from arguments", e);
     } catch (IndexOutOfBoundsException e) {
       log.debug("Error accessing the first argument for user ID", e);
+    }
+
+    User user = discordDataReceiver.getUserById(userId);
+
+    if (user != null && settings.getAdminUserIds() != null) {
+      settings.getAdminUserIds().add(userId);
+      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+
+      modalEvent.reply(user.getAsMention() + " has been added").setEphemeral(true).queue();
+    } else {
+      modalEvent.reply("User not found").setEphemeral(true).queue();
     }
   }
 
   private void handleModalRemoveAdmin(ModalInteractionEvent modalEvent) {
     log.debug("Processing modal: {}", removeAdmin);
     String input = modalEvent.getValue(removeAdmin).getAsString();
+    Long userId = null;
 
     try {
-      Long userId = Long.parseLong(input);
-
-      if (settings.getAdminUserIds() != null && settings.getAdminUserIds().contains(userId)) {
-        settings.getAdminUserIds().remove(userId);
-        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-
-        modalEvent.getJDA().retrieveUserById(userId).queue(user -> {
-          modalEvent.reply(user.getAsMention() + " has been remove as admin").setEphemeral(true).queue();
-        }, throwable -> {
-          modalEvent.reply("User not found in this list").setEphemeral(true).queue();
-          log.debug("Failed to retrieve user", throwable);
-        });
-      } else {
-        modalEvent.reply("Failed to find user").setEphemeral(true).queue();
-      }
+      userId = Long.parseLong(input);
     } catch (NumberFormatException e) {
       log.debug("Error parsing user ID from arguments", e);
     } catch (IndexOutOfBoundsException e) {
       log.debug("Error accessing the first argument for user ID", e);
+    }
+
+    if (settings.getAdminUserIds() != null && settings.getAdminUserIds().contains(userId)) {
+      settings.getAdminUserIds().remove(userId);
+      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+
+      User user = discordDataReceiver.getUserById(userId);
+
+      if (user != null) {
+        modalEvent.reply(user.getAsMention() + " has been removed from this list").setEphemeral(true).queue();
+      } else {
+        modalEvent.reply(userId + " has been removed from this list").setEphemeral(true).queue();
+      }
+    } else {
+      modalEvent.reply("User not found in this list").setEphemeral(true).queue();
     }
   }
 

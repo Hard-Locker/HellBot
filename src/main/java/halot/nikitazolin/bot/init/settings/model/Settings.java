@@ -22,6 +22,7 @@ public class Settings {
   private String botStatus = "online";
   private boolean songInStatus = true;
   private boolean songInTopic = false;
+  private boolean songInTextChannel = false;
   private boolean stayInChannel = true;
   private boolean updateAlerts = true;
   private List<Long> allowedTextChannelIds = new ArrayList<>();

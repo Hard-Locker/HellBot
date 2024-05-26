@@ -1,8 +1,6 @@
 package halot.nikitazolin.bot.discord.audio.player;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -14,13 +12,16 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventListener;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
-import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import halot.nikitazolin.bot.discord.tool.ActivityManager;
+import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 @Component
@@ -30,9 +31,11 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
   private final PlayerService playerService;
+  private final MessageFormatter messageFormatter;
+  private final MessageSender messageSender;
   private final Settings settings;
   private final ActivityManager activityManager;
-  private final JdaMaker jdaMaker;
+  private final DiscordDataReceiver discordDataReceiver;
 
 //  private boolean isRepeat = false;
 
@@ -50,8 +53,8 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     }
 
     if (settings.isSongInTopic() == true && settings.getAllowedTextChannelIds() != null) {
-      List<Long> textChannelIds = settings.getAllowedTextChannelIds();
-      setTopic(textChannelIds, info);
+      List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
+      setTopics(textChannels, info);
     }
   }
 
@@ -66,15 +69,15 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     }
 
     if (settings.isSongInTopic() == true && settings.getAllowedTextChannelIds() != null) {
-      List<Long> textChannelIds = settings.getAllowedTextChannelIds();
-      setTopic(textChannelIds, topic);
+      List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
+      setTopics(textChannels, topic);
     }
   }
 
   @Override
   public void onTrackStart(AudioPlayer player, AudioTrack track) {
-    AudioTrack audioTrack = playerService.getAudioPlayer().getPlayingTrack();
-    String song = audioTrack.getInfo().author + " - " + audioTrack.getInfo().title;
+    AudioTrackInfo audioTrackInfo = playerService.getAudioPlayer().getPlayingTrack().getInfo();
+    String song = audioTrackInfo.author + " - " + audioTrackInfo.title;
     String topic = "Now playing: " + song;
 
     if (settings.isSongInStatus() == true) {
@@ -82,8 +85,19 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     }
 
     if (settings.isSongInTopic() == true && settings.getAllowedTextChannelIds() != null) {
-      List<Long> textChannelIds = settings.getAllowedTextChannelIds();
-      setTopic(textChannelIds, topic);
+      List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
+      setTopics(textChannels, topic);
+    }
+
+    if (settings.isSongInTextChannel() == true && settings.getAllowedTextChannelIds() != null) {
+      EmbedBuilder embed = messageFormatter.createAudioTrackInfoEmbed(audioTrackInfo, "**Now playing**");
+      List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
+
+      for (TextChannel textChannel : textChannels) {
+        messageSender.sendMessageEmbed(textChannel, embed);
+      }
+
+      log.debug("Audio information send to text channel");
     }
   }
 
@@ -94,13 +108,12 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     }
 
     if (settings.isSongInTopic() == true && settings.getAllowedTextChannelIds() != null) {
-      List<Long> textChannelIds = settings.getAllowedTextChannelIds();
-      setTopic(textChannelIds, "");
+      List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
+      setTopics(textChannels, "");
     }
 
     if (endReason == AudioTrackEndReason.FINISHED) {
       log.trace("Track ended, try start new track");
-
       playerService.play();
     }
   }
@@ -117,27 +130,12 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     // a new track
   }
 
-  private void setTopic(List<Long> textChannelIds, String topic) {
+  private void setTopics(List<TextChannel> textChannels, String topic) {
     log.debug("Updating text channels topic");
-    if (textChannelIds.isEmpty() == true) {
+
+    if (textChannels.isEmpty() == true) {
       log.debug("Have not text channels to set topic");
       return;
-    }
-
-    Optional<JDA> jdaOpt = jdaMaker.getJda();
-    List<TextChannel> textChannels = new ArrayList<>();
-
-    if (jdaOpt.isPresent()) {
-      JDA jda = jdaOpt.get();
-
-      for (Long textChannelId : textChannelIds) {
-        TextChannel textChannel = jda.getTextChannelById(textChannelId);
-        textChannels.add(textChannel);
-      }
-
-      log.debug("Get text channels by IDs");
-    } else {
-      log.error("Failed to set topic: JDA instance not available");
     }
 
     for (TextChannel textChannel : textChannels) {

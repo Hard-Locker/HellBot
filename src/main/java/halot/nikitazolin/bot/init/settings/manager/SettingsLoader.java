@@ -45,6 +45,7 @@ public class SettingsLoader {
       settings.setBotStatus(defaultIfNull(loadedConfig.getBotStatus(), "online"));
       settings.setSongInStatus(defaultIfNull(loadedConfig.isSongInStatus(), true));
       settings.setSongInTopic(defaultIfNull(loadedConfig.isSongInTopic(), false));
+      settings.setSongInTextChannel(defaultIfNull(loadedConfig.isSongInTextChannel(), false));
       settings.setStayInChannel(defaultIfNull(loadedConfig.isStayInChannel(), true));
       settings.setUpdateAlerts(defaultIfNull(loadedConfig.isUpdateAlerts(), true));
       settings.setAllowedTextChannelIds(defaultIfNull(loadedConfig.getAllowedTextChannelIds(), new ArrayList<>()));
