@@ -132,7 +132,7 @@ public class SetActivityCommand extends BotCommand {
     Button watchingButton = Button.primary(watching, "Set Watching");
     List<Button> buttons = List.of(closeButton, playingButton, streamingButton, listeningButton, watchingButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which activity need set?",
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "What activity should set?",
         buttons);
 
     buttonHandlers.put(close, this::selectClose);

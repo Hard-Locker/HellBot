@@ -31,8 +31,11 @@ import dev.lavalink.youtube.clients.AndroidWithThumbnail;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
 import dev.lavalink.youtube.clients.skeleton.Client;
+import halot.nikitazolin.bot.ApplicationRunnerImpl;
 import halot.nikitazolin.bot.discord.DatabaseService;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
+import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +49,8 @@ import net.dv8tion.jda.api.audio.AudioSendHandler;
 public class PlayerService implements AudioSendHandler {
 
   private final DatabaseService databaseService;
+  private final Settings settings;
+  private final SettingsSaver settingsSaver;
 
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
@@ -88,6 +93,7 @@ public class PlayerService implements AudioSendHandler {
     audioPlayerManager.getConfiguration().setOpusEncodingQuality(10);
 
     audioPlayer = audioPlayerManager.createPlayer();
+    setVolume(settings.getVolume());
 
     log.info("Created PlayerService for implementation AudioSendHandler");
   }
@@ -139,7 +145,11 @@ public class PlayerService implements AudioSendHandler {
   }
 
   public void setVolume(int volume) {
-    audioPlayer.setVolume(volume);
+    if (volume > 0 && volume <= 150) {
+      audioPlayer.setVolume(volume);
+      settings.setVolume(volume);
+      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+    }
   }
 
   public void clearQueue() {

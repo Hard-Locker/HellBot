@@ -128,7 +128,7 @@ public class SetStatusCommand extends BotCommand {
     Button invisibleButton = Button.secondary(invisible, "Set invisible");
     List<Button> buttons = List.of(closeButton, onlineButton, idleButton, dndButton, invisibleButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which status need set?", buttons);
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "What status should set?", buttons);
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(online, this::setStatus);

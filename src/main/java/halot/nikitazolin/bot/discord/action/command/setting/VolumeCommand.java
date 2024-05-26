@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.ApplicationRunnerImpl;
 import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
@@ -17,7 +16,6 @@ import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
-import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +41,6 @@ public class VolumeCommand extends BotCommand {
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
-  private final SettingsSaver settingsSaver;
   private final ActionMessageCollector actionMessageCollector;
 
   private final String commandName = "volume";
@@ -168,8 +165,6 @@ public class VolumeCommand extends BotCommand {
 
   private void updateVolume(int volumeLevel) {
     playerService.setVolume(volumeLevel);
-    settings.setVolume(volumeLevel);
-    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
     log.debug("Current volume level: {}", volumeLevel);
   }
 
