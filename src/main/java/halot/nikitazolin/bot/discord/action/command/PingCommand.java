@@ -2,6 +2,7 @@ package halot.nikitazolin.bot.discord.action.command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -10,11 +11,13 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -31,6 +34,7 @@ public class PingCommand extends BotCommand {
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
+  private final AllowChecker allowChecker;
 
   private final String commandName = "ping";
 
@@ -64,8 +68,8 @@ public class PingCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    return true;
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isOwnerOrAdmin(user);
   }
 
   @Override
@@ -85,9 +89,19 @@ public class PingCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    final long time = System.currentTimeMillis();
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
 
-    jdaMaker.getJda().ifPresent(jda -> {
+      return;
+    }
+
+    final long time = System.currentTimeMillis();
+    Optional<JDA> jdaOpt = jdaMaker.getJda();
+
+    if (jdaOpt.isPresent()) {
+      JDA jda = jdaOpt.get();
+
       jda.getRestPing().queue(ping -> {
         long latency = System.currentTimeMillis() - time;
         String pingInfo = String.format("Ping: %d ms (REST API), Latency: %d ms", ping, latency);
@@ -96,7 +110,7 @@ public class PingCommand extends BotCommand {
         EmbedBuilder embed = messageFormatter.createSuccessEmbed(pingInfo);
         messageSender.sendMessageEmbed(context.getTextChannel(), embed);
       });
-    });
+    }
   }
 
   @Override

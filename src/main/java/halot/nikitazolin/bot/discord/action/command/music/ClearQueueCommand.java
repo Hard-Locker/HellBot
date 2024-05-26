@@ -9,12 +9,11 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
-import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -28,9 +27,9 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 public class ClearQueueCommand extends BotCommand {
 
   private final PlayerService playerService;
-  private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
+  private final AllowChecker allowChecker;
 
   private final String commandName = "clear";
 
@@ -64,18 +63,8 @@ public class ClearQueueCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    List<Long> allowedIds = new ArrayList<>();
-
-    if (settings.getBannedUserIds() != null) {
-      allowedIds.addAll(settings.getBannedUserIds());
-    }
-
-    if (!allowedIds.contains(user.getIdLong())) {
-      return true;
-    } else {
-      return false;
-    }
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isNotBanned(user);
   }
 
   @Override
@@ -95,16 +84,14 @@ public class ClearQueueCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    if (checkUserPermission(context.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(context.getUser(), embed);
-      log.debug("User have not permission for clear queue" + context.getUser());
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
 
       return;
     }
 
     playerService.clearQueue();
-
     log.debug("Queue cleared by user: " + context.getUser());
   }
 

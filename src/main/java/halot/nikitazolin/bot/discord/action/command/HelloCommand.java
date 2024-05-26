@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class HelloCommand extends BotCommand {
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
+  private final AllowChecker allowChecker;
 
   private final String commandName = "hello";
 
@@ -62,8 +64,8 @@ public class HelloCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    return true;
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isNotBanned(user);
   }
 
   @Override
@@ -83,6 +85,13 @@ public class HelloCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
+
+      return;
+    }
+
     EmbedBuilder embed = messageFormatter
         .createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);

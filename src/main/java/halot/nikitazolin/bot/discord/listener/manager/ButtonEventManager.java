@@ -24,7 +24,7 @@ public class ButtonEventManager {
   private final AllowChecker allowChecker;
 
   public void processingEvent(ButtonInteractionEvent buttonEvent) {
-    if (!allowChecker.checkAllowedTextChannel(buttonEvent.getChannel().asTextChannel(), buttonEvent.getUser())) {
+    if (!allowChecker.isAllowedTextChannel(buttonEvent.getChannel().asTextChannel(), buttonEvent.getUser())) {
       buttonEvent.getHook().deleteOriginal().queue();
 
       return;

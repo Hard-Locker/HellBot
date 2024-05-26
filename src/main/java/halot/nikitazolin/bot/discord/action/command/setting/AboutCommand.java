@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
@@ -29,6 +30,7 @@ public class AboutCommand extends BotCommand {
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
+  private final AllowChecker allowChecker;
 
   private final String commandName = "about";
 
@@ -62,8 +64,8 @@ public class AboutCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    return true;
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isNotBanned(user);
   }
 
   @Override
@@ -83,10 +85,17 @@ public class AboutCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
+
+      return;
+    }
+
     EmbedBuilder embed = messageFormatter.createInfoEmbed("There will be information about the bot here");
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
-    log.debug("User get hello" + context.getUser());
+    log.debug("User get information about bot" + context.getUser());
   }
 
   @Override

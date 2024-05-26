@@ -14,6 +14,7 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.GuildAudioService;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.YoutubeLinkManager;
@@ -41,6 +42,7 @@ public class PlayCommand extends BotCommand {
   private final Settings settings;
   private final ActionMessageCollector actionMessageCollector;
   private final YoutubeLinkManager youtubeLinkManager;
+  private final AllowChecker allowChecker;
 
   private final String commandName = "play";
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
@@ -75,18 +77,8 @@ public class PlayCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    List<Long> allowedIds = new ArrayList<>();
-
-    if (settings.getBannedUserIds() != null) {
-      allowedIds.addAll(settings.getBannedUserIds());
-    }
-
-    if (!allowedIds.contains(user.getIdLong())) {
-      return true;
-    } else {
-      return false;
-    }
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isNotBanned(user);
   }
 
   @Override
@@ -107,10 +99,9 @@ public class PlayCommand extends BotCommand {
   @Override
   public void execute(BotCommandContext context) {
     // Checking user permission to be use this command. Exit if denied
-    if (checkUserPermission(context.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(context.getUser(), embed);
-      log.debug("User have not permission for change volume" + context.getUser());
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
 
       return;
     }
@@ -143,10 +134,9 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
-    if (checkUserPermission(buttonEvent.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(buttonEvent.getUser(), embed);
-      log.debug("User have not permission for use settings" + buttonEvent.getUser());
+    if (checkUserAccess(buttonEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(buttonEvent.getUser());
+      log.debug("User {} does not have access to use: {}", buttonEvent.getUser(), commandName);
 
       return;
     }

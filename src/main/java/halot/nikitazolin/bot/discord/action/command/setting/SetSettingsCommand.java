@@ -14,13 +14,12 @@ import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
-import halot.nikitazolin.bot.discord.tool.MessageFormatter;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -37,10 +36,10 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 @RequiredArgsConstructor
 public class SetSettingsCommand extends BotCommand {
 
-  private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
   private final SettingsSaver settingsSaver;
+  private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
 
   private final String commandName = "set";
@@ -49,11 +48,11 @@ public class SetSettingsCommand extends BotCommand {
   private final String songInStatus = "songInStatus";
   private final String stayInChannel = "stayInChannel";
   private final String updateAlerts = "updateAlerts";
-  private final String allowedTextChannelIds = "allowedTextChannelIds";
-  private final String allowedVoiceChannelIds = "allowedVoiceChannelIds";
-  private final String playlistFolderPaths = "playlistFolderPaths";
-  private final String prefixes = "prefixes";
-  private final String nameAliases = "nameAliases";
+//  private final String allowedTextChannelIds = "allowedTextChannelIds";
+//  private final String allowedVoiceChannelIds = "allowedVoiceChannelIds";
+//  private final String playlistFolderPaths = "playlistFolderPaths";
+//  private final String prefixes = "prefixes";
+//  private final String nameAliases = "nameAliases";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
@@ -88,22 +87,8 @@ public class SetSettingsCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    List<Long> allowedIds = new ArrayList<>();
-
-    if (settings.getOwnerUserId() != null) {
-      allowedIds.add(settings.getOwnerUserId());
-    }
-
-    if (settings.getAdminUserIds() != null) {
-      allowedIds.addAll(settings.getAdminUserIds());
-    }
-
-    if (allowedIds.contains(user.getIdLong())) {
-      return true;
-    } else {
-      return false;
-    }
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isOwnerOrAdmin(user);
   }
 
   @Override
@@ -123,10 +108,9 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    if (checkUserPermission(context.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(context.getUser(), embed);
-      log.debug("User have not permission for use settings" + context.getUser());
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
 
       return;
     }
@@ -136,11 +120,11 @@ public class SetSettingsCommand extends BotCommand {
     Button songInStatusButton = Button.primary(songInStatus, "Set song in status");
     Button stayInChannelButton = Button.primary(stayInChannel, "Set stay in channel");
     Button updateAlertsButton = Button.primary(updateAlerts, "Set update alerts");
-    Button allowedTextChannelIdsButton = Button.primary(allowedTextChannelIds, "Set allowed text channel");
-    Button allowedVoiceChannelIdsButton = Button.primary(allowedVoiceChannelIds, "Set allowed voice channel");
-    Button playlistFolderPathsButton = Button.primary(playlistFolderPaths, "Set playlist folders");
-    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
-    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
+//    Button allowedTextChannelIdsButton = Button.primary(allowedTextChannelIds, "Set allowed text channel");
+//    Button allowedVoiceChannelIdsButton = Button.primary(allowedVoiceChannelIds, "Set allowed voice channel");
+//    Button playlistFolderPathsButton = Button.primary(playlistFolderPaths, "Set playlist folders");
+//    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
+//    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
     List<Button> buttons = List.of(closeButton, aloneTimeButton, songInStatusButton, stayInChannelButton,
         updateAlertsButton);
 
@@ -173,10 +157,9 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
-    if (checkUserPermission(buttonEvent.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(buttonEvent.getUser(), embed);
-      log.debug("User have not permission for use settings" + buttonEvent.getUser());
+    if (checkUserAccess(buttonEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(buttonEvent.getUser());
+      log.debug("User {} does not have access to use: {}", buttonEvent.getUser(), commandName);
 
       return;
     }
@@ -186,10 +169,9 @@ public class SetSettingsCommand extends BotCommand {
   }
 
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
-    if (checkUserPermission(modalEvent.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(modalEvent.getUser(), embed);
-      log.debug("User have not permission for use settings" + modalEvent.getUser());
+    if (checkUserAccess(modalEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(modalEvent.getUser());
+      log.debug("User {} does not have access to use: {}", modalEvent.getUser(), commandName);
 
       return;
     }
@@ -226,7 +208,7 @@ public class SetSettingsCommand extends BotCommand {
       log.debug("Error accessing the first argument for user ID", e);
     }
   }
-  
+
   private void selectClose(ButtonInteractionEvent buttonEvent) {
     buttonEvent.reply("Settings closed").setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();

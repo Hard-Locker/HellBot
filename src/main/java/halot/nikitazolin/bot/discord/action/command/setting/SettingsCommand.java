@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class SettingsCommand extends BotCommand {
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
+  private final AllowChecker allowChecker;
 
   private final String commandName = "settings";
 
@@ -63,22 +65,8 @@ public class SettingsCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    List<Long> allowedIds = new ArrayList<>();
-
-    if (settings.getOwnerUserId() != null) {
-      allowedIds.add(settings.getOwnerUserId());
-    }
-
-    if (settings.getAdminUserIds() != null) {
-      allowedIds.addAll(settings.getAdminUserIds());
-    }
-
-    if (allowedIds.contains(user.getIdLong())) {
-      return true;
-    } else {
-      return false;
-    }
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isOwnerOrAdmin(user);
   }
 
   @Override
@@ -98,10 +86,9 @@ public class SettingsCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    if (checkUserPermission(context.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(context.getUser(), embed);
-      log.debug("User have not permission for show settings" + context.getUser());
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
       
       return;
     }

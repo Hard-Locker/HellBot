@@ -51,7 +51,7 @@ public class SlashCommandInteractionEventManager {
       return;
     }
 
-    if (!allowChecker.checkAllowedTextChannel(slashEvent.getChannel().asTextChannel(), slashEvent.getUser())) {
+    if (!allowChecker.isAllowedTextChannel(slashEvent.getChannel().asTextChannel(), slashEvent.getUser())) {
       slashEvent.getHook().deleteOriginal().queue();
 
       return;

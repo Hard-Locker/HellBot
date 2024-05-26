@@ -10,11 +10,12 @@ import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 
 @Component
-//@Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
 public class DiscordDataReceiver {
@@ -103,5 +104,19 @@ public class DiscordDataReceiver {
     }
 
     return textChannels;
+  }
+
+  public VoiceChannel getVoiceChannelByMember(Member member) {
+    VoiceChannel userVoiceChannel;
+
+    try {
+      userVoiceChannel = member.getVoiceState().getChannel().asVoiceChannel();
+      log.debug("Retrieved voice channel by member: {}", member);
+
+      return userVoiceChannel;
+    } catch (NullPointerException e) {
+      log.debug("User must to be in correct voice channel to use music command.");
+      return null;
+    }
   }
 }

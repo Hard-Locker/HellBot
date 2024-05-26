@@ -19,7 +19,7 @@ public abstract class BotCommand {
 
   public abstract String description();
 
-  public abstract boolean checkUserPermission(User user);
+  public abstract boolean checkUserAccess(User user);
 
   public abstract Permission neededPermission();
 

@@ -1,14 +1,13 @@
 package halot.nikitazolin.bot.discord.audio;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
 import halot.nikitazolin.bot.discord.tool.ActivityManager;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
+import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
@@ -31,6 +30,8 @@ public class GuildAudioService {
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
+  private final AllowChecker allowChecker;
+  private final DiscordDataReceiver discordDataReceiver;
   private final PlayerService playerService;
   private AudioManager audioManager;
 
@@ -50,12 +51,18 @@ public class GuildAudioService {
 
   public boolean connectToVoiceChannel(BotCommandContext context) {
     log.info("Try connect to VoiceChannel");
-    VoiceChannel userVoiceChannel = getVoiceChannelByUser(context);
+    VoiceChannel userVoiceChannel = discordDataReceiver.getVoiceChannelByMember(context.getMember());
 
-    if (checkValidChannel(context, userVoiceChannel, settings) == true) {
+    if (userVoiceChannel == null) {
+      EmbedBuilder embed = messageFormatter.createErrorEmbed(
+          context.getUser().getAsMention() + ", you need to be in voice channel to use music command.");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+    }
+
+    if (allowChecker.isAllowedVoiceChannel(context, userVoiceChannel, settings) == true) {
       audioManager.openAudioConnection(userVoiceChannel);
-
       log.debug("VoiceChannel is valid. Bot connected to user VoiceChannel");
+
       return true;
     } else {
       log.debug("VoiceChannel is invalid. Bot won't connect to VoiceChannel");
@@ -77,97 +84,5 @@ public class GuildAudioService {
     log.info("Shutdown player");
     stopAudioSending();
     playerService.shutdownPlayer();
-  }
-
-  private VoiceChannel getVoiceChannelByUser(BotCommandContext context) {
-    VoiceChannel userVoiceChannel;
-
-    try {
-      userVoiceChannel = context.getMember().getVoiceState().getChannel().asVoiceChannel();
-
-      return userVoiceChannel;
-    } catch (NullPointerException e) {
-      EmbedBuilder embed = messageFormatter.createErrorEmbed(
-          context.getUser().getAsMention() + ", you need to be in voice channel to use music command.");
-      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
-
-      log.debug("User must to be in correct voice channel to use music command.");
-      return null;
-    }
-  }
-
-  private boolean checkValidChannel(BotCommandContext context, VoiceChannel userVoiceChannel, Settings settings) {
-    if (!checkAfkChannel(context, userVoiceChannel)) {
-      return false;
-    }
-
-    if (!checkSameChannel(context, userVoiceChannel)) {
-      return false;
-    }
-
-    if (!checkAllowedChannel(context, userVoiceChannel, settings)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private boolean checkAfkChannel(BotCommandContext context, VoiceChannel userVoiceChannel) {
-    VoiceChannel afkVoiceChannel = context.getGuild().getAfkChannel();
-
-    if (afkVoiceChannel != null && afkVoiceChannel.equals(userVoiceChannel)) {
-      EmbedBuilder embed = messageFormatter
-          .createErrorEmbed(context.getUser().getAsMention() + ", this command cannot be used in the AFK channel.");
-      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
-      log.debug("User try call bot in AFK channel. User: " + context.getUser());
-
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  private boolean checkSameChannel(BotCommandContext context, VoiceChannel userVoiceChannel) {
-    VoiceChannel botVoiceChannel = null;
-
-    try {
-      botVoiceChannel = context.getGuild().getSelfMember().getVoiceState().getChannel().asVoiceChannel();
-    } catch (NullPointerException e) {
-      log.debug("The bot is not in the voice channel");
-    }
-
-    if (botVoiceChannel != null && !botVoiceChannel.equals(userVoiceChannel)) {
-      EmbedBuilder embed = messageFormatter.createErrorEmbed(
-          context.getUser().getAsMention() + ", you must be in the same voice channel as the bot to use this command.");
-      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
-      log.debug("User try call bot in different channel. User:" + context.getUser());
-
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  private boolean checkAllowedChannel(BotCommandContext context, VoiceChannel userVoiceChannel, Settings settings) {
-    List<Long> allowedVoiceChannelIds = new ArrayList<>();
-
-    try {
-      allowedVoiceChannelIds.addAll(settings.getAllowedVoiceChannelIds());
-    } catch (NullPointerException e) {
-      log.debug("Especial allowed voice channel not set. Bot can connect to any channel.");
-
-      return true;
-    }
-
-    if (allowedVoiceChannelIds.isEmpty() || allowedVoiceChannelIds.contains(userVoiceChannel.getIdLong())) {
-      return true;
-    } else {
-      EmbedBuilder embed = messageFormatter
-          .createErrorEmbed(context.getUser().getAsMention() + ", your voice channel is denied for bot.");
-      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
-      log.debug("User tried to use a command in an denied voice channel.");
-
-      return false;
-    }
   }
 }

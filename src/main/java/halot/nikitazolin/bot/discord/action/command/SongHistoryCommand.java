@@ -12,6 +12,7 @@ import halot.nikitazolin.bot.discord.DatabaseService;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.repository.model.SongHistory;
@@ -36,6 +37,7 @@ public class SongHistoryCommand extends BotCommand {
   private final Settings settings;
   private final DatabaseService databaseService;
   private final TimeConverter timeConverter;
+  private final AllowChecker allowChecker;
 
   private final String commandName = "history";
 
@@ -69,18 +71,8 @@ public class SongHistoryCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    List<Long> allowedIds = new ArrayList<>();
-
-    if (settings.getBannedUserIds() != null) {
-      allowedIds.addAll(settings.getBannedUserIds());
-    }
-
-    if (!allowedIds.contains(user.getIdLong())) {
-      return true;
-    } else {
-      return false;
-    }
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isNotBanned(user);
   }
 
   @Override
@@ -100,14 +92,13 @@ public class SongHistoryCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    if (checkUserPermission(context.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(context.getUser(), embed);
-      log.debug("User have not permission for show history" + context.getUser());
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
 
       return;
     }
-    
+
     String newLine = System.lineSeparator();
     LocalDate today = LocalDate.now();
     List<SongHistory> songs = databaseService.getSongHistoryByDate(today);

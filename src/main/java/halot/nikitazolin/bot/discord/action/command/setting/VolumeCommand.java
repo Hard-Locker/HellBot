@@ -14,12 +14,11 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
-import halot.nikitazolin.bot.discord.tool.MessageFormatter;
+import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -38,9 +37,9 @@ import net.dv8tion.jda.api.interactions.modals.Modal;
 public class VolumeCommand extends BotCommand {
 
   private final PlayerService playerService;
-  private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
+  private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
 
   private final String commandName = "volume";
@@ -79,26 +78,8 @@ public class VolumeCommand extends BotCommand {
   }
 
   @Override
-  public boolean checkUserPermission(User user) {
-    List<Long> allowedIds = new ArrayList<>();
-
-    if (settings.getOwnerUserId() != null) {
-      allowedIds.add(settings.getOwnerUserId());
-    }
-
-    if (settings.getAdminUserIds() != null) {
-      allowedIds.addAll(settings.getAdminUserIds());
-    }
-
-    if (settings.getDjUserIds() != null) {
-      allowedIds.addAll(settings.getDjUserIds());
-    }
-
-    if (allowedIds.contains(user.getIdLong())) {
-      return true;
-    } else {
-      return false;
-    }
+  public boolean checkUserAccess(User user) {
+    return allowChecker.isOwnerOrAdminOrDj(user);
   }
 
   @Override
@@ -118,10 +99,9 @@ public class VolumeCommand extends BotCommand {
 
   @Override
   public void execute(BotCommandContext context) {
-    if (checkUserPermission(context.getUser()) == false) {
-      EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You have not permission for use this command");
-      messageSender.sendPrivateMessage(context.getUser(), embed);
-      log.debug("User have not permission for change volume" + context.getUser());
+    if (checkUserAccess(context.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(context.getUser());
+      log.debug("User {} does not have access to use: {}", context.getUser(), commandName);
 
       return;
     }
@@ -150,7 +130,7 @@ public class VolumeCommand extends BotCommand {
 
     int volumeLevel = settings.getVolume();
     String title = "Volume setting. Current volume: " + volumeLevel;
-    
+
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), title, buttons);
 
     buttonHandlers = new HashMap<>();
@@ -170,11 +150,25 @@ public class VolumeCommand extends BotCommand {
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+    if (checkUserAccess(buttonEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(buttonEvent.getUser());
+      log.debug("User {} does not have access to use: {}", buttonEvent.getUser(), commandName);
+
+      return;
+    }
+
     String componentId = buttonEvent.getComponentId();
     buttonHandlers.getOrDefault(componentId, this::handleUnknownButton).accept(buttonEvent);
   }
 
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
+    if (checkUserAccess(modalEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(modalEvent.getUser());
+      log.debug("User {} does not have access to use: {}", modalEvent.getUser(), commandName);
+
+      return;
+    }
+
     String modalId = modalEvent.getModalId();
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
@@ -191,17 +185,18 @@ public class VolumeCommand extends BotCommand {
 
   private void handleModalVolume(ModalInteractionEvent modalEvent) {
     String input = modalEvent.getValue(volume).getAsString();
+    int volumeLevel = 100;
 
     try {
-      int volumeLevel = Integer.parseInt(input);
-
-      updateVolume(volumeLevel);
-      modalEvent.reply("Current volume level: " + volumeLevel).setEphemeral(true).queue();
+      volumeLevel = Integer.parseInt(input);
     } catch (NumberFormatException e) {
       log.warn("Error parsing volume level from arguments", e);
     } catch (IndexOutOfBoundsException e) {
       log.warn("Error accessing the first argument for volume level", e);
     }
+
+    updateVolume(volumeLevel);
+    modalEvent.reply("Current volume level: " + volumeLevel).setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

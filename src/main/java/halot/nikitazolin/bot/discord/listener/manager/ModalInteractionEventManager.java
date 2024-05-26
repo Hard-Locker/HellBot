@@ -24,7 +24,7 @@ public class ModalInteractionEventManager {
   private final AllowChecker allowChecker;
 
   public void processingEvent(ModalInteractionEvent modalEvent) {
-    if (!allowChecker.checkAllowedTextChannel(modalEvent.getChannel().asTextChannel(), modalEvent.getUser())) {
+    if (!allowChecker.isAllowedTextChannel(modalEvent.getChannel().asTextChannel(), modalEvent.getUser())) {
       modalEvent.getHook().deleteOriginal().queue();
 
       return;

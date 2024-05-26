@@ -60,7 +60,7 @@ public class MessageReceivedEventManager {
       return;
     }
 
-    if (!allowChecker.checkAllowedTextChannel(messageEvent.getChannel().asTextChannel(), messageEvent.getAuthor())) {
+    if (!allowChecker.isAllowedTextChannel(messageEvent.getChannel().asTextChannel(), messageEvent.getAuthor())) {
       return;
     }
 

@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
@@ -16,7 +17,10 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class MessageSender {
+
+  private final MessageFormatter messageFormatter;
 
   public void sendText(TextChannel textChannel, CharSequence text) {
     textChannel.sendMessage(text).queue();
@@ -82,6 +86,16 @@ public class MessageSender {
 
   public void sendPrivateMessage(User user, EmbedBuilder embedBuilder) {
     MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
+
+    if (!user.isBot()) {
+      user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(messageCreateData).queue(),
+          error -> log.warn("Failed to send a private message to the user: " + user));
+    }
+  }
+
+  public void sendPrivateMessageAccessError(User user) {
+    EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You do not have access to use it");
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embed.build()).build();
 
     if (!user.isBot()) {
       user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(messageCreateData).queue(),
