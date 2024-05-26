@@ -110,13 +110,14 @@ public class SettingsCommand extends BotCommand {
     String notSetValue = "Not set";
     String newLine = System.lineSeparator();
 
+    embed.addField("Language", String.valueOf(settings.getLanguage()), true);
     embed.addField("Volume", String.valueOf(settings.getVolume()), true);
     embed.addField("Owner ID", settings.getOwnerUserId() != null ? settings.getOwnerUserId().toString() : notSetValue, true);
-    embed.addField("Alone time until stop", settings.getAloneTimeUntilStop() != null ? settings.getAloneTimeUntilStop().toString() : notSetValue, true);
     embed.addField("Bot status", settings.getBotStatus() != null ? settings.getBotStatus() : notSetValue, true);
-    embed.addField("Bot activity", settings.getBotActivity() != null ? settings.getBotActivity() : notSetValue, true);
     embed.addField("Song in status", String.valueOf(settings.isSongInStatus()), true);
+    embed.addField("Song in topic", String.valueOf(settings.isSongInTopic()), true);
     embed.addField("Stay in channel", String.valueOf(settings.isStayInChannel()), true);
+    embed.addField("Alone time until stop", settings.getAloneTimeUntilStop() != null ? settings.getAloneTimeUntilStop().toString() : notSetValue, true);
     embed.addField("Update alerts", String.valueOf(settings.isUpdateAlerts()), true);
     embed.addField("Allowed text channel IDs", settings.getAllowedTextChannelIds() != null ? settings.getAllowedTextChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
     embed.addField("Allowed voice channel IDs", settings.getAllowedVoiceChannelIds() != null ? settings.getAllowedVoiceChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);

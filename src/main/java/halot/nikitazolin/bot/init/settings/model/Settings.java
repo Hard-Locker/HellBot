@@ -20,7 +20,6 @@ public class Settings {
   private Long ownerUserId = null;
   private Long aloneTimeUntilStop = 120L;
   private String botStatus = "online";
-  private String botActivity = "";
   private boolean songInStatus = true;
   private boolean songInTopic = false;
   private boolean stayInChannel = true;

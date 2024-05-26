@@ -43,7 +43,6 @@ public class SettingsLoader {
       settings.setOwnerUserId(defaultIfNull(loadedConfig.getOwnerUserId(), 0L));
       settings.setAloneTimeUntilStop(defaultIfNull(loadedConfig.getAloneTimeUntilStop(), 120L));
       settings.setBotStatus(defaultIfNull(loadedConfig.getBotStatus(), "online"));
-      settings.setBotActivity(defaultIfNull(loadedConfig.getBotActivity(), ""));
       settings.setSongInStatus(defaultIfNull(loadedConfig.isSongInStatus(), true));
       settings.setSongInTopic(defaultIfNull(loadedConfig.isSongInTopic(), false));
       settings.setStayInChannel(defaultIfNull(loadedConfig.isStayInChannel(), true));

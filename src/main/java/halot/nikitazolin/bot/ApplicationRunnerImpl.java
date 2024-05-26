@@ -39,9 +39,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     // Start JDA
     // TODO Need improve guild getter. Now it potential bug
     jdaService.initializeJda();
-
     audioService.makeAudioPlayer(jdaService.getGuild());
-
     databaseService.saveGuildToDb(jdaService.getGuild());
 
     System.out.println("Ready!");

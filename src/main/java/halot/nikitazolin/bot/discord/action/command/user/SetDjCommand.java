@@ -129,6 +129,7 @@ public class SetDjCommand extends BotCommand {
     Button removeDjButton = Button.primary(removeDj, "Remove DJ");
     List<Button> buttons = List.of(closeButton, addDjButton, removeDjButton);
 
+    
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which role need update?", buttons);
 
     buttonHandlers.put(close, this::selectClose);
