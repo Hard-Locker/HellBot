@@ -59,7 +59,7 @@ public class GuildAudioService {
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 
-    if (allowChecker.isAllowedVoiceChannel(context, userVoiceChannel, settings) == true) {
+    if (allowChecker.isAllowedVoiceChannel(context, userVoiceChannel) == true) {
       audioManager.openAudioConnection(userVoiceChannel);
       log.debug("VoiceChannel is valid. Bot connected to user VoiceChannel");
 
