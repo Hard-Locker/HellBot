@@ -44,8 +44,6 @@ public class SetSettingsCommand extends BotCommand {
 
   private final String commandName = "set";
   private final String close = "close";
-  private final String aloneTime = "aloneTime";
-  private final String stayInChannel = "stayInChannel";
   private final String updateAlerts = "updateAlerts";
 //  private final String allowedTextChannelIds = "allowedTextChannelIds";
 //  private final String allowedVoiceChannelIds = "allowedVoiceChannelIds";
@@ -115,23 +113,18 @@ public class SetSettingsCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
-    Button stayInChannelButton = Button.primary(stayInChannel, "Set stay in channel");
     Button updateAlertsButton = Button.primary(updateAlerts, "Set update alerts");
 //    Button allowedTextChannelIdsButton = Button.primary(allowedTextChannelIds, "Set allowed text channel");
 //    Button allowedVoiceChannelIdsButton = Button.primary(allowedVoiceChannelIds, "Set allowed voice channel");
 //    Button playlistFolderPathsButton = Button.primary(playlistFolderPaths, "Set playlist folders");
 //    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
 //    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
-    List<Button> buttons = List.of(closeButton, aloneTimeButton, stayInChannelButton,
-        updateAlertsButton);
+    List<Button> buttons = List.of(closeButton, updateAlertsButton);
 
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
         buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(aloneTime, this::makeModalAloneTime);
-//    buttonHandlers.put(stayInChannel, this::make);
 //    buttonHandlers.put(updateAlerts, this::make);
 //    buttonHandlers.put(allowedTextChannelIds, this::make);
 //    buttonHandlers.put(allowedVoiceChannelIds, this::make);
@@ -139,8 +132,6 @@ public class SetSettingsCommand extends BotCommand {
 //    buttonHandlers.put(prefixes, this::make);
 //    buttonHandlers.put(nameAliases, this::make);
 
-    modalHandlers.put(aloneTime, this::handleModalAloneTime);
-//    modalHandlers.put(stayInChannel, this::set);
 //    modalHandlers.put(updateAlerts, this::set);
 //    modalHandlers.put(allowedTextChannelIds, this::set);
 //    modalHandlers.put(allowedVoiceChannelIds, this::set);
@@ -174,35 +165,6 @@ public class SetSettingsCommand extends BotCommand {
 
     String modalId = modalEvent.getModalId();
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
-  }
-
-  private void makeModalAloneTime(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(aloneTime, "Set alone time in seconds until stop bot")
-        .addActionRow(
-            TextInput.create(aloneTime, "Time (seconds 0-99999)", TextInputStyle.SHORT).setRequiredRange(0, 5).build())
-        .build();
-
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened {} modal", aloneTime);
-  }
-
-  private void handleModalAloneTime(ModalInteractionEvent modalEvent) {
-    log.debug("Processing modal: {}", aloneTime);
-    String inputTime = modalEvent.getValue(aloneTime).getAsString();
-
-    try {
-      Long time = Long.parseLong(inputTime);
-
-      settings.setAloneTimeUntilStop(time);
-      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-
-      modalEvent.reply("Alone time set to " + time + " seconds").setEphemeral(true).queue();
-      log.debug("User changed alone time to {} seconds", time);
-    } catch (NumberFormatException e) {
-      log.debug("Error parsing user ID from arguments", e);
-    } catch (IndexOutOfBoundsException e) {
-      log.debug("Error accessing the first argument for user ID", e);
-    }
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

@@ -41,7 +41,7 @@ public class SettingsLoader {
       settings.setLanguage(defaultIfNull(loadedConfig.getLanguage(), "en"));
       settings.setVolume(defaultIfNull(loadedConfig.getVolume(), 100));
       settings.setOwnerUserId(defaultIfNull(loadedConfig.getOwnerUserId(), 0L));
-      settings.setAloneTimeUntilStop(defaultIfNull(loadedConfig.getAloneTimeUntilStop(), 120L));
+      settings.setAloneTimeUntilStop(defaultIfNull(loadedConfig.getAloneTimeUntilStop(), 120));
       settings.setBotStatus(defaultIfNull(loadedConfig.getBotStatus(), "online"));
       settings.setSongInStatus(defaultIfNull(loadedConfig.isSongInStatus(), true));
       settings.setSongInTopic(defaultIfNull(loadedConfig.isSongInTopic(), false));

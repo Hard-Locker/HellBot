@@ -16,17 +16,17 @@ import lombok.Data;
 public class Settings {
 
   private String language = "en";
-  private int volume = 100;
-  private Long ownerUserId = null;
-  private Long aloneTimeUntilStop = 120L;
   private String botStatus = "online";
+  private int volume = 100;
+  private int aloneTimeUntilStop = 120;
+  private boolean stayInChannel = true;
   private boolean songInStatus = true;
   private boolean songInTopic = false;
   private boolean songInTextChannel = false;
-  private boolean stayInChannel = true;
   private boolean updateAlerts = true;
   private List<Long> allowedTextChannelIds = new ArrayList<>();
   private List<Long> allowedVoiceChannelIds = new ArrayList<>();
+  private Long ownerUserId = null;
   private List<Long> adminUserIds = new ArrayList<>();
   private List<Long> djUserIds = new ArrayList<>();
   private List<Long> bannedUserIds = new ArrayList<>();

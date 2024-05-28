@@ -26,6 +26,9 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -33,7 +36,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetShowingSongCommand extends BotCommand {
+public class SetAloneCommand extends BotCommand {
 
   private final MessageSender messageSender;
   private final Settings settings;
@@ -41,13 +44,13 @@ public class SetShowingSongCommand extends BotCommand {
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "song";
+  private final String commandName = "alone";
   private final String close = "close";
-  private final String songInStatus = "songInStatus";
-  private final String songInTopic = "songInTopic";
-  private final String songInTextChannel = "songInTextChannel";
+  private final String aloneTime = "aloneTime";
+  private final String stayInChannel = "stayInChannel";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
+  private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
 
   @Override
   public String name() {
@@ -75,7 +78,7 @@ public class SetShowingSongCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Change settings showing current song";
+    return "Change settings alone";
   }
 
   @Override
@@ -108,33 +111,29 @@ public class SetShowingSongCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button songInStatusButton = Button.primary(songInStatus, "Set song in status");
-    Button songInTopicButton = Button.primary(songInTopic, "Set song in topic");
-    Button songInTextChannelButton = Button.primary(songInTextChannel, "Set song in text channel");
-    List<Button> buttons = List.of(closeButton, songInStatusButton, songInTopicButton, songInTextChannelButton);
+    Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
+    Button stayInChannelButton = Button.primary(stayInChannel, "Set stay in channel");
+    List<Button> buttons = List.of(closeButton, aloneTimeButton, stayInChannelButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Settings showing song**").append(newLine);
+    StringBuilder messageContent = new StringBuilder("**Settings alone time**").append(newLine);
 
-    messageContent.append("Show song in status: ");
-    messageContent.append(settings.isSongInStatus() == true ? "Yes" : "No");
+    messageContent.append("Alone time: ");
+    messageContent.append(settings.getAloneTimeUntilStop() == 0 ? "Not set" : settings.getAloneTimeUntilStop());
     messageContent.append(newLine);
 
-    messageContent.append("Show song in topic: ");
-    messageContent.append(settings.isSongInTopic() == true ? "Yes" : "No");
-    messageContent.append(newLine);
-
-    messageContent.append("Show song in text channel: ");
-    messageContent.append(settings.isSongInTextChannel() == true ? "Yes" : "No");
+    messageContent.append("Stay in channel: ");
+    messageContent.append(settings.isStayInChannel() == true ? "Yes" : "No");
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(songInStatus, this::handleButtonSongInStatus);
-    buttonHandlers.put(songInTopic, this::handleButtonSongInTopic);
-    buttonHandlers.put(songInTextChannel, this::handleButtonSongInTextChannel);
+    buttonHandlers.put(aloneTime, this::makeModalAloneTime);
+    buttonHandlers.put(stayInChannel, this::handleButtonStayInChannel);
+
+    modalHandlers.put(aloneTime, this::handleModalAloneTime);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
@@ -153,49 +152,57 @@ public class SetShowingSongCommand extends BotCommand {
   }
 
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
-    return;
+    if (checkUserAccess(modalEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(modalEvent.getUser());
+      log.debug("User {} does not have access to use: {}", modalEvent.getUser(), commandName);
+
+      return;
+    }
+
+    String modalId = modalEvent.getModalId();
+    modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void handleButtonSongInStatus(ButtonInteractionEvent buttonEvent) {
-    log.debug("Processing setting: {}", songInStatus);
+  private void makeModalAloneTime(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal.create(aloneTime, "Set alone time in seconds until stop bot")
+        .addActionRow(
+            TextInput.create(aloneTime, "Time (seconds 0-99999)", TextInputStyle.SHORT).setRequiredRange(0, 5).build())
+        .build();
 
-    if (settings.isSongInStatus() == true) {
-      settings.setSongInStatus(false);
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", aloneTime);
+  }
+
+  private void handleModalAloneTime(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", aloneTime);
+    String input = modalEvent.getValue(aloneTime).getAsString();
+
+    try {
+      int time = Integer.parseInt(input);
+      settings.setAloneTimeUntilStop(time);
+      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+
+      modalEvent.reply("Alone time set to " + time + " seconds").setEphemeral(true).queue();
+      log.debug("User changed alone time to {} seconds", time);
+    } catch (NumberFormatException e) {
+      log.debug("Error parsing user ID from arguments", e);
+    } catch (IndexOutOfBoundsException e) {
+      log.debug("Error accessing the first argument for user ID", e);
+    }
+  }
+
+  private void handleButtonStayInChannel(ButtonInteractionEvent buttonEvent) {
+    log.debug("Processing setting: {}", stayInChannel);
+
+    if (settings.isStayInChannel() == true) {
+      settings.setStayInChannel(false);
     } else {
-      settings.setSongInStatus(true);
+      settings.setStayInChannel(true);
     }
 
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-    String info = settings.isSongInStatus() == true ? "Yes" : "No";
-    buttonEvent.reply("Song in status set to: " + info).setEphemeral(true).queue();
-  }
-
-  private void handleButtonSongInTopic(ButtonInteractionEvent buttonEvent) {
-    log.debug("Processing setting: {}", songInTopic);
-
-    if (settings.isSongInTopic() == true) {
-      settings.setSongInTopic(false);
-    } else {
-      settings.setSongInTopic(true);
-    }
-
-    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-    String info = settings.isSongInTopic() == true ? "Yes" : "No";
-    buttonEvent.reply("Song in topic set to: " + info).setEphemeral(true).queue();
-  }
-
-  private void handleButtonSongInTextChannel(ButtonInteractionEvent buttonEvent) {
-    log.debug("Processing setting: {}", songInTextChannel);
-
-    if (settings.isSongInTextChannel() == true) {
-      settings.setSongInTextChannel(false);
-    } else {
-      settings.setSongInTextChannel(true);
-    }
-
-    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-    String info = settings.isSongInTextChannel() == true ? "Yes" : "No";
-    buttonEvent.reply("Song in text channel set to: " + info).setEphemeral(true).queue();
+    String info = settings.isStayInChannel() == true ? "Yes" : "No";
+    buttonEvent.reply("Stay in channel set to: " + info).setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
@@ -207,5 +214,10 @@ public class SetShowingSongCommand extends BotCommand {
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
     buttonEvent.reply("Unknown button").setEphemeral(true).queue();
     log.debug("Clicked unknown button");
+  }
+
+  private void handleUnknownModal(ModalInteractionEvent modalEvent) {
+    modalEvent.reply("Unknown modal").setEphemeral(true).queue();
+    log.debug("Clicked modal button");
   }
 }

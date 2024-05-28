@@ -29,12 +29,14 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class VolumeCommand extends BotCommand {
+public class SetVolumeCommand extends BotCommand {
 
   private final PlayerService playerService;
   private final MessageSender messageSender;
@@ -129,9 +131,15 @@ public class VolumeCommand extends BotCommand {
     List<Button> buttons = List.of(closeButton, volumeButton);
 
     int volumeLevel = settings.getVolume();
-    String title = "Volume setting. Current volume: " + volumeLevel;
+    String newLine = System.lineSeparator();
+    StringBuilder messageContent = new StringBuilder("**Settings volume**").append(newLine);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), title, buttons);
+    messageContent.append("Current volume: ");
+    messageContent.append(volumeLevel);
+    messageContent.append(newLine);
+
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers = new HashMap<>();
     buttonHandlers.put(close, this::selectClose);
@@ -196,7 +204,7 @@ public class VolumeCommand extends BotCommand {
     }
 
     updateVolume(volumeLevel);
-    modalEvent.reply("Current volume level: " + volumeLevel).setEphemeral(true).queue();
+    modalEvent.reply("Volume level set to: " + volumeLevel).setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

@@ -105,7 +105,7 @@ public class SettingsCommand extends BotCommand {
     embed.addField("Song in topic", String.valueOf(settings.isSongInTopic()), true);
     embed.addField("Song in text channel", String.valueOf(settings.isSongInTextChannel()), true);
     embed.addField("Stay in channel", String.valueOf(settings.isStayInChannel()), true);
-    embed.addField("Alone time until stop", settings.getAloneTimeUntilStop() != null ? settings.getAloneTimeUntilStop().toString() : notSetValue, true);
+    embed.addField("Alone time until stop", settings.getAloneTimeUntilStop() == 0 ? notSetValue : String.valueOf(settings.getAloneTimeUntilStop()), true);
     embed.addField("Update alerts", String.valueOf(settings.isUpdateAlerts()), true);
     embed.addField("Allowed text channel IDs", settings.getAllowedTextChannelIds() != null ? settings.getAllowedTextChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
     embed.addField("Allowed voice channel IDs", settings.getAllowedVoiceChannelIds() != null ? settings.getAllowedVoiceChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
