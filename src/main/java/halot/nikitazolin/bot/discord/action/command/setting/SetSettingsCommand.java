@@ -45,7 +45,6 @@ public class SetSettingsCommand extends BotCommand {
   private final String commandName = "set";
   private final String close = "close";
   private final String aloneTime = "aloneTime";
-  private final String songInStatus = "songInStatus";
   private final String stayInChannel = "stayInChannel";
   private final String updateAlerts = "updateAlerts";
 //  private final String allowedTextChannelIds = "allowedTextChannelIds";
@@ -117,7 +116,6 @@ public class SetSettingsCommand extends BotCommand {
 
     Button closeButton = Button.danger(close, "Close settings");
     Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
-    Button songInStatusButton = Button.primary(songInStatus, "Set song in status");
     Button stayInChannelButton = Button.primary(stayInChannel, "Set stay in channel");
     Button updateAlertsButton = Button.primary(updateAlerts, "Set update alerts");
 //    Button allowedTextChannelIdsButton = Button.primary(allowedTextChannelIds, "Set allowed text channel");
@@ -125,7 +123,7 @@ public class SetSettingsCommand extends BotCommand {
 //    Button playlistFolderPathsButton = Button.primary(playlistFolderPaths, "Set playlist folders");
 //    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
 //    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
-    List<Button> buttons = List.of(closeButton, aloneTimeButton, songInStatusButton, stayInChannelButton,
+    List<Button> buttons = List.of(closeButton, aloneTimeButton, stayInChannelButton,
         updateAlertsButton);
 
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
@@ -133,7 +131,6 @@ public class SetSettingsCommand extends BotCommand {
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(aloneTime, this::makeModalAloneTime);
-//    buttonHandlers.put(songInStatus, this::make);
 //    buttonHandlers.put(stayInChannel, this::make);
 //    buttonHandlers.put(updateAlerts, this::make);
 //    buttonHandlers.put(allowedTextChannelIds, this::make);
@@ -143,7 +140,6 @@ public class SetSettingsCommand extends BotCommand {
 //    buttonHandlers.put(nameAliases, this::make);
 
     modalHandlers.put(aloneTime, this::handleModalAloneTime);
-//    modalHandlers.put(songInStatus, this::set);
 //    modalHandlers.put(stayInChannel, this::set);
 //    modalHandlers.put(updateAlerts, this::set);
 //    modalHandlers.put(allowedTextChannelIds, this::set);
