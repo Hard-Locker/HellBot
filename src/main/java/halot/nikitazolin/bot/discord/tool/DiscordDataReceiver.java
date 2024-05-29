@@ -106,6 +106,48 @@ public class DiscordDataReceiver {
     return textChannels;
   }
 
+  public VoiceChannel getVoiceChannelById(Long voiceChannelId) {
+    Optional<JDA> jdaOpt = jdaMaker.getJda();
+    VoiceChannel voiceChannel = null;
+
+    if (jdaOpt.isPresent()) {
+      JDA jda = jdaOpt.get();
+
+      try {
+        voiceChannel = jda.getVoiceChannelById(voiceChannelId);
+        log.debug("Retrieved voice channel with ID: {}", voiceChannelId);
+      } catch (Exception e) {
+        log.debug("Failed to retrieve voice channel with ID: {}", voiceChannelId);
+      }
+    }
+
+    return voiceChannel;
+  }
+
+  public List<VoiceChannel> getVoiceChannelsByIds(List<Long> voiceChannelIds) {
+    Optional<JDA> jdaOpt = jdaMaker.getJda();
+    List<VoiceChannel> voiceChannels = new ArrayList<>();
+
+    if (jdaOpt.isPresent()) {
+      JDA jda = jdaOpt.get();
+
+      for (Long voiceChannelId : voiceChannelIds) {
+        try {
+          VoiceChannel voiceChannel = jda.getVoiceChannelById(voiceChannelId);
+
+          if (voiceChannel != null) {
+            log.debug("Retrieved voice channel with ID: {}", voiceChannelId);
+            voiceChannels.add(voiceChannel);
+          }
+        } catch (Exception e) {
+          log.debug("Failed to retrieve voice channel with ID: {}", voiceChannelId);
+        }
+      }
+    }
+
+    return voiceChannels;
+  }
+
   public VoiceChannel getVoiceChannelByMember(Member member) {
     VoiceChannel userVoiceChannel;
 

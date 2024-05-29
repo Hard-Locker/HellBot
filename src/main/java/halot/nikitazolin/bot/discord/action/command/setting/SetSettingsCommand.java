@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import halot.nikitazolin.bot.ApplicationRunnerImpl;
 import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
@@ -26,9 +25,6 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 
 @Component
 @Scope("prototype")
@@ -45,8 +41,6 @@ public class SetSettingsCommand extends BotCommand {
   private final String commandName = "set";
   private final String close = "close";
   private final String updateAlerts = "updateAlerts";
-//  private final String allowedTextChannelIds = "allowedTextChannelIds";
-//  private final String allowedVoiceChannelIds = "allowedVoiceChannelIds";
 //  private final String playlistFolderPaths = "playlistFolderPaths";
 //  private final String prefixes = "prefixes";
 //  private final String nameAliases = "nameAliases";
@@ -114,8 +108,6 @@ public class SetSettingsCommand extends BotCommand {
 
     Button closeButton = Button.danger(close, "Close settings");
     Button updateAlertsButton = Button.primary(updateAlerts, "Set update alerts");
-//    Button allowedTextChannelIdsButton = Button.primary(allowedTextChannelIds, "Set allowed text channel");
-//    Button allowedVoiceChannelIdsButton = Button.primary(allowedVoiceChannelIds, "Set allowed voice channel");
 //    Button playlistFolderPathsButton = Button.primary(playlistFolderPaths, "Set playlist folders");
 //    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
 //    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
@@ -126,15 +118,11 @@ public class SetSettingsCommand extends BotCommand {
 
     buttonHandlers.put(close, this::selectClose);
 //    buttonHandlers.put(updateAlerts, this::make);
-//    buttonHandlers.put(allowedTextChannelIds, this::make);
-//    buttonHandlers.put(allowedVoiceChannelIds, this::make);
 //    buttonHandlers.put(playlistFolderPaths, this::make);
 //    buttonHandlers.put(prefixes, this::make);
 //    buttonHandlers.put(nameAliases, this::make);
 
 //    modalHandlers.put(updateAlerts, this::set);
-//    modalHandlers.put(allowedTextChannelIds, this::set);
-//    modalHandlers.put(allowedVoiceChannelIds, this::set);
 //    modalHandlers.put(playlistFolderPaths, this::set);
 //    modalHandlers.put(prefixes, this::set);
 //    modalHandlers.put(nameAliases, this::set);
