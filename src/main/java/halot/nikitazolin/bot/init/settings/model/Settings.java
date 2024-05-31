@@ -30,7 +30,7 @@ public class Settings {
   private List<Long> adminUserIds = new ArrayList<>();
   private List<Long> djUserIds = new ArrayList<>();
   private List<Long> bannedUserIds = new ArrayList<>();
-  private List<String> playlistFolderPaths = new ArrayList<>();
+  private Map<String, String> playlists = new HashMap<>();
   private List<String> prefixes = new ArrayList<>();
   private Map<String, List<String>> nameAliases = new HashMap<>();
 }

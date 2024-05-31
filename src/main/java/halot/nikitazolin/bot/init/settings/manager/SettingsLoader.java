@@ -53,7 +53,7 @@ public class SettingsLoader {
       settings.setAdminUserIds(defaultIfNull(loadedConfig.getAdminUserIds(), new ArrayList<>()));
       settings.setDjUserIds(defaultIfNull(loadedConfig.getDjUserIds(), new ArrayList<>()));
       settings.setBannedUserIds(defaultIfNull(loadedConfig.getBannedUserIds(), new ArrayList<>()));
-      settings.setPlaylistFolderPaths(defaultIfNull(loadedConfig.getPlaylistFolderPaths(), new ArrayList<>()));
+      settings.setPlaylists(defaultIfNull(loadedConfig.getPlaylists(), new HashMap<>()));
       settings.setPrefixes(defaultIfNull(loadedConfig.getPrefixes(), new ArrayList<>()));
       settings.setNameAliases(defaultIfNull(loadedConfig.getNameAliases(), new HashMap<>()));
       log.debug("Successfully applied settings");

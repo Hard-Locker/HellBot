@@ -1,14 +1,16 @@
-package halot.nikitazolin.bot.discord.action.command.setting;
+package halot.nikitazolin.bot.discord.action.command.music;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.ApplicationRunnerImpl;
 import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
@@ -24,13 +26,19 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetSettingsCommand extends BotCommand {
+public class PlaylistCommand extends BotCommand {
 
   private final MessageSender messageSender;
   private final Settings settings;
@@ -38,12 +46,10 @@ public class SetSettingsCommand extends BotCommand {
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "set";
+  private final String commandName = "playlist";
   private final String close = "close";
-  private final String updateAlerts = "updateAlerts";
-//  private final String playlistFolderPaths = "playlistFolderPaths";
-//  private final String prefixes = "prefixes";
-//  private final String nameAliases = "nameAliases";
+  private final String addPlaylist = "addPlaylist";
+  private final String removePlaylist = "removePlaylist";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
@@ -74,12 +80,12 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "You can change any settings";
+    return "Set playlists";
   }
 
   @Override
   public boolean checkUserAccess(User user) {
-    return allowChecker.isOwnerOrAdmin(user);
+    return allowChecker.isOwnerOrAdminOrDj(user);
   }
 
   @Override
@@ -107,22 +113,35 @@ public class SetSettingsCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button updateAlertsButton = Button.primary(updateAlerts, "Set update alerts");
-//    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
-//    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
-    List<Button> buttons = List.of(closeButton, updateAlertsButton);
+    Button addPlaylistPathButton = Button.primary(addPlaylist, "Add playlist");
+    Button removePlaylistPathButton = Button.primary(removePlaylist, "Remove playlist");
+    List<Button> buttons = List.of(closeButton, addPlaylistPathButton, removePlaylistPathButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
-        buttons);
+    String newLine = System.lineSeparator();
+    StringBuilder messageContent = new StringBuilder("**Settings playlists**").append(newLine);
+
+    Map<String, String> playlists = settings.getPlaylists();
+    if (playlists != null && !playlists.isEmpty()) {
+      messageContent.append("Current playlists:").append(newLine);
+
+      for (Entry<String, String> entry : playlists.entrySet()) {
+        messageContent.append("Name: **");
+        messageContent.append(entry.getKey());
+        messageContent.append("** Path: ");
+        messageContent.append(entry.getValue());
+        messageContent.append(newLine);
+      }
+    }
+
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
-//    buttonHandlers.put(updateAlerts, this::make);
-//    buttonHandlers.put(prefixes, this::make);
-//    buttonHandlers.put(nameAliases, this::make);
+    buttonHandlers.put(addPlaylist, this::makeModalAddPlaylist);
+    buttonHandlers.put(removePlaylist, this::makeModalRemovePlaylist);
 
-//    modalHandlers.put(updateAlerts, this::set);
-//    modalHandlers.put(prefixes, this::set);
-//    modalHandlers.put(nameAliases, this::set);
+    modalHandlers.put(addPlaylist, this::handleModalAddPlaylist);
+    modalHandlers.put(removePlaylist, this::handleModalRemovePlaylist);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
@@ -150,6 +169,62 @@ public class SetSettingsCommand extends BotCommand {
 
     String modalId = modalEvent.getModalId();
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
+  }
+
+  private void makeModalAddPlaylist(ButtonInteractionEvent buttonEvent) {
+    TextInput nameInput = TextInput.create("name", "Playlist name", TextInputStyle.SHORT)
+        .setPlaceholder("Enter future playlist name").setMinLength(1).setMaxLength(50).build();
+
+    TextInput pathInput = TextInput.create("path", "Playlist path", TextInputStyle.SHORT)
+        .setPlaceholder("Enter path to file or folder").setMinLength(1).setMaxLength(2000).build();
+
+    Modal modal = Modal.create(addPlaylist, "Add playlist")
+        .addComponents(ActionRow.of(nameInput), ActionRow.of(pathInput)).build();
+
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", addPlaylist);
+  }
+
+  private void makeModalRemovePlaylist(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal.create(removePlaylist, "Remove playlist").addActionRow(TextInput
+        .create(removePlaylist, "Enter playlist name to delete", TextInputStyle.SHORT).setRequiredRange(0, 50).build())
+        .build();
+
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", removePlaylist);
+  }
+
+  private void handleModalAddPlaylist(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", addPlaylist);
+    String nameInput = modalEvent.getValue("name").getAsString();
+    String pathInput = modalEvent.getValue("path").getAsString();
+
+    if (settings.getPlaylists() != null) {
+      if (!settings.getPlaylists().containsKey(nameInput)) {
+        settings.getPlaylists().put(nameInput, pathInput);
+        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+
+        modalEvent.reply(nameInput + " has been added to list").setEphemeral(true).queue();
+      } else {
+        modalEvent.reply("Playlist with the same name already exists").setEphemeral(true).queue();
+      }
+    } else {
+      modalEvent.reply("Internal error").setEphemeral(true).queue();
+    }
+  }
+
+  private void handleModalRemovePlaylist(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", removePlaylist);
+    String input = modalEvent.getValue(removePlaylist).getAsString();
+
+    if (settings.getPlaylists() != null && settings.getPlaylists().containsKey(input)) {
+      settings.getPlaylists().remove(input);
+      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+
+      modalEvent.reply(input + " has been removed from this list").setEphemeral(true).queue();
+    } else {
+      modalEvent.reply("Playlist not found in this list").setEphemeral(true).queue();
+    }
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

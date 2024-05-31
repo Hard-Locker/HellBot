@@ -93,9 +93,9 @@ public class SettingsCommand extends BotCommand {
       return;
     }
 
-    EmbedBuilder embed = messageFormatter.createAltInfoEmbed("Сurrent bot settings:");
     String notSetValue = "Not set";
     String newLine = System.lineSeparator();
+    EmbedBuilder embed = messageFormatter.createAltInfoEmbed("Сurrent bot settings:");
 
     embed.addField("Language", String.valueOf(settings.getLanguage()), true);
     embed.addField("Volume", String.valueOf(settings.getVolume()), true);
@@ -112,7 +112,15 @@ public class SettingsCommand extends BotCommand {
     embed.addField("Admin IDs", settings.getAdminUserIds() != null ? settings.getAdminUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
     embed.addField("DJ IDs", settings.getDjUserIds() != null ? settings.getDjUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
     embed.addField("Banned IDs", settings.getBannedUserIds() != null ? settings.getBannedUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
-    embed.addField("Playlist folder paths", settings.getPlaylistFolderPaths() != null ? String.join(", ", settings.getPlaylistFolderPaths()) : notSetValue, false);
+    
+    if (settings.getPlaylists() != null && !settings.getPlaylists().isEmpty()) {
+      StringBuilder playlistsBuilder = new StringBuilder();
+      settings.getPlaylists().forEach((key, value) -> playlistsBuilder.append(key).append(": ").append(value).append(newLine));
+      embed.addField("Playlists", playlistsBuilder.toString(), false);
+    } else {
+      embed.addField("Playlists", notSetValue, false);
+    }
+    
     embed.addField("Prefixes", settings.getPrefixes() != null ? String.join(", ", settings.getPrefixes()) : notSetValue, false);
 
     if (settings.getNameAliases() != null && !settings.getNameAliases().isEmpty()) {
