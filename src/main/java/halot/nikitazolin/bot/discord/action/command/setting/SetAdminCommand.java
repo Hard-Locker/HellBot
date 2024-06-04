@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.action.command.user;
+package halot.nikitazolin.bot.discord.action.command.setting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetDjCommand extends BotCommand {
+public class SetAdminCommand extends BotCommand {
 
   private final MessageSender messageSender;
   private final Settings settings;
@@ -46,10 +46,10 @@ public class SetDjCommand extends BotCommand {
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "dj";
+  private final String commandName = "admin";
   private final String close = "close";
-  private final String addDj = "addDjUser";
-  private final String removeDj = "removeDjUser";
+  private final String addAdmin = "addAdminUser";
+  private final String removeAdmin = "removeAdminUser";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
@@ -80,7 +80,7 @@ public class SetDjCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Set DJ";
+    return "Set admin";
   }
 
   @Override
@@ -113,16 +113,16 @@ public class SetDjCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button addDjButton = Button.primary(addDj, "Add DJ");
-    Button removeDjButton = Button.primary(removeDj, "Remove DJ");
-    List<Button> buttons = List.of(closeButton, addDjButton, removeDjButton);
+    Button addAdminButton = Button.primary(addAdmin, "Add admin");
+    Button removeAdminButton = Button.primary(removeAdmin, "Remove admin");
+    List<Button> buttons = List.of(closeButton, addAdminButton, removeAdminButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**DJ setting**").append(newLine);
+    StringBuilder messageContent = new StringBuilder("**Admin setting**").append(newLine);
 
-    if (settings.getDjUserIds() != null && !settings.getDjUserIds().isEmpty()) {
-      messageContent.append("Current DJ:").append(newLine);
-      List<User> users = discordDataReceiver.getUsersByIds(settings.getDjUserIds());
+    if (settings.getAdminUserIds() != null && !settings.getAdminUserIds().isEmpty()) {
+      messageContent.append("Current admin:").append(newLine);
+      List<User> users = discordDataReceiver.getUsersByIds(settings.getAdminUserIds());
 
       for (User user : users) {
         messageContent.append(user.getAsMention());
@@ -136,11 +136,11 @@ public class SetDjCommand extends BotCommand {
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(addDj, this::makeModalAddDj);
-    buttonHandlers.put(removeDj, this::makeModalRemoveDj);
+    buttonHandlers.put(addAdmin, this::makeModalAddAdmin);
+    buttonHandlers.put(removeAdmin, this::makeModalRemoveAdmin);
 
-    modalHandlers.put(addDj, this::handleModalAddDj);
-    modalHandlers.put(removeDj, this::handleModalRemoveDj);
+    modalHandlers.put(addAdmin, this::handleModalAddAdmin);
+    modalHandlers.put(removeAdmin, this::handleModalRemoveAdmin);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
@@ -170,29 +170,29 @@ public class SetDjCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void makeModalAddDj(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(addDj, "Add DJ")
-        .addActionRow(
-            TextInput.create(addDj, "Enter user ID to add DJ", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
-        .build();
-
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened {} modal", addDj);
-  }
-
-  private void makeModalRemoveDj(ButtonInteractionEvent buttonEvent) {
+  private void makeModalAddAdmin(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
-        .create(removeDj, "Remove DJ").addActionRow(TextInput
-            .create(removeDj, "Enter user ID to remove DJ", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+        .create(addAdmin, "Add admin").addActionRow(TextInput
+            .create(addAdmin, "Enter user ID to add admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
-    log.debug("Opened {} modal", removeDj);
+    log.debug("Opened {} modal", addAdmin);
   }
 
-  private void handleModalAddDj(ModalInteractionEvent modalEvent) {
-    log.debug("Processing modal: {}", addDj);
-    String input = modalEvent.getValue(addDj).getAsString();
+  private void makeModalRemoveAdmin(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal
+        .create(removeAdmin, "Remove admin").addActionRow(TextInput
+            .create(removeAdmin, "Enter user ID to remove admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+        .build();
+
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", removeAdmin);
+  }
+
+  private void handleModalAddAdmin(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", addAdmin);
+    String input = modalEvent.getValue(addAdmin).getAsString();
     Long userId = null;
 
     try {
@@ -205,9 +205,9 @@ public class SetDjCommand extends BotCommand {
 
     User user = discordDataReceiver.getUserById(userId);
 
-    if (user != null && settings.getDjUserIds() != null) {
-      if (!settings.getDjUserIds().contains(userId)) {
-        settings.getDjUserIds().add(userId);
+    if (user != null && settings.getAdminUserIds() != null) {
+      if (!settings.getAdminUserIds().contains(userId)) {
+        settings.getAdminUserIds().add(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
         modalEvent.reply(user.getAsMention() + " has been added").setEphemeral(true).queue();
       } else {
@@ -218,9 +218,9 @@ public class SetDjCommand extends BotCommand {
     }
   }
 
-  private void handleModalRemoveDj(ModalInteractionEvent modalEvent) {
-    log.debug("Processing modal: {}", removeDj);
-    String input = modalEvent.getValue(removeDj).getAsString();
+  private void handleModalRemoveAdmin(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", removeAdmin);
+    String input = modalEvent.getValue(removeAdmin).getAsString();
     Long userId = null;
 
     try {
@@ -231,8 +231,8 @@ public class SetDjCommand extends BotCommand {
       log.debug("Error accessing the first argument for user ID", e);
     }
 
-    if (settings.getDjUserIds() != null && settings.getDjUserIds().contains(userId)) {
-      settings.getDjUserIds().remove(userId);
+    if (settings.getAdminUserIds() != null && settings.getAdminUserIds().contains(userId)) {
+      settings.getAdminUserIds().remove(userId);
       settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
       User user = discordDataReceiver.getUserById(userId);

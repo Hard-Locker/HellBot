@@ -23,7 +23,7 @@ public class Settings {
   private boolean songInStatus = true;
   private boolean songInTopic = false;
   private boolean songInTextChannel = false;
-  private boolean updateAlerts = true;
+  private boolean updateNotification = true;
   private List<Long> allowedTextChannelIds = new ArrayList<>();
   private List<Long> allowedVoiceChannelIds = new ArrayList<>();
   private Long ownerUserId = null;

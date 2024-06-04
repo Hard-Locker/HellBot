@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.action.command.user;
+package halot.nikitazolin.bot.discord.action.command.setting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,6 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
-import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
@@ -27,9 +26,6 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -37,19 +33,18 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetAdminCommand extends BotCommand {
+public class SetUpdateCommand extends BotCommand {
 
   private final MessageSender messageSender;
   private final Settings settings;
   private final SettingsSaver settingsSaver;
-  private final DiscordDataReceiver discordDataReceiver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "admin";
+  private final String commandName = "update";
   private final String close = "close";
-  private final String addAdmin = "addAdminUser";
-  private final String removeAdmin = "removeAdminUser";
+  private final String enableUpdateNotifier = "enableUpdateNotifier";
+  private final String disableUpdateNotifier = "disableUpdateNotifier";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
@@ -80,7 +75,7 @@ public class SetAdminCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Set admin";
+    return "Change update notifier";
   }
 
   @Override
@@ -113,34 +108,23 @@ public class SetAdminCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button addAdminButton = Button.primary(addAdmin, "Add admin");
-    Button removeAdminButton = Button.primary(removeAdmin, "Remove admin");
-    List<Button> buttons = List.of(closeButton, addAdminButton, removeAdminButton);
+    Button enableButton = Button.primary(enableUpdateNotifier, "Enable");
+    Button disableButton = Button.primary(disableUpdateNotifier, "Disable");
+    List<Button> buttons = List.of(closeButton, enableButton, disableButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Admin setting**").append(newLine);
+    StringBuilder messageContent = new StringBuilder("**Settings update notifier**").append(newLine);
 
-    if (settings.getAdminUserIds() != null && !settings.getAdminUserIds().isEmpty()) {
-      messageContent.append("Current admin:").append(newLine);
-      List<User> users = discordDataReceiver.getUsersByIds(settings.getAdminUserIds());
-
-      for (User user : users) {
-        messageContent.append(user.getAsMention());
-        messageContent.append(" ID: ");
-        messageContent.append(user.getIdLong());
-        messageContent.append(newLine);
-      }
-    }
+    messageContent.append("Notify when update available: ");
+    messageContent.append(settings.isUpdateNotification() == true ? "Yes" : "No");
+    messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(addAdmin, this::makeModalAddAdmin);
-    buttonHandlers.put(removeAdmin, this::makeModalRemoveAdmin);
-
-    modalHandlers.put(addAdmin, this::handleModalAddAdmin);
-    modalHandlers.put(removeAdmin, this::handleModalRemoveAdmin);
+    buttonHandlers.put(enableUpdateNotifier, this::handleButtonEnable);
+    buttonHandlers.put(disableUpdateNotifier, this::handleButtonDisable);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
@@ -170,81 +154,22 @@ public class SetAdminCommand extends BotCommand {
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
-  private void makeModalAddAdmin(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(addAdmin, "Add admin").addActionRow(TextInput
-            .create(addAdmin, "Enter user ID to add admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
-        .build();
+  private void handleButtonEnable(ButtonInteractionEvent buttonEvent) {
+    log.debug("Processing setting: {}", enableUpdateNotifier);
+    settings.setUpdateNotification(true);
+    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened {} modal", addAdmin);
+    String info = settings.isUpdateNotification() == true ? "Yes" : "No";
+    buttonEvent.reply("Update notification set to: " + info).setEphemeral(true).queue();
   }
 
-  private void makeModalRemoveAdmin(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(removeAdmin, "Remove admin").addActionRow(TextInput
-            .create(removeAdmin, "Enter user ID to remove admin", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
-        .build();
+  private void handleButtonDisable(ButtonInteractionEvent buttonEvent) {
+    log.debug("Processing setting: {}", disableUpdateNotifier);
+    settings.setUpdateNotification(false);
+    settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-    buttonEvent.replyModal(modal).queue();
-    log.debug("Opened {} modal", removeAdmin);
-  }
-
-  private void handleModalAddAdmin(ModalInteractionEvent modalEvent) {
-    log.debug("Processing modal: {}", addAdmin);
-    String input = modalEvent.getValue(addAdmin).getAsString();
-    Long userId = null;
-
-    try {
-      userId = Long.parseLong(input);
-    } catch (NumberFormatException e) {
-      log.debug("Error parsing user ID from arguments", e);
-    } catch (IndexOutOfBoundsException e) {
-      log.debug("Error accessing the first argument for user ID", e);
-    }
-
-    User user = discordDataReceiver.getUserById(userId);
-
-    if (user != null && settings.getAdminUserIds() != null) {
-      if (!settings.getAdminUserIds().contains(userId)) {
-        settings.getAdminUserIds().add(userId);
-        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        modalEvent.reply(user.getAsMention() + " has been added").setEphemeral(true).queue();
-      } else {
-        modalEvent.reply("User has already been added to the list").setEphemeral(true).queue();
-      }
-    } else {
-      modalEvent.reply("User not found").setEphemeral(true).queue();
-    }
-  }
-
-  private void handleModalRemoveAdmin(ModalInteractionEvent modalEvent) {
-    log.debug("Processing modal: {}", removeAdmin);
-    String input = modalEvent.getValue(removeAdmin).getAsString();
-    Long userId = null;
-
-    try {
-      userId = Long.parseLong(input);
-    } catch (NumberFormatException e) {
-      log.debug("Error parsing user ID from arguments", e);
-    } catch (IndexOutOfBoundsException e) {
-      log.debug("Error accessing the first argument for user ID", e);
-    }
-
-    if (settings.getAdminUserIds() != null && settings.getAdminUserIds().contains(userId)) {
-      settings.getAdminUserIds().remove(userId);
-      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-
-      User user = discordDataReceiver.getUserById(userId);
-
-      if (user != null) {
-        modalEvent.reply(user.getAsMention() + " has been removed from this list").setEphemeral(true).queue();
-      } else {
-        modalEvent.reply(userId + " has been removed from this list").setEphemeral(true).queue();
-      }
-    } else {
-      modalEvent.reply("User not found in this list").setEphemeral(true).queue();
-    }
+    String info = settings.isUpdateNotification() == true ? "Yes" : "No";
+    buttonEvent.reply("Update notification set to: " + info).setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

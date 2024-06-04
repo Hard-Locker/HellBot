@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
   <artifactId>hell-bot</artifactId>
-  <version>0.5.20</version>
+  <version>0.5.21</version>
   <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
 

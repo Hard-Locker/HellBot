@@ -9,11 +9,13 @@ import java.util.function.Consumer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.ApplicationRunnerImpl;
 import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
+import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
@@ -25,25 +27,29 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SetSettingsCommand extends BotCommand {
+public class SetDjCommand extends BotCommand {
 
   private final MessageSender messageSender;
   private final Settings settings;
   private final SettingsSaver settingsSaver;
+  private final DiscordDataReceiver discordDataReceiver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "set";
+  private final String commandName = "dj";
   private final String close = "close";
-  private final String updateAlerts = "updateAlerts";
-//  private final String playlistFolderPaths = "playlistFolderPaths";
-//  private final String prefixes = "prefixes";
-//  private final String nameAliases = "nameAliases";
+  private final String addDj = "addDjUser";
+  private final String removeDj = "removeDjUser";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
   private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
@@ -74,7 +80,7 @@ public class SetSettingsCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "You can change any settings";
+    return "Set DJ";
   }
 
   @Override
@@ -107,22 +113,34 @@ public class SetSettingsCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, "Close settings");
-    Button updateAlertsButton = Button.primary(updateAlerts, "Set update alerts");
-//    Button prefixesButton = Button.primary(prefixes, "Set prefixes");
-//    Button nameAliasesButton = Button.primary(nameAliases, "Set name aliases");
-    List<Button> buttons = List.of(closeButton, updateAlertsButton);
+    Button addDjButton = Button.primary(addDj, "Add DJ");
+    Button removeDjButton = Button.primary(removeDj, "Remove DJ");
+    List<Button> buttons = List.of(closeButton, addDjButton, removeDjButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "Which setting need update?",
-        buttons);
+    String newLine = System.lineSeparator();
+    StringBuilder messageContent = new StringBuilder("**DJ setting**").append(newLine);
+
+    if (settings.getDjUserIds() != null && !settings.getDjUserIds().isEmpty()) {
+      messageContent.append("Current DJ:").append(newLine);
+      List<User> users = discordDataReceiver.getUsersByIds(settings.getDjUserIds());
+
+      for (User user : users) {
+        messageContent.append(user.getAsMention());
+        messageContent.append(" ID: ");
+        messageContent.append(user.getIdLong());
+        messageContent.append(newLine);
+      }
+    }
+
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
-//    buttonHandlers.put(updateAlerts, this::make);
-//    buttonHandlers.put(prefixes, this::make);
-//    buttonHandlers.put(nameAliases, this::make);
+    buttonHandlers.put(addDj, this::makeModalAddDj);
+    buttonHandlers.put(removeDj, this::makeModalRemoveDj);
 
-//    modalHandlers.put(updateAlerts, this::set);
-//    modalHandlers.put(prefixes, this::set);
-//    modalHandlers.put(nameAliases, this::set);
+    modalHandlers.put(addDj, this::handleModalAddDj);
+    modalHandlers.put(removeDj, this::handleModalRemoveDj);
 
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
@@ -150,6 +168,83 @@ public class SetSettingsCommand extends BotCommand {
 
     String modalId = modalEvent.getModalId();
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
+  }
+
+  private void makeModalAddDj(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal.create(addDj, "Add DJ")
+        .addActionRow(
+            TextInput.create(addDj, "Enter user ID to add DJ", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+        .build();
+
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", addDj);
+  }
+
+  private void makeModalRemoveDj(ButtonInteractionEvent buttonEvent) {
+    Modal modal = Modal
+        .create(removeDj, "Remove DJ").addActionRow(TextInput
+            .create(removeDj, "Enter user ID to remove DJ", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+        .build();
+
+    buttonEvent.replyModal(modal).queue();
+    log.debug("Opened {} modal", removeDj);
+  }
+
+  private void handleModalAddDj(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", addDj);
+    String input = modalEvent.getValue(addDj).getAsString();
+    Long userId = null;
+
+    try {
+      userId = Long.parseLong(input);
+    } catch (NumberFormatException e) {
+      log.debug("Error parsing user ID from arguments", e);
+    } catch (IndexOutOfBoundsException e) {
+      log.debug("Error accessing the first argument for user ID", e);
+    }
+
+    User user = discordDataReceiver.getUserById(userId);
+
+    if (user != null && settings.getDjUserIds() != null) {
+      if (!settings.getDjUserIds().contains(userId)) {
+        settings.getDjUserIds().add(userId);
+        settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+        modalEvent.reply(user.getAsMention() + " has been added").setEphemeral(true).queue();
+      } else {
+        modalEvent.reply("User has already been added to the list").setEphemeral(true).queue();
+      }
+    } else {
+      modalEvent.reply("User not found").setEphemeral(true).queue();
+    }
+  }
+
+  private void handleModalRemoveDj(ModalInteractionEvent modalEvent) {
+    log.debug("Processing modal: {}", removeDj);
+    String input = modalEvent.getValue(removeDj).getAsString();
+    Long userId = null;
+
+    try {
+      userId = Long.parseLong(input);
+    } catch (NumberFormatException e) {
+      log.debug("Error parsing user ID from arguments", e);
+    } catch (IndexOutOfBoundsException e) {
+      log.debug("Error accessing the first argument for user ID", e);
+    }
+
+    if (settings.getDjUserIds() != null && settings.getDjUserIds().contains(userId)) {
+      settings.getDjUserIds().remove(userId);
+      settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
+
+      User user = discordDataReceiver.getUserById(userId);
+
+      if (user != null) {
+        modalEvent.reply(user.getAsMention() + " has been removed from this list").setEphemeral(true).queue();
+      } else {
+        modalEvent.reply(userId + " has been removed from this list").setEphemeral(true).queue();
+      }
+    } else {
+      modalEvent.reply("User not found in this list").setEphemeral(true).queue();
+    }
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

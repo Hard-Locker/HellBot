@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SettingsCommand extends BotCommand {
+public class ShowSettingsCommand extends BotCommand {
 
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
@@ -106,7 +106,7 @@ public class SettingsCommand extends BotCommand {
     embed.addField("Song in text channel", String.valueOf(settings.isSongInTextChannel()), true);
     embed.addField("Stay in channel", String.valueOf(settings.isStayInChannel()), true);
     embed.addField("Alone time until stop", settings.getAloneTimeUntilStop() == 0 ? notSetValue : String.valueOf(settings.getAloneTimeUntilStop()), true);
-    embed.addField("Update alerts", String.valueOf(settings.isUpdateAlerts()), true);
+    embed.addField("Update notification", String.valueOf(settings.isUpdateNotification()), true);
     embed.addField("Allowed text channel IDs", settings.getAllowedTextChannelIds() != null ? settings.getAllowedTextChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
     embed.addField("Allowed voice channel IDs", settings.getAllowedVoiceChannelIds() != null ? settings.getAllowedVoiceChannelIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);
     embed.addField("Admin IDs", settings.getAdminUserIds() != null ? settings.getAdminUserIds().stream().map(Object::toString).collect(Collectors.joining(", ")) : notSetValue, false);

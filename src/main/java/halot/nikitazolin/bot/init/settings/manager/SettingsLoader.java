@@ -47,7 +47,7 @@ public class SettingsLoader {
       settings.setSongInTopic(defaultIfNull(loadedConfig.isSongInTopic(), false));
       settings.setSongInTextChannel(defaultIfNull(loadedConfig.isSongInTextChannel(), false));
       settings.setStayInChannel(defaultIfNull(loadedConfig.isStayInChannel(), true));
-      settings.setUpdateAlerts(defaultIfNull(loadedConfig.isUpdateAlerts(), true));
+      settings.setUpdateNotification(defaultIfNull(loadedConfig.isUpdateNotification(), true));
       settings.setAllowedTextChannelIds(defaultIfNull(loadedConfig.getAllowedTextChannelIds(), new ArrayList<>()));
       settings.setAllowedVoiceChannelIds(defaultIfNull(loadedConfig.getAllowedVoiceChannelIds(), new ArrayList<>()));
       settings.setAdminUserIds(defaultIfNull(loadedConfig.getAdminUserIds(), new ArrayList<>()));

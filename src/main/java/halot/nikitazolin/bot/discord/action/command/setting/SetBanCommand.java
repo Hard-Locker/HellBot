@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.action.command.user;
+package halot.nikitazolin.bot.discord.action.command.setting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
