@@ -38,7 +38,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class PlaylistCommand extends BotCommand {
+public class SetPlaylistCommand extends BotCommand {
 
   private final MessageSender messageSender;
   private final Settings settings;
