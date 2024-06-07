@@ -18,6 +18,7 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.util.VersionChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -40,6 +41,7 @@ public class SetUpdateCommand extends BotCommand {
   private final SettingsSaver settingsSaver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final VersionChecker versionChecker;
 
   private final String commandName = "update";
   private final String close = "close";
@@ -107,6 +109,9 @@ public class SetUpdateCommand extends BotCommand {
       return;
     }
 
+    String latestVersion = versionChecker.getNumberLatestVersion().orElse("unknown");
+    String currentVersion = versionChecker.getNumberCurrentVersion();
+
     Button closeButton = Button.danger(close, "Close settings");
     Button enableButton = Button.primary(enableUpdateNotifier, "Enable");
     Button disableButton = Button.primary(disableUpdateNotifier, "Disable");
@@ -115,8 +120,12 @@ public class SetUpdateCommand extends BotCommand {
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder("**Settings update notifier**").append(newLine);
 
+    messageContent.append("Current version: " + "**" + currentVersion + "**");
+    messageContent.append(newLine);
+    messageContent.append("Latest version: " + "**" + latestVersion + "**");
+    messageContent.append(newLine);
     messageContent.append("Notify when update available: ");
-    messageContent.append(settings.isUpdateNotification() == true ? "Yes" : "No");
+    messageContent.append(settings.isUpdateNotification() == true ? "**Yes**" : "**No**");
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
