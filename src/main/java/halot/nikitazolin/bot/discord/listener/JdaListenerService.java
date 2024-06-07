@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.JDA;
 public class JdaListenerService {
 
   private final JdaMaker jdaMaker;
-  private final EventListener eventListener;
+  private final EventsListener eventsListener;
 
   public void addListeners() {
     Optional<JDA> jdaOptional = jdaMaker.getJda();
@@ -29,7 +29,7 @@ public class JdaListenerService {
   }
 
   private void registerListeners(JDA jda) {
-    jda.addEventListener(eventListener);
-    log.info("Registered event listener: {}", eventListener);
+    jda.addEventListener(eventsListener);
+    log.info("Registered event listener: {}", eventsListener);
   }
 }

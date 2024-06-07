@@ -25,7 +25,7 @@ public class JdaMaker {
   private final AuthorizationData authorizationData;
   
   private String token;
-  private String status = "/about";
+  private String status = "Type command /about";
   private final List<GatewayIntent> gatewayIntents = List.of(
       GatewayIntent.GUILD_MESSAGES,
       GatewayIntent.DIRECT_MESSAGES,
@@ -53,7 +53,7 @@ public class JdaMaker {
   private void createJda() {
     try {
       jda = JDABuilder.createDefault(token, gatewayIntents)
-          .setActivity(Activity.watching(status))
+          .setActivity(Activity.customStatus(status))
           .enableIntents(gatewayIntents)
           .addEventListeners(new ReadyListener())
           .enableCache(cacheFlags)

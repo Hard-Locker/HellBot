@@ -14,6 +14,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
+import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.tool.ActivityManager;
 import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
@@ -30,6 +31,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 @RequiredArgsConstructor
 public class TrackScheduler extends AudioEventAdapter implements AudioEventListener {
 
+  private final GuildAudioService guildAudioService;
   private final PlayerService playerService;
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
@@ -110,6 +112,10 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     if (settings.isSongInTopic() == true && settings.getAllowedTextChannelIds() != null) {
       List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
       setTopics(textChannels, "");
+    }
+    
+    if (playerService.getQueue().isEmpty() == true && settings.isStayInChannel() == false) {
+      guildAudioService.stopAudioSending();
     }
 
     if (endReason == AudioTrackEndReason.FINISHED) {

@@ -15,7 +15,8 @@ public class ReadyListener implements EventListener {
   @Override
   public void onEvent(@NotNull GenericEvent genericEvent) {
     if (genericEvent instanceof ReadyEvent) {
-      log.info("Bot ready!");
+      log.info("JDA ready!");
+      System.out.println("JDA ready!");
     }
   }
 }
