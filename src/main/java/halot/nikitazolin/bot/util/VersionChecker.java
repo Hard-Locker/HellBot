@@ -50,10 +50,7 @@ public class VersionChecker {
         if (body != null) {
           try (Reader reader = body.charStream()) {
             JSONObject obj = new JSONObject(new JSONTokener(reader));
-            String releaseBody = obj.getString("body");
-            String releaseTitle = releaseBody.split("\r\n|\r|\n", 2)[0];
-
-            return Optional.ofNullable(releaseTitle);
+            return Optional.ofNullable(obj.getString("name"));
           }
         } else {
           log.error("Response body is null");
