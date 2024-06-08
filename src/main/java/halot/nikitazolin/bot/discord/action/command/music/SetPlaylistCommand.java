@@ -46,7 +46,7 @@ public class SetPlaylistCommand extends BotCommand {
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
 
-  private final String commandName = "playlist";
+  private final String commandName = "setplaylist";
   private final String close = "close";
   private final String addPlaylist = "addPlaylist";
   private final String removePlaylist = "removePlaylist";
