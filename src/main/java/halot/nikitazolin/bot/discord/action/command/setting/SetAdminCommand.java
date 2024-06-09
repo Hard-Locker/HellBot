@@ -223,7 +223,7 @@ public class SetAdminCommand extends BotCommand {
             .queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_admin_command.message.add_not_found")).setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("setting.message.user_not_found")).setEphemeral(true).queue();
     }
   }
 

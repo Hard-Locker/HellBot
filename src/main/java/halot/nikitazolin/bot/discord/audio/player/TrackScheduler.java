@@ -50,7 +50,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
 
   @Override
   public void onPlayerPause(AudioPlayer player) {
-    String info = "Player paused";
+    String info = musicProvider.getText("info.now_paused");
 
     if (settings.isSongInStatus() == true) {
       activityManager.setCustomStatus(info);
@@ -66,7 +66,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
   public void onPlayerResume(AudioPlayer player) {
     AudioTrack audioTrack = playerService.getAudioPlayer().getPlayingTrack();
     String song = audioTrack.getInfo().author + " - " + audioTrack.getInfo().title;
-    String topic = "Now playing: " + song;
+    String topic = musicProvider.getText("info.now_playing") + ": " + song;
 
     if (settings.isSongInStatus() == true) {
       activityManager.setListening(song);
@@ -82,7 +82,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
   public void onTrackStart(AudioPlayer player, AudioTrack track) {
     AudioTrackInfo audioTrackInfo = playerService.getAudioPlayer().getPlayingTrack().getInfo();
     String song = audioTrackInfo.author + " - " + audioTrackInfo.title;
-    String topic = "Now playing: " + song;
+    String topic = musicProvider.getText("info.now_playing") + ": " + song;
 
     if (settings.isSongInStatus() == true) {
       activityManager.setListening(song);
@@ -109,7 +109,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
     if (settings.isSongInStatus() == true && playerService.getQueue().isEmpty() == true) {
-      activityManager.setCustomStatus("Chill");
+      activityManager.setCustomStatus(musicProvider.getText("info.now_chill"));
     }
 
     if (settings.isSongInTopic() == true && settings.getAllowedTextChannelIds() != null) {

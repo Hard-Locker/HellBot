@@ -19,6 +19,7 @@ import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -45,6 +46,7 @@ public class SetDjCommand extends BotCommand {
   private final DiscordDataReceiver discordDataReceiver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "dj";
   private final String close = "close";
@@ -80,7 +82,7 @@ public class SetDjCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Set DJ";
+    return settingProvider.getText("set_dj_command.description");
   }
 
   @Override
@@ -112,16 +114,18 @@ public class SetDjCommand extends BotCommand {
       return;
     }
 
-    Button closeButton = Button.danger(close, "Close settings");
-    Button addDjButton = Button.primary(addDj, "Add DJ");
-    Button removeDjButton = Button.primary(removeDj, "Remove DJ");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button addDjButton = Button.primary(addDj, settingProvider.getText("set_dj_command.button.add_dj"));
+    Button removeDjButton = Button.primary(removeDj, settingProvider.getText("set_dj_command.button.remove_dj"));
     List<Button> buttons = List.of(closeButton, addDjButton, removeDjButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**DJ setting**").append(newLine);
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + settingProvider.getText("set_dj_command.message.title") + "**");
+    messageContent.append(newLine);
 
     if (settings.getDjUserIds() != null && !settings.getDjUserIds().isEmpty()) {
-      messageContent.append("Current DJ:").append(newLine);
+      messageContent.append(settingProvider.getText("set_dj_command.message.current_dj") + ":").append(newLine);
       List<User> users = discordDataReceiver.getUsersByIds(settings.getDjUserIds());
 
       for (User user : users) {
@@ -171,9 +175,10 @@ public class SetDjCommand extends BotCommand {
   }
 
   private void makeModalAddDj(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(addDj, "Add DJ")
+    Modal modal = Modal.create(addDj, settingProvider.getText("set_dj_command.modal.add_dj_name"))
         .addActionRow(
-            TextInput.create(addDj, "Enter user ID to add DJ", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+            TextInput.create(addDj, settingProvider.getText("set_dj_command.modal.add_dj_input"), TextInputStyle.SHORT)
+                .setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -181,9 +186,10 @@ public class SetDjCommand extends BotCommand {
   }
 
   private void makeModalRemoveDj(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal
-        .create(removeDj, "Remove DJ").addActionRow(TextInput
-            .create(removeDj, "Enter user ID to remove DJ", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+    Modal modal = Modal.create(removeDj, settingProvider.getText("set_dj_command.modal.remove_dj_name"))
+        .addActionRow(TextInput
+            .create(removeDj, settingProvider.getText("set_dj_command.modal.remove_dj_input"), TextInputStyle.SHORT)
+            .setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -209,12 +215,14 @@ public class SetDjCommand extends BotCommand {
       if (!settings.getDjUserIds().contains(userId)) {
         settings.getDjUserIds().add(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        modalEvent.reply(user.getAsMention() + " has been added").setEphemeral(true).queue();
+        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_dj_command.message.add_dj_success"))
+            .setEphemeral(true).queue();
       } else {
-        modalEvent.reply("User has already been added to the list").setEphemeral(true).queue();
+        modalEvent.reply(settingProvider.getText("set_dj_command.message.add_dj_already_exists")).setEphemeral(true)
+            .queue();
       }
     } else {
-      modalEvent.reply("User not found").setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("setting.message.user_not_found")).setEphemeral(true).queue();
     }
   }
 
@@ -238,28 +246,32 @@ public class SetDjCommand extends BotCommand {
       User user = discordDataReceiver.getUserById(userId);
 
       if (user != null) {
-        modalEvent.reply(user.getAsMention() + " has been removed from this list").setEphemeral(true).queue();
+        modalEvent
+            .reply(user.getAsMention() + " " + settingProvider.getText("set_dj_command.message.remove_dj_success"))
+            .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(userId + " has been removed from this list").setEphemeral(true).queue();
+        modalEvent.reply(userId + " " + settingProvider.getText("set_dj_command.message.remove_dj_success"))
+            .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply("User not found in this list").setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_dj_command.message.remove_dj_not_found")).setEphemeral(true)
+          .queue();
     }
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 
   private void handleUnknownModal(ModalInteractionEvent modalEvent) {
-    modalEvent.reply("Unknown modal").setEphemeral(true).queue();
+    modalEvent.reply(settingProvider.getText("setting.message.modal.unknown")).setEphemeral(true).queue();
     log.debug("Clicked modal button");
   }
 }

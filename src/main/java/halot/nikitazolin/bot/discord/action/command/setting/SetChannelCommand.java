@@ -19,6 +19,7 @@ import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -47,6 +48,7 @@ public class SetChannelCommand extends BotCommand {
   private final DiscordDataReceiver discordDataReceiver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "channel";
   private final String close = "close";
@@ -84,7 +86,7 @@ public class SetChannelCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Set allowed channels";
+    return settingProvider.getText("set_channel_command.description");
   }
 
   @Override
@@ -116,19 +118,26 @@ public class SetChannelCommand extends BotCommand {
       return;
     }
 
-    Button closeButton = Button.danger(close, "Close settings");
-    Button addTextChannelButton = Button.primary(addTextChannel, "Add text channel");
-    Button removeTextChannelButton = Button.primary(removeTextChannel, "Remove text channel");
-    Button addVoiceChannelButton = Button.primary(addVoiceChannel, "Add voice channel");
-    Button removeVoiceChannelButton = Button.primary(removeVoiceChannel, "Remove voice channel");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button addTextChannelButton = Button.primary(addTextChannel,
+        settingProvider.getText("set_channel_command.button.add_text_channel"));
+    Button removeTextChannelButton = Button.primary(removeTextChannel,
+        settingProvider.getText("set_channel_command.button.remove_text_channel"));
+    Button addVoiceChannelButton = Button.primary(addVoiceChannel,
+        settingProvider.getText("set_channel_command.button.add_voice_channel"));
+    Button removeVoiceChannelButton = Button.primary(removeVoiceChannel,
+        settingProvider.getText("set_channel_command.button.remove_voice_cahnnel"));
     List<Button> buttons = List.of(closeButton, addTextChannelButton, removeTextChannelButton, addVoiceChannelButton,
         removeVoiceChannelButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Settings allowed channels**").append(newLine);
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + settingProvider.getText("set_channel_command.message.title") + "**");
+    messageContent.append(newLine);
 
     if (settings.getAllowedTextChannelIds() != null && !settings.getAllowedTextChannelIds().isEmpty()) {
-      messageContent.append("Current allowed text channels:").append(newLine);
+      messageContent.append(settingProvider.getText("set_channel_command.message.current_text_channel") + ":")
+          .append(newLine);
       List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
 
       for (TextChannel textChannel : textChannels) {
@@ -142,7 +151,8 @@ public class SetChannelCommand extends BotCommand {
     messageContent.append(newLine);
 
     if (settings.getAllowedVoiceChannelIds() != null && !settings.getAllowedVoiceChannelIds().isEmpty()) {
-      messageContent.append("Current allowed voice channels:").append(newLine);
+      messageContent.append(settingProvider.getText("set_channel_command.message.current_voice_channel") + ":")
+          .append(newLine);
       List<VoiceChannel> voiceChannels = discordDataReceiver
           .getVoiceChannelsByIds(settings.getAllowedVoiceChannelIds());
 
@@ -197,9 +207,11 @@ public class SetChannelCommand extends BotCommand {
   }
 
   private void makeModalAddTextChannel(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(addTextChannel, "Add allowed text channel")
-        .addActionRow(
-            TextInput.create(addTextChannel, "Enter channel ID", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+    Modal modal = Modal
+        .create(addTextChannel, settingProvider.getText("set_channel_command.modal.add_text_channel_name"))
+        .addActionRow(TextInput.create(addTextChannel,
+            settingProvider.getText("set_channel_command.modal.add_text_channel_input"), TextInputStyle.SHORT)
+            .setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -208,8 +220,10 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalRemoveTextChannel(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
-        .create(removeTextChannel, "Remove allowed text channel").addActionRow(TextInput
-            .create(removeTextChannel, "Enter channel ID", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+        .create(removeTextChannel, settingProvider.getText("set_channel_command.modal.remove_text_channel_name"))
+        .addActionRow(TextInput.create(removeTextChannel,
+            settingProvider.getText("set_channel_command.modal.remove_text_channel_input"), TextInputStyle.SHORT)
+            .setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -217,9 +231,11 @@ public class SetChannelCommand extends BotCommand {
   }
 
   private void makeModalAddVoiceChannel(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(addVoiceChannel, "Add allowed voice channel")
-        .addActionRow(
-            TextInput.create(addVoiceChannel, "Enter channel ID", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+    Modal modal = Modal
+        .create(addVoiceChannel, settingProvider.getText("set_channel_command.modal.add_voice_channel_name"))
+        .addActionRow(TextInput.create(addVoiceChannel,
+            settingProvider.getText("set_channel_command.modal.add_voice_channel_input"), TextInputStyle.SHORT)
+            .setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -228,8 +244,10 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalRemoveVoiceChannel(ButtonInteractionEvent buttonEvent) {
     Modal modal = Modal
-        .create(removeVoiceChannel, "Remove allowed voice channel").addActionRow(TextInput
-            .create(removeVoiceChannel, "Enter channel ID", TextInputStyle.SHORT).setRequiredRange(0, 20).build())
+        .create(removeVoiceChannel, settingProvider.getText("set_channel_command.modal.remove_voice_channel_name"))
+        .addActionRow(TextInput.create(removeVoiceChannel,
+            settingProvider.getText("set_channel_command.modal.remove_voice_channel_input"), TextInputStyle.SHORT)
+            .setRequiredRange(0, 20).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -256,12 +274,17 @@ public class SetChannelCommand extends BotCommand {
         settings.getAllowedTextChannelIds().add(channelId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent.reply(textChannel.getAsMention() + " has been added").setEphemeral(true).queue();
+        modalEvent
+            .reply(textChannel.getAsMention() + " "
+                + settingProvider.getText("set_channel_command.message.add_text_channel_success"))
+            .setEphemeral(true).queue();
       } else {
-        modalEvent.reply("Text channel has already been added to the list").setEphemeral(true).queue();
+        modalEvent.reply(settingProvider.getText("set_channel_command.message.add_text_channel_already_exists"))
+            .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply("Text channel not found").setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_channel_command.message.add_text_channel_not_found"))
+          .setEphemeral(true).queue();
     }
   }
 
@@ -285,12 +308,18 @@ public class SetChannelCommand extends BotCommand {
       TextChannel textChannel = discordDataReceiver.getTextChannelById(channelId);
 
       if (textChannel != null) {
-        modalEvent.reply(textChannel.getAsMention() + " has been removed from this list").setEphemeral(true).queue();
+        modalEvent
+            .reply(textChannel.getAsMention() + " "
+                + settingProvider.getText("set_channel_command.message.remove_text_channel_success"))
+            .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(channelId + " has been removed from this list").setEphemeral(true).queue();
+        modalEvent
+            .reply(channelId + " " + settingProvider.getText("set_channel_command.message.remove_text_channel_success"))
+            .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply("Text channel not found in this list").setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_channel_command.message.remove_text_channel_not_found"))
+          .setEphemeral(true).queue();
     }
   }
 
@@ -314,12 +343,17 @@ public class SetChannelCommand extends BotCommand {
         settings.getAllowedVoiceChannelIds().add(channelId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent.reply(voiceChannel.getAsMention() + " has been added").setEphemeral(true).queue();
+        modalEvent
+            .reply(voiceChannel.getAsMention() + " "
+                + settingProvider.getText("set_channel_command.message.add_voice_channel_success"))
+            .setEphemeral(true).queue();
       } else {
-        modalEvent.reply("Voice channel has already been added to the list").setEphemeral(true).queue();
+        modalEvent.reply(settingProvider.getText("set_channel_command.message.add_voice_channel_already_exists"))
+            .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply("Voice channel not found").setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_channel_command.message.add_voice_channel_not_found"))
+          .setEphemeral(true).queue();
     }
   }
 
@@ -343,28 +377,35 @@ public class SetChannelCommand extends BotCommand {
       VoiceChannel voiceChannel = discordDataReceiver.getVoiceChannelById(channelId);
 
       if (voiceChannel != null) {
-        modalEvent.reply(voiceChannel.getAsMention() + " has been removed from this list").setEphemeral(true).queue();
+        modalEvent
+            .reply(voiceChannel.getAsMention() + " "
+                + settingProvider.getText("set_channel_command.message.remove_voice_channel_success"))
+            .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(channelId + " has been removed from this list").setEphemeral(true).queue();
+        modalEvent
+            .reply(
+                channelId + " " + settingProvider.getText("set_channel_command.message.remove_voice_channel_success"))
+            .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply("Voice channel not found in this list").setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_channel_command.message.remove_voice_channel_not_found"))
+          .setEphemeral(true).queue();
     }
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 
   private void handleUnknownModal(ModalInteractionEvent modalEvent) {
-    modalEvent.reply("Unknown modal").setEphemeral(true).queue();
+    modalEvent.reply(settingProvider.getText("setting.message.modal.unknown")).setEphemeral(true).queue();
     log.debug("Clicked modal button");
   }
 }
