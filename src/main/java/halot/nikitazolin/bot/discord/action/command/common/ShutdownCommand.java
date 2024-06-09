@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.action.command;
+package halot.nikitazolin.bot.discord.action.command.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.common.CommonProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -33,6 +34,7 @@ public class ShutdownCommand extends BotCommand {
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final CommonProvider commonProvider;
 
   private final String commandName = "shutdown";
 
@@ -62,7 +64,7 @@ public class ShutdownCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Shutdown bot";
+    return commonProvider.getText("shutdown_command.description");
   }
 
   @Override
@@ -94,7 +96,7 @@ public class ShutdownCommand extends BotCommand {
       return;
     }
 
-    EmbedBuilder embed = messageFormatter.createErrorEmbed("Bot shutdown...");
+    EmbedBuilder embed = messageFormatter.createErrorEmbed(commonProvider.getText("shutdown_command.message"));
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     guildAudioService.shutdown();

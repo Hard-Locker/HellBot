@@ -15,6 +15,7 @@ import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import halot.nikitazolin.bot.repository.model.SongHistory;
 import halot.nikitazolin.bot.util.TimeConverter;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class SongHistoryCommand extends BotCommand {
   private final DatabaseService databaseService;
   private final TimeConverter timeConverter;
   private final AllowChecker allowChecker;
+  private final MusicProvider musicProvider;
 
   private final String commandName = "history";
 

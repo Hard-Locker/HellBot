@@ -11,6 +11,7 @@ import halot.nikitazolin.bot.discord.JdaService;
 import halot.nikitazolin.bot.init.authorization.AuthorizationService;
 import halot.nikitazolin.bot.init.database.DatabasePrepareService;
 import halot.nikitazolin.bot.init.settings.SettingsService;
+import halot.nikitazolin.bot.localization.LocalizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +24,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
   private final AuthorizationService authorizationService;
   private final DatabasePrepareService databasePrepareService;
   private final SettingsService settingsService;
+  private final LocalizationService localizationService;
   private final JdaService jdaService;
   private final AudioService audioService;
   private final DatabaseService databaseService;
@@ -35,6 +37,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     authorizationService.validateAuthorization(AUTHORIZATION_FILE_PATH);
     databasePrepareService.validateDb(AUTHORIZATION_FILE_PATH);
     settingsService.validateSettings(SETTINGS_FILE_PATH);
+    localizationService.initializeLocale();
 
     // Start JDA
     // TODO Need improve guild getter. Now it potential bug

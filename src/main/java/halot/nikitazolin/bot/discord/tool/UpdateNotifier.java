@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import halot.nikitazolin.bot.util.VersionChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class UpdateNotifier {
   private final MessageSender messageSender;
   private final MessageFormatter messageFormatter;
   private final DiscordDataReceiver discordDataReceiver;
+  private final SettingProvider settingProvider;
 
   public void checkUpdate() {
     if (settings.isUpdateNotification() == false) {
@@ -50,7 +52,7 @@ public class UpdateNotifier {
     }
 
     List<User> users = discordDataReceiver.getUsersByIds(new ArrayList<>(userIds));
-    EmbedBuilder embed = messageFormatter.createInfoEmbed("Available latest update: " + latestVersion);
+    EmbedBuilder embed = messageFormatter.createInfoEmbed(settingProvider.getText("setting.update") + ": " + latestVersion);
 
     for (User user : users) {
       messageSender.sendPrivateMessage(user, embed);

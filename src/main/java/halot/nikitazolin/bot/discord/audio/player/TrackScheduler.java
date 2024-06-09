@@ -20,6 +20,7 @@ import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -38,6 +39,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
   private final Settings settings;
   private final ActivityManager activityManager;
   private final DiscordDataReceiver discordDataReceiver;
+  private final MusicProvider musicProvider;
 
 //  private boolean isRepeat = false;
 
@@ -92,7 +94,8 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     }
 
     if (settings.isSongInTextChannel() == true && settings.getAllowedTextChannelIds() != null) {
-      EmbedBuilder embed = messageFormatter.createAudioTrackInfoEmbed(audioTrackInfo, "**Now playing**");
+      EmbedBuilder embed = messageFormatter.createAudioTrackInfoEmbed(audioTrackInfo,
+          ("**" + musicProvider.getText("info.now_playing") + "**"));
       List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
 
       for (TextChannel textChannel : textChannels) {
@@ -113,7 +116,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
       List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
       setTopics(textChannels, "");
     }
-    
+
     if (playerService.getQueue().isEmpty() == true && settings.isStayInChannel() == false) {
       guildAudioService.stopAudioSending();
     }

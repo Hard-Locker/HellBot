@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.action.command.setting;
+package halot.nikitazolin.bot.discord.action.command.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,11 @@ import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
-import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.common.CommonProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -25,14 +26,15 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class AboutCommand extends BotCommand {
+public class HelloCommand extends BotCommand {
 
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final CommonProvider commonProvider;
 
-  private final String commandName = "about";
+  private final String commandName = "hello";
 
   @Override
   public String name() {
@@ -60,7 +62,7 @@ public class AboutCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Show information about bot";
+    return commonProvider.getText("hello_command.description");
   }
 
   @Override
@@ -92,10 +94,11 @@ public class AboutCommand extends BotCommand {
       return;
     }
 
-    EmbedBuilder embed = messageFormatter.createInfoEmbed("There will be information about the bot here");
+    EmbedBuilder embed = messageFormatter
+        .createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
-    log.debug("User get information about bot" + context.getUser());
+    log.debug("User get hello" + context.getUser());
   }
 
   @Override

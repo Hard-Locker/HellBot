@@ -11,6 +11,7 @@ import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.PermissionProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,8 @@ public class GuildAudioService {
   private final AllowChecker allowChecker;
   private final DiscordDataReceiver discordDataReceiver;
   private final PlayerService playerService;
+  private final PermissionProvider permissionProvider;
+
   private AudioManager audioManager;
 
   public void registratePlayer(Guild guild) {
@@ -55,7 +58,7 @@ public class GuildAudioService {
 
     if (userVoiceChannel == null) {
       EmbedBuilder embed = messageFormatter.createErrorEmbed(
-          context.getUser().getAsMention() + ", you need to be in voice channel to use music command.");
+          context.getUser().getAsMention() + ", " + permissionProvider.getText("voice_channel.no_channel"));
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 

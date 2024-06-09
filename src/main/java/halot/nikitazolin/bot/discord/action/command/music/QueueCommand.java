@@ -2,44 +2,48 @@ package halot.nikitazolin.bot.discord.action.command.music;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.BlockingQueue;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.audio.player.AudioItemContext;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
-import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
-import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class SkipCommand extends BotCommand {
+public class QueueCommand extends BotCommand {
 
   private final PlayerService playerService;
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
-  private final MusicProvider musicProvider;
 
-  private final String commandName = "skip";
+  private final String commandName = "queue";
+  private final String close = "close";
+  private final String next = "nextPage";
+  private final String previous = "previousPage";
 
   @Override
   public String name() {
@@ -67,8 +71,7 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public String description() {
-//    return musicProvider.getText("skip_command.description");
-    return "Skip track. Optionally, you can specify the position of some tracks to remove them";
+    return "Show queue audio playing";
   }
 
   @Override
@@ -88,7 +91,7 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] { new OptionData(OptionType.STRING, "positions", "Track positions to skip", false) };
+    return new OptionData[] {};
   }
 
   @Override
@@ -99,34 +102,18 @@ public class SkipCommand extends BotCommand {
 
       return;
     }
+    
+    Button closeButton = Button.danger(close, "Close settings");
+    Button nextButton = Button.primary(next, Emoji.fromUnicode("U+2192"));
+    Button previousButton = Button.primary(previous, Emoji.fromUnicode("U+2190"));
+    List<Button> buttons = List.of(closeButton, nextButton, previousButton);
 
-    if (playerService.getQueue().isEmpty() == true) {
-      EmbedBuilder embed = messageFormatter.createWarningEmbed(
-          context.getUser().getAsMention() + " This command can be used if playing queue have tracks");
-      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
-      log.debug("User try skip track in empty queue" + context.getUser());
-
-      return;
-    }
-
-    List<String> args = context.getCommandArguments().getString();
-
-    if (args.isEmpty()) {
-      playerService.skipTrack();
+    if (playerService.getQueue().isEmpty() == false) {
+      Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), makeMessage(), buttons);
     } else {
-      List<Integer> positions = new ArrayList<>();
-
-      for (String element : args) {
-        positions.addAll(parsePositions(element));
-      }
-
-      playerService.skipTracks(positions);
+      EmbedBuilder embed = messageFormatter.createInfoEmbed("Queue is empty");
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
-
-    EmbedBuilder embed = messageFormatter.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
-    messageSender.sendMessageEmbed(context.getTextChannel(), embed);
-
-    log.debug("Track skiped by user: " + context.getUser());
   }
 
   @Override
@@ -139,26 +126,17 @@ public class SkipCommand extends BotCommand {
     return;
   }
 
-  private List<Integer> parsePositions(String input) {
-    List<Integer> positions = new ArrayList<>();
-    Pattern pattern = Pattern.compile("(\\d+)(?:-(\\d+))?");
-    Matcher matcher = pattern.matcher(input);
+  private MessageCreateData makeMessage() {
+    BlockingQueue<AudioItemContext> queue = playerService.getQueue();
 
-    while (matcher.find()) {
-      int start = Integer.parseInt(matcher.group(1));
-      String endGroup = matcher.group(2);
+    String newLine = System.lineSeparator();
+    StringBuilder messageContent = new StringBuilder("**Player queue**").append(newLine);
 
-      if (endGroup != null) {
-        int end = Integer.parseInt(endGroup);
+    messageContent.append("Track in queue: " + queue.size()).append(newLine);
 
-        for (int i = start; i <= end; i++) {
-          positions.add(i);
-        }
-      } else {
-        positions.add(start);
-      }
-    }
-
-    return positions;
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
+    
+    return messageCreateData;
   }
+
 }

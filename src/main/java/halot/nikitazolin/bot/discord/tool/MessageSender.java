@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.localization.action.PermissionProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -21,6 +22,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 public class MessageSender {
 
   private final MessageFormatter messageFormatter;
+  private final PermissionProvider permissionProvider;
 
   public void sendText(TextChannel textChannel, CharSequence text) {
     textChannel.sendMessage(text).queue();
@@ -94,7 +96,7 @@ public class MessageSender {
   }
 
   public void sendPrivateMessageAccessError(User user) {
-    EmbedBuilder embed = messageFormatter.createAltInfoEmbed("You do not have access to use it");
+    EmbedBuilder embed = messageFormatter.createAltInfoEmbed(permissionProvider.getText("command.denied"));
     MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embed.build()).build();
 
     if (!user.isBot()) {

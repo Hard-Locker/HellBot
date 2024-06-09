@@ -18,6 +18,7 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -43,6 +44,7 @@ public class SetAloneCommand extends BotCommand {
   private final SettingsSaver settingsSaver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "alone";
   private final String close = "close";
@@ -78,7 +80,7 @@ public class SetAloneCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Change settings alone";
+    return settingProvider.getText("set_alone_command.description");
   }
 
   @Override
@@ -110,20 +112,26 @@ public class SetAloneCommand extends BotCommand {
       return;
     }
 
-    Button closeButton = Button.danger(close, "Close settings");
-    Button aloneTimeButton = Button.primary(aloneTime, "Set alone time");
-    Button stayInChannelButton = Button.primary(stayInChannel, "Set stay in channel");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button aloneTimeButton = Button.primary(aloneTime,
+        settingProvider.getText("set_alone_command.button.set_alone_time"));
+    Button stayInChannelButton = Button.primary(stayInChannel,
+        settingProvider.getText("set_alone_command.button.set_stay"));
     List<Button> buttons = List.of(closeButton, aloneTimeButton, stayInChannelButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Settings alone time**").append(newLine);
-
-    messageContent.append("Alone time: ");
-    messageContent.append(settings.getAloneTimeUntilStop() == 0 ? "Not set" : settings.getAloneTimeUntilStop());
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + settingProvider.getText("set_alone_command.message.title") + "**");
     messageContent.append(newLine);
 
-    messageContent.append("Stay in channel: ");
-    messageContent.append(settings.isStayInChannel() == true ? "Yes" : "No");
+    messageContent.append(settingProvider.getText("set_alone_command.message.alone_time") + ": ");
+    messageContent.append(settings.getAloneTimeUntilStop() == 0 ? settingProvider.getText("setting.text.not_set")
+        : settings.getAloneTimeUntilStop());
+    messageContent.append(newLine);
+
+    messageContent.append(settingProvider.getText("set_alone_command.message.stay_in_channel") + ": ");
+    messageContent.append(settings.isStayInChannel() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no"));
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
@@ -164,9 +172,10 @@ public class SetAloneCommand extends BotCommand {
   }
 
   private void makeModalAloneTime(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(aloneTime, "Set alone time in seconds until stop bot")
-        .addActionRow(
-            TextInput.create(aloneTime, "Time (seconds 0-99999)", TextInputStyle.SHORT).setRequiredRange(0, 5).build())
+    Modal modal = Modal.create(aloneTime, settingProvider.getText("set_alone_command.modal.alone_name"))
+        .addActionRow(TextInput
+            .create(aloneTime, settingProvider.getText("set_alone_command.modal.alone_input"), TextInputStyle.SHORT)
+            .setRequiredRange(0, 5).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -182,7 +191,8 @@ public class SetAloneCommand extends BotCommand {
       settings.setAloneTimeUntilStop(time);
       settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-      modalEvent.reply("Alone time set to " + time + " seconds").setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_admin_command.message.alone_time_result") + ": " + time)
+          .setEphemeral(true).queue();
       log.debug("User changed alone time to {} seconds", time);
     } catch (NumberFormatException e) {
       log.debug("Error parsing user ID from arguments", e);
@@ -201,23 +211,25 @@ public class SetAloneCommand extends BotCommand {
     }
 
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-    String info = settings.isStayInChannel() == true ? "Yes" : "No";
-    buttonEvent.reply("Stay in channel set to: " + info).setEphemeral(true).queue();
+    String info = settings.isStayInChannel() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no");
+    buttonEvent.reply(settingProvider.getText("set_admin_command.message.stay_result") + ": " + info).setEphemeral(true)
+        .queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 
   private void handleUnknownModal(ModalInteractionEvent modalEvent) {
-    modalEvent.reply("Unknown modal").setEphemeral(true).queue();
+    modalEvent.reply(settingProvider.getText("setting.message.modal.unknown")).setEphemeral(true).queue();
     log.debug("Clicked modal button");
   }
 }

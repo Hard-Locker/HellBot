@@ -1,20 +1,24 @@
-package halot.nikitazolin.bot.discord.action.command;
+package halot.nikitazolin.bot.discord.action.command.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
+import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.common.CommonProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -25,14 +29,16 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 @Scope("prototype")
 @Slf4j
 @RequiredArgsConstructor
-public class HelloCommand extends BotCommand {
+public class PingCommand extends BotCommand {
 
+  private final JdaMaker jdaMaker;
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final CommonProvider commonProvider;
 
-  private final String commandName = "hello";
+  private final String commandName = "ping";
 
   @Override
   public String name() {
@@ -60,12 +66,12 @@ public class HelloCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Greetings";
+    return commonProvider.getText("ping_command.description");
   }
 
   @Override
   public boolean checkUserAccess(User user) {
-    return allowChecker.isNotBanned(user);
+    return allowChecker.isOwnerOrAdmin(user);
   }
 
   @Override
@@ -92,11 +98,21 @@ public class HelloCommand extends BotCommand {
       return;
     }
 
-    EmbedBuilder embed = messageFormatter
-        .createAltInfoEmbed(context.getUser().getAsMention() + " Gamarjoba genacvale!");
-    messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+    final long time = System.currentTimeMillis();
+    Optional<JDA> jdaOpt = jdaMaker.getJda();
 
-    log.debug("User get hello" + context.getUser());
+    if (jdaOpt.isPresent()) {
+      JDA jda = jdaOpt.get();
+
+      jda.getRestPing().queue(ping -> {
+        long latency = System.currentTimeMillis() - time;
+        String pingInfo = String.format("Ping: %d ms (REST API), Latency: %d ms", ping, latency);
+        log.trace("User check ping. {}", pingInfo);
+
+        EmbedBuilder embed = messageFormatter.createSuccessEmbed(pingInfo);
+        messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+      });
+    }
   }
 
   @Override
