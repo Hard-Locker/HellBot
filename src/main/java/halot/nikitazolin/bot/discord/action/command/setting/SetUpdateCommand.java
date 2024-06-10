@@ -18,6 +18,7 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import halot.nikitazolin.bot.util.VersionChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class SetUpdateCommand extends BotCommand {
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
   private final VersionChecker versionChecker;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "update";
   private final String close = "close";
@@ -49,7 +51,6 @@ public class SetUpdateCommand extends BotCommand {
   private final String disableUpdateNotifier = "disableUpdateNotifier";
 
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
-  private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
 
   @Override
   public String name() {
@@ -77,7 +78,7 @@ public class SetUpdateCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Change update notifier";
+    return settingProvider.getText("set_update_command.description");
   }
 
   @Override
@@ -109,23 +110,33 @@ public class SetUpdateCommand extends BotCommand {
       return;
     }
 
-    String latestVersion = versionChecker.getNumberLatestVersion().orElse("unknown");
-    String currentVersion = versionChecker.getNumberCurrentVersion();
+    String latestVersion = versionChecker.getNumberLatestVersion()
+        .orElse(settingProvider.getText("setting.text.unknown"));
+    String currentVersion = versionChecker.getNumberCurrentVersion()
+        .orElse(settingProvider.getText("setting.text.unknown"));
 
-    Button closeButton = Button.danger(close, "Close settings");
-    Button enableButton = Button.primary(enableUpdateNotifier, "Enable");
-    Button disableButton = Button.primary(disableUpdateNotifier, "Disable");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button enableButton = Button.primary(enableUpdateNotifier,
+        settingProvider.getText("set_update_command.button.enable"));
+    Button disableButton = Button.primary(disableUpdateNotifier,
+        settingProvider.getText("set_update_command.button.disable"));
     List<Button> buttons = List.of(closeButton, enableButton, disableButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Settings update notifier**").append(newLine);
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + settingProvider.getText("set_update_command.message.title") + "**");
+    messageContent.append(newLine);
 
-    messageContent.append("Current version: " + "**" + currentVersion + "**");
+    messageContent.append(
+        settingProvider.getText("set_update_command.message.current_version") + ": " + "**" + currentVersion + "**");
     messageContent.append(newLine);
-    messageContent.append("Latest version: " + "**" + latestVersion + "**");
+    messageContent.append(
+        settingProvider.getText("set_update_command.message.latest_version") + ": " + "**" + latestVersion + "**");
     messageContent.append(newLine);
-    messageContent.append("Notify when update available: ");
-    messageContent.append(settings.isUpdateNotification() == true ? "**Yes**" : "**No**");
+    messageContent.append(settingProvider.getText("set_update_command.message.notify") + ": ");
+    messageContent
+        .append(settings.isUpdateNotification() == true ? "**" + settingProvider.getText("setting.text.yes") + "**"
+            : "**" + settingProvider.getText("setting.text.no") + "**");
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
@@ -152,15 +163,7 @@ public class SetUpdateCommand extends BotCommand {
   }
 
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
-    if (checkUserAccess(modalEvent.getUser()) == false) {
-      messageSender.sendPrivateMessageAccessError(modalEvent.getUser());
-      log.debug("User {} does not have access to use: {}", modalEvent.getUser(), commandName);
-
-      return;
-    }
-
-    String modalId = modalEvent.getModalId();
-    modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
+    return;
   }
 
   private void handleButtonEnable(ButtonInteractionEvent buttonEvent) {
@@ -168,8 +171,10 @@ public class SetUpdateCommand extends BotCommand {
     settings.setUpdateNotification(true);
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-    String info = settings.isUpdateNotification() == true ? "Yes" : "No";
-    buttonEvent.reply("Update notification set to: " + info).setEphemeral(true).queue();
+    String info = settings.isUpdateNotification() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no");
+    buttonEvent.reply(settingProvider.getText("set_update_command.message.set") + ": " + info).setEphemeral(true)
+        .queue();
   }
 
   private void handleButtonDisable(ButtonInteractionEvent buttonEvent) {
@@ -177,23 +182,20 @@ public class SetUpdateCommand extends BotCommand {
     settings.setUpdateNotification(false);
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-    String info = settings.isUpdateNotification() == true ? "Yes" : "No";
-    buttonEvent.reply("Update notification set to: " + info).setEphemeral(true).queue();
+    String info = settings.isUpdateNotification() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no");
+    buttonEvent.reply(settingProvider.getText("set_update_command.message.set") + ": " + info).setEphemeral(true)
+        .queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
-  }
-
-  private void handleUnknownModal(ModalInteractionEvent modalEvent) {
-    modalEvent.reply("Unknown modal").setEphemeral(true).queue();
-    log.debug("Clicked modal button");
   }
 }

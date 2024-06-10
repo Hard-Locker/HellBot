@@ -15,6 +15,7 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -35,6 +36,7 @@ public class NowPlayingCommand extends BotCommand {
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final MusicProvider musicProvider;
 
   private final String commandName = "now";
 
@@ -98,7 +100,7 @@ public class NowPlayingCommand extends BotCommand {
 
     if (playerService.getAudioPlayer().getPlayingTrack() != null) {
       AudioTrackInfo audioTrackInfo = playerService.getAudioPlayer().getPlayingTrack().getInfo();
-      EmbedBuilder embed = messageFormatter.createAudioTrackInfoEmbed(audioTrackInfo, "**Now playing**");
+      EmbedBuilder embed = messageFormatter.createAudioTrackInfoEmbed(audioTrackInfo, "**" + musicProvider.getText("info.now_playing") + "**");
 
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
       log.debug("User show now playing audio. " + "User: " + context.getUser());

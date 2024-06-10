@@ -17,6 +17,7 @@ import halot.nikitazolin.bot.discord.audio.player.PlayerService;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -43,6 +44,7 @@ public class SetVolumeCommand extends BotCommand {
   private final Settings settings;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "volume";
   private final String close = "close";
@@ -76,7 +78,7 @@ public class SetVolumeCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Set volume level";
+    return settingProvider.getText("set_volume_command.description");
   }
 
   @Override
@@ -126,16 +128,17 @@ public class SetVolumeCommand extends BotCommand {
   }
 
   private void makeGui(BotCommandContext context) {
-    Button closeButton = Button.danger(close, "Close settings");
-    Button volumeButton = Button.primary(volume, "Set volume");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button volumeButton = Button.primary(volume, settingProvider.getText("set_volume_command.button.set_volume"));
     List<Button> buttons = List.of(closeButton, volumeButton);
 
     int volumeLevel = settings.getVolume();
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Settings volume**").append(newLine);
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + settingProvider.getText("set_volume_command.message.title") + "**");
+    messageContent.append(newLine);
 
-    messageContent.append("Current volume: ");
-    messageContent.append(volumeLevel);
+    messageContent.append(settingProvider.getText("set_volume_command.message.current_volume") + ": " + volumeLevel);
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
@@ -182,9 +185,10 @@ public class SetVolumeCommand extends BotCommand {
   }
 
   private void makeModalVolume(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(volume, "Set Volume")
+    Modal modal = Modal.create(volume, settingProvider.getText("set_volume_command.modal.set_volume_name"))
         .addActionRow(
-            TextInput.create(volume, "Volume Level (0-150)", TextInputStyle.SHORT).setRequiredRange(0, 3).build())
+            TextInput.create(volume, settingProvider.getText("set_volume_command.modal.set_volume_input") + " (0-150)",
+                TextInputStyle.SHORT).setRequiredRange(0, 3).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -204,22 +208,23 @@ public class SetVolumeCommand extends BotCommand {
     }
 
     updateVolume(volumeLevel);
-    modalEvent.reply("Volume level set to: " + volumeLevel).setEphemeral(true).queue();
+    modalEvent.reply(settingProvider.getText("set_volume_command.message.set_volume") + ": " + volumeLevel)
+        .setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 
   private void handleUnknownModal(ModalInteractionEvent modalEvent) {
-    modalEvent.reply("Unknown modal").setEphemeral(true).queue();
+    modalEvent.reply(settingProvider.getText("setting.message.modal.unknown")).setEphemeral(true).queue();
     log.debug("Clicked modal button");
   }
 }

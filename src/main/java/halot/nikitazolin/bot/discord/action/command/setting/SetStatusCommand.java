@@ -17,6 +17,7 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.StatusManager;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -25,6 +26,8 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 @Component
 @Scope("prototype")
@@ -37,6 +40,7 @@ public class SetStatusCommand extends BotCommand {
   private final StatusManager statusManager;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "status";
   private final String close = "close";
@@ -73,7 +77,7 @@ public class SetStatusCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Set bot status";
+    return settingProvider.getText("set_status_command.description");
   }
 
   @Override
@@ -105,14 +109,24 @@ public class SetStatusCommand extends BotCommand {
       return;
     }
 
-    Button closeButton = Button.danger(close, "Close settings");
-    Button onlineButton = Button.success(online, "Set online");
-    Button idleButton = Button.primary(idle, "Set idle");
-    Button dndButton = Button.danger(dnd, "Set DND");
-    Button invisibleButton = Button.secondary(invisible, "Set invisible");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button onlineButton = Button.success(online, settingProvider.getText("set_status_command.button.online"));
+    Button idleButton = Button.primary(idle, settingProvider.getText("set_status_command.button.idle"));
+    Button dndButton = Button.danger(dnd, settingProvider.getText("set_status_command.button.dnd"));
+    Button invisibleButton = Button.secondary(invisible,
+        settingProvider.getText("set_status_command.button.invisible"));
     List<Button> buttons = List.of(closeButton, onlineButton, idleButton, dndButton, invisibleButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), "What status should set?", buttons);
+    String newLine = System.lineSeparator();
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + settingProvider.getText("set_status_command.message.title") + "**");
+    messageContent.append(newLine);
+
+    messageContent.append(settingProvider.getText("set_status_command.message.subtitle") + "?");
+    messageContent.append(newLine);
+
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
+    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(online, this::setStatus);
@@ -144,26 +158,26 @@ public class SetStatusCommand extends BotCommand {
     switch (buttonEvent.getComponentId()) {
     case online:
       statusManager.setOnline();
-      buttonEvent.reply("Status set to Online").setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status_command.message.set_online")).setEphemeral(true).queue();
       break;
 
     case idle:
       statusManager.setIdle();
-      buttonEvent.reply("Status set to Idle").setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status_command.message.set_idle")).setEphemeral(true).queue();
       break;
 
     case dnd:
       statusManager.setDnd();
-      buttonEvent.reply("Status set to Do Not Disturb").setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status_command.message.set_dnd")).setEphemeral(true).queue();
       break;
 
     case invisible:
       statusManager.setInvisible();
-      buttonEvent.reply("Status set to Invisible").setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status_command.message.set_invisible")).setEphemeral(true).queue();
       break;
 
     default:
-      buttonEvent.reply("Unknown status").setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status_command.message.unknown")).setEphemeral(true).queue();
       break;
     }
 
@@ -171,13 +185,13 @@ public class SetStatusCommand extends BotCommand {
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 }

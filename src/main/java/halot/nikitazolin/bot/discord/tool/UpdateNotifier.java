@@ -32,8 +32,8 @@ public class UpdateNotifier {
       return;
     }
 
-    String latestVersion = versionChecker.getNumberLatestVersion().orElse("unknown");
-    String currentVersion = versionChecker.getNumberCurrentVersion();
+    String latestVersion = versionChecker.getNumberLatestVersion().orElse(settingProvider.getText("setting.text.unknown"));
+    String currentVersion = versionChecker.getNumberCurrentVersion().orElse(settingProvider.getText("setting.text.unknown"));
     Set<Long> userIds = new HashSet<>();
 
     if (latestVersion.equals(currentVersion)) {
@@ -52,7 +52,7 @@ public class UpdateNotifier {
     }
 
     List<User> users = discordDataReceiver.getUsersByIds(new ArrayList<>(userIds));
-    EmbedBuilder embed = messageFormatter.createInfoEmbed(settingProvider.getText("setting.update") + ": " + latestVersion);
+    EmbedBuilder embed = messageFormatter.createInfoEmbed(settingProvider.getText("set_update_command.message.update_available") + ": " + latestVersion);
 
     for (User user : users) {
       messageSender.sendPrivateMessage(user, embed);

@@ -22,18 +22,18 @@ public class VersionChecker {
 
   private static final OkHttpClient client = new OkHttpClient();
 
-  public String getNumberCurrentVersion() {
+  public Optional<String> getNumberCurrentVersion() {
     Package packag = HellBot.class.getPackage();
 
     if (packag != null) {
       String version = packag.getImplementationVersion();
 
       if (version != null) {
-        return version;
+        return Optional.ofNullable(version);
       }
     }
 
-    return "unknown";
+    return Optional.empty();
   }
 
   public Optional<String> getNumberLatestVersion() {
