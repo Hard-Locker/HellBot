@@ -52,7 +52,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
   public void onPlayerPause(AudioPlayer player) {
     String info = musicProvider.getText("info.now_paused");
 
-    if (settings.isSongInStatus() == true) {
+    if (settings.isSongInActivity() == true) {
       activityManager.setCustomStatus(info);
     }
 
@@ -68,7 +68,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     String song = audioTrack.getInfo().author + " - " + audioTrack.getInfo().title;
     String topic = musicProvider.getText("info.now_playing") + ": " + song;
 
-    if (settings.isSongInStatus() == true) {
+    if (settings.isSongInActivity() == true) {
       activityManager.setListening(song);
     }
 
@@ -84,7 +84,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
     String song = audioTrackInfo.author + " - " + audioTrackInfo.title;
     String topic = musicProvider.getText("info.now_playing") + ": " + song;
 
-    if (settings.isSongInStatus() == true) {
+    if (settings.isSongInActivity() == true) {
       activityManager.setListening(song);
     }
 
@@ -108,7 +108,7 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
 
   @Override
   public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-    if (settings.isSongInStatus() == true && playerService.getQueue().isEmpty() == true) {
+    if (settings.isSongInActivity() == true && playerService.getQueue().isEmpty() == true) {
       activityManager.setCustomStatus(musicProvider.getText("info.now_chill"));
     }
 

@@ -12,6 +12,7 @@ import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.localization.action.PermissionProvider;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ public class GuildAudioService {
   private final DiscordDataReceiver discordDataReceiver;
   private final PlayerService playerService;
   private final PermissionProvider permissionProvider;
+  private final MusicProvider musicProvider;
 
   private AudioManager audioManager;
 
@@ -75,8 +77,8 @@ public class GuildAudioService {
 
   public void stopAudioSending() {
     log.info("Stop audio sending");
-    if (settings.isSongInStatus() == true) {
-      activityManager.setCustomStatus("Chill");
+    if (settings.isSongInActivity() == true) {
+      activityManager.setCustomStatus(musicProvider.getText("info.now_chill"));
     }
 
     playerService.offPlayer();

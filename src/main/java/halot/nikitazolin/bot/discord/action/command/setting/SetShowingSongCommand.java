@@ -18,6 +18,7 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -40,10 +41,11 @@ public class SetShowingSongCommand extends BotCommand {
   private final SettingsSaver settingsSaver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "song";
   private final String close = "close";
-  private final String songInStatus = "songInStatus";
+  private final String songInActivity = "songInActivity";
   private final String songInTopic = "songInTopic";
   private final String songInTextChannel = "songInTextChannel";
 
@@ -75,7 +77,7 @@ public class SetShowingSongCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Change settings showing current song";
+    return settingProvider.getText("set_showing_song_command.description");
   }
 
   @Override
@@ -107,32 +109,40 @@ public class SetShowingSongCommand extends BotCommand {
       return;
     }
 
-    Button closeButton = Button.danger(close, "Close settings");
-    Button songInStatusButton = Button.primary(songInStatus, "Set song in status");
-    Button songInTopicButton = Button.primary(songInTopic, "Set song in topic");
-    Button songInTextChannelButton = Button.primary(songInTextChannel, "Set song in text channel");
-    List<Button> buttons = List.of(closeButton, songInStatusButton, songInTopicButton, songInTextChannelButton);
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button songInActivityButton = Button.primary(songInActivity,
+        settingProvider.getText("set_showing_song_command.button.activity"));
+    Button songInTopicButton = Button.primary(songInTopic,
+        settingProvider.getText("set_showing_song_command.button.topic"));
+    Button songInTextChannelButton = Button.primary(songInTextChannel,
+        settingProvider.getText("set_showing_song_command.button.text_channel"));
+    List<Button> buttons = List.of(closeButton, songInActivityButton, songInTopicButton, songInTextChannelButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Settings showing song**").append(newLine);
-
-    messageContent.append("Show song in status: ");
-    messageContent.append(settings.isSongInStatus() == true ? "Yes" : "No");
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + settingProvider.getText("set_showing_song_command.message.title") + "**");
     messageContent.append(newLine);
 
-    messageContent.append("Show song in topic: ");
-    messageContent.append(settings.isSongInTopic() == true ? "Yes" : "No");
+    messageContent.append(settingProvider.getText("set_showing_song_command.message.current_activity") + ": ");
+    messageContent.append(settings.isSongInActivity() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no"));
     messageContent.append(newLine);
 
-    messageContent.append("Show song in text channel: ");
-    messageContent.append(settings.isSongInTextChannel() == true ? "Yes" : "No");
+    messageContent.append(settingProvider.getText("set_showing_song_command.message.current_topic") + ": ");
+    messageContent.append(settings.isSongInTopic() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no"));
+    messageContent.append(newLine);
+
+    messageContent.append(settingProvider.getText("set_showing_song_command.message.current_text_channel") + ": ");
+    messageContent.append(settings.isSongInTextChannel() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no"));
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
-    buttonHandlers.put(songInStatus, this::handleButtonSongInStatus);
+    buttonHandlers.put(songInActivity, this::handleButtonSongInActivity);
     buttonHandlers.put(songInTopic, this::handleButtonSongInTopic);
     buttonHandlers.put(songInTextChannel, this::handleButtonSongInTextChannel);
 
@@ -156,18 +166,20 @@ public class SetShowingSongCommand extends BotCommand {
     return;
   }
 
-  private void handleButtonSongInStatus(ButtonInteractionEvent buttonEvent) {
-    log.debug("Processing setting: {}", songInStatus);
+  private void handleButtonSongInActivity(ButtonInteractionEvent buttonEvent) {
+    log.debug("Processing setting: {}", songInActivity);
 
-    if (settings.isSongInStatus() == true) {
-      settings.setSongInStatus(false);
+    if (settings.isSongInActivity() == true) {
+      settings.setSongInActivity(false);
     } else {
-      settings.setSongInStatus(true);
+      settings.setSongInActivity(true);
     }
 
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-    String info = settings.isSongInStatus() == true ? "Yes" : "No";
-    buttonEvent.reply("Song in status set to: " + info).setEphemeral(true).queue();
+    String info = settings.isSongInActivity() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no");
+    buttonEvent.reply(settingProvider.getText("set_showing_song_command.message.set_activity") + ": " + info)
+        .setEphemeral(true).queue();
   }
 
   private void handleButtonSongInTopic(ButtonInteractionEvent buttonEvent) {
@@ -180,8 +192,10 @@ public class SetShowingSongCommand extends BotCommand {
     }
 
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-    String info = settings.isSongInTopic() == true ? "Yes" : "No";
-    buttonEvent.reply("Song in topic set to: " + info).setEphemeral(true).queue();
+    String info = settings.isSongInTopic() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no");
+    buttonEvent.reply(settingProvider.getText("set_showing_song_command.message.set_topic") + ": " + info)
+        .setEphemeral(true).queue();
   }
 
   private void handleButtonSongInTextChannel(ButtonInteractionEvent buttonEvent) {
@@ -194,18 +208,20 @@ public class SetShowingSongCommand extends BotCommand {
     }
 
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-    String info = settings.isSongInTextChannel() == true ? "Yes" : "No";
-    buttonEvent.reply("Song in text channel set to: " + info).setEphemeral(true).queue();
+    String info = settings.isSongInTextChannel() == true ? settingProvider.getText("setting.text.yes")
+        : settingProvider.getText("setting.text.no");
+    buttonEvent.reply(settingProvider.getText("set_showing_song_command.message.set_text_channel") + ": " + info)
+        .setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 }

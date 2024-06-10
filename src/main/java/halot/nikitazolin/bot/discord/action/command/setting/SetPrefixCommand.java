@@ -18,6 +18,7 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -43,6 +44,7 @@ public class SetPrefixCommand extends BotCommand {
   private final SettingsSaver settingsSaver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "prefix";
   private final String close = "close";
@@ -78,7 +80,7 @@ public class SetPrefixCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Set prefixes for received command";
+    return settingProvider.getText("set_prefix_command.description");
   }
 
   @Override
@@ -110,16 +112,20 @@ public class SetPrefixCommand extends BotCommand {
       return;
     }
 
-    Button closeButton = Button.danger(close, "Close settings");
-    Button addPrefixButton = Button.primary(addPrefix, "Add prefix");
-    Button removePrefixButton = Button.primary(removePrefix, "Remove prefix");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button addPrefixButton = Button.primary(addPrefix, settingProvider.getText("set_prefix_command.button.add_prefix"));
+    Button removePrefixButton = Button.primary(removePrefix,
+        settingProvider.getText("set_prefix_command.button.remove_prefix"));
     List<Button> buttons = List.of(closeButton, addPrefixButton, removePrefixButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Settings prefixes**").append(newLine);
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + settingProvider.getText("set_prefix_command.message.title") + "**");
+    messageContent.append(newLine);
 
     if (settings.getPrefixes() != null && !settings.getPrefixes().isEmpty()) {
-      messageContent.append("Current prefixes:").append(newLine);
+      messageContent.append(settingProvider.getText("set_prefix_command.message.current_prefixes") + ":");
+      messageContent.append(newLine);
 
       for (String prefix : settings.getPrefixes()) {
         messageContent.append(prefix);
@@ -168,9 +174,9 @@ public class SetPrefixCommand extends BotCommand {
   }
 
   private void makeModalAddPrefix(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(addPrefix, "Add prefix")
-        .addActionRow(
-            TextInput.create(addPrefix, "Enter any character", TextInputStyle.SHORT).setRequiredRange(0, 5).build())
+    Modal modal = Modal.create(addPrefix, settingProvider.getText("set_prefix_command.modal.add_prefix_name"))
+        .addActionRow(TextInput.create(addPrefix, settingProvider.getText("set_prefix_command.modal.add_prefix_input"),
+            TextInputStyle.SHORT).setRequiredRange(0, 5).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -178,9 +184,10 @@ public class SetPrefixCommand extends BotCommand {
   }
 
   private void makeModalRemovePrefix(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(removePrefix, "Remove prefix")
-        .addActionRow(TextInput.create(removePrefix, "Enter prefix from list in the message", TextInputStyle.SHORT)
-            .setRequiredRange(0, 5).build())
+    Modal modal = Modal.create(removePrefix, settingProvider.getText("set_prefix_command.modal.remove_prefix_name"))
+        .addActionRow(
+            TextInput.create(removePrefix, settingProvider.getText("set_prefix_command.modal.remove_prefix_input"),
+                TextInputStyle.SHORT).setRequiredRange(0, 5).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -196,12 +203,16 @@ public class SetPrefixCommand extends BotCommand {
         settings.getPrefixes().add(input);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent.reply("**" + input + "**" + " has been added").setEphemeral(true).queue();
+        modalEvent
+            .reply("**" + input + "**" + " " + settingProvider.getText("set_prefix_command.message.add_prefix_success"))
+            .setEphemeral(true).queue();
       } else {
-        modalEvent.reply("Prefix has already been added to the list").setEphemeral(true).queue();
+        modalEvent.reply(settingProvider.getText("set_prefix_command.message.add_prefix_already_exists"))
+            .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply("Prefix not found").setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_prefix_command.message.add_prefix_not_found")).setEphemeral(true)
+          .queue();
     }
   }
 
@@ -213,25 +224,31 @@ public class SetPrefixCommand extends BotCommand {
       settings.getPrefixes().remove(input);
       settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-      modalEvent.reply("**" + input + "**" + " has been removed from this list").setEphemeral(true).queue();
+      modalEvent
+          .reply(
+              "**" + input + "**" + " " + settingProvider.getText("set_prefix_command.message.remove_prefix_success"))
+          .setEphemeral(true).queue();
     } else {
-      modalEvent.reply("**" + input + "**" + " not found in this list").setEphemeral(true).queue();
+      modalEvent
+          .reply(
+              "**" + input + "**" + " " + settingProvider.getText("set_prefix_command.message.remove_prefix_not_found"))
+          .setEphemeral(true).queue();
     }
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 
   private void handleUnknownModal(ModalInteractionEvent modalEvent) {
-    modalEvent.reply("Unknown modal").setEphemeral(true).queue();
+    modalEvent.reply(settingProvider.getText("setting.message.modal.unknown")).setEphemeral(true).queue();
     log.debug("Clicked modal button");
   }
 }

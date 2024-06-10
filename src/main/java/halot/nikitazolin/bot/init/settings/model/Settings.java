@@ -20,7 +20,7 @@ public class Settings {
   private int volume = 100;
   private int aloneTimeUntilStop = 120;
   private boolean stayInChannel = true;
-  private boolean songInStatus = true;
+  private boolean songInActivity = true;
   private boolean songInTopic = false;
   private boolean songInTextChannel = false;
   private boolean updateNotification = true;

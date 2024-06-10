@@ -101,7 +101,7 @@ public class ShowSettingsCommand extends BotCommand {
     embed.addField("Volume", String.valueOf(settings.getVolume()), true);
     embed.addField("Owner ID", settings.getOwnerUserId() != null ? settings.getOwnerUserId().toString() : notSetValue, true);
     embed.addField("Bot status", settings.getBotStatus() != null ? settings.getBotStatus() : notSetValue, true);
-    embed.addField("Song in status", String.valueOf(settings.isSongInStatus()), true);
+    embed.addField("Song in activity", String.valueOf(settings.isSongInActivity()), true);
     embed.addField("Song in topic", String.valueOf(settings.isSongInTopic()), true);
     embed.addField("Song in text channel", String.valueOf(settings.isSongInTextChannel()), true);
     embed.addField("Stay in channel", String.valueOf(settings.isStayInChannel()), true);
