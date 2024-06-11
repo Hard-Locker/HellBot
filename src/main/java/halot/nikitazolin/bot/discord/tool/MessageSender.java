@@ -85,6 +85,15 @@ public class MessageSender {
       return null;
     }
   }
+  
+  public void sendPrivateMessage(User user, MessageCreateData messageCreateData) {
+    MessageCreateData fullMessageCreateData = new MessageCreateBuilder().setContent(messageCreateData.getContent()).build();
+    
+    if (!user.isBot()) {
+      user.openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(fullMessageCreateData).queue(),
+          error -> log.warn("Failed to send a private message to the user: " + user));
+    }
+  }
 
   public void sendPrivateMessage(User user, EmbedBuilder embedBuilder) {
     MessageCreateData messageCreateData = new MessageCreateBuilder().setEmbeds(embedBuilder.build()).build();
