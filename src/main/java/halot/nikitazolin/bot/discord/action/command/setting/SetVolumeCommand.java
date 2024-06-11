@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -185,11 +186,13 @@ public class SetVolumeCommand extends BotCommand {
   }
 
   private void makeModalVolume(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(volume, settingProvider.getText("set_volume_command.modal.set_volume_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_volume_command.modal.set_volume_input_description"))
+        .setMinLength(1).setMaxLength(3).build();
+
     Modal modal = Modal.create(volume, settingProvider.getText("set_volume_command.modal.set_volume_name"))
-        .addActionRow(
-            TextInput.create(volume, settingProvider.getText("set_volume_command.modal.set_volume_input") + " (0-150)",
-                TextInputStyle.SHORT).setRequiredRange(0, 3).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", volume);

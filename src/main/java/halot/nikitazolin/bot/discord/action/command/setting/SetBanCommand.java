@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -175,22 +176,26 @@ public class SetBanCommand extends BotCommand {
   }
 
   private void makeModalBanUser(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(ban, settingProvider.getText("set_ban_command.modal.ban_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_ban_command.modal.ban_input_description")).setMinLength(16)
+        .setMaxLength(20).build();
+
     Modal modal = Modal.create(ban, settingProvider.getText("set_ban_command.modal.ban_name"))
-        .addActionRow(
-            TextInput.create(ban, settingProvider.getText("set_ban_command.modal.ban_input"), TextInputStyle.SHORT)
-                .setRequiredRange(0, 20).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", ban);
   }
 
   private void makeModalUnbanUser(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(unban, settingProvider.getText("set_ban_command.modal.unban_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_ban_command.modal.unban_input_description")).setMinLength(16)
+        .setMaxLength(20).build();
+
     Modal modal = Modal.create(unban, settingProvider.getText("set_ban_command.modal.unban_name"))
-        .addActionRow(
-            TextInput.create(unban, settingProvider.getText("set_ban_command.modal.unban_input"), TextInputStyle.SHORT)
-                .setRequiredRange(0, 20).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", unban);

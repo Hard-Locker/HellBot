@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -175,22 +176,26 @@ public class SetDjCommand extends BotCommand {
   }
 
   private void makeModalAddDj(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(addDj, settingProvider.getText("set_dj_command.modal.add_dj_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_dj_command.modal.add_dj_input_description")).setMinLength(16)
+        .setMaxLength(20).build();
+
     Modal modal = Modal.create(addDj, settingProvider.getText("set_dj_command.modal.add_dj_name"))
-        .addActionRow(
-            TextInput.create(addDj, settingProvider.getText("set_dj_command.modal.add_dj_input"), TextInputStyle.SHORT)
-                .setRequiredRange(0, 20).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", addDj);
   }
 
   private void makeModalRemoveDj(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(removeDj, settingProvider.getText("set_dj_command.modal.remove_dj_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_dj_command.modal.remove_dj_input_description")).setMinLength(16)
+        .setMaxLength(20).build();
+
     Modal modal = Modal.create(removeDj, settingProvider.getText("set_dj_command.modal.remove_dj_name"))
-        .addActionRow(TextInput
-            .create(removeDj, settingProvider.getText("set_dj_command.modal.remove_dj_input"), TextInputStyle.SHORT)
-            .setRequiredRange(0, 20).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", removeDj);

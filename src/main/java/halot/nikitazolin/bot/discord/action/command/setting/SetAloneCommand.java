@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -172,11 +173,13 @@ public class SetAloneCommand extends BotCommand {
   }
 
   private void makeModalAloneTime(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(aloneTime, settingProvider.getText("set_alone_command.modal.alone_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_alone_command.modal.alone_input_description")).setMinLength(1)
+        .setMaxLength(5).build();
+
     Modal modal = Modal.create(aloneTime, settingProvider.getText("set_alone_command.modal.alone_name"))
-        .addActionRow(TextInput
-            .create(aloneTime, settingProvider.getText("set_alone_command.modal.alone_input"), TextInputStyle.SHORT)
-            .setRequiredRange(0, 5).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", aloneTime);

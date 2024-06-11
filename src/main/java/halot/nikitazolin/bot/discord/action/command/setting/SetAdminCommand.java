@@ -27,6 +27,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -176,22 +177,26 @@ public class SetAdminCommand extends BotCommand {
   }
 
   private void makeModalAddAdmin(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(addAdmin, settingProvider.getText("set_admin_command.modal.add_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_admin_command.modal.add_input_description")).setMinLength(16)
+        .setMaxLength(20).build();
+
     Modal modal = Modal.create(addAdmin, settingProvider.getText("set_admin_command.modal.add_name"))
-        .addActionRow(TextInput
-            .create(addAdmin, settingProvider.getText("set_admin_command.modal.add_input"), TextInputStyle.SHORT)
-            .setRequiredRange(0, 20).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", addAdmin);
   }
 
   private void makeModalRemoveAdmin(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(removeAdmin, settingProvider.getText("set_admin_command.modal.remove_name"))
-        .addActionRow(TextInput
-            .create(removeAdmin, settingProvider.getText("set_admin_command.modal.remove_input"), TextInputStyle.SHORT)
-            .setRequiredRange(0, 20).build())
-        .build();
+    TextInput input = TextInput
+        .create(addAdmin, settingProvider.getText("set_admin_command.modal.remove_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_admin_command.modal.remove_input_description")).setMinLength(16)
+        .setMaxLength(20).build();
+
+    Modal modal = Modal.create(addAdmin, settingProvider.getText("set_admin_command.modal.remove_name"))
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", removeAdmin);

@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
@@ -172,41 +173,52 @@ public class SetActivityCommand extends BotCommand {
   }
 
   private void makeModalPlayingActivity(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(playing, settingProvider.getText("set_activity_command.modal.playing_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity_command.modal.playing_input_description")).setMinLength(1)
+        .setMaxLength(100).build();
+
     Modal modal = Modal.create(playing, settingProvider.getText("set_activity_command.modal.playing_name"))
-        .addActionRow(TextInput
-            .create(playing, settingProvider.getText("set_activity_command.modal.playing_input"), TextInputStyle.SHORT)
-            .setRequiredRange(0, 100).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", playing);
   }
 
   private void makeModalStreamingActivity(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(streaming, settingProvider.getText("set_activity_command.modal.streaming_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity_command.modal.streaming_input_description"))
+        .setMinLength(1).setMaxLength(500).build();
+
     Modal modal = Modal.create(streaming, settingProvider.getText("set_activity_command.modal.streaming_name"))
-        .addActionRow(TextInput.create(streaming, settingProvider.getText("set_activity_command.modal.streaming_input"),
-            TextInputStyle.SHORT).setRequiredRange(0, 500).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", streaming);
   }
 
   private void makeModalListeningActivity(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(listening, settingProvider.getText("set_activity_command.modal.listening_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity_command.modal.listening_input_description"))
+        .setMinLength(1).setMaxLength(100).build();
+
     Modal modal = Modal.create(listening, settingProvider.getText("set_activity_command.modal.listening_name"))
-        .addActionRow(TextInput.create(listening, settingProvider.getText("set_activity_command.modal.listening_input"),
-            TextInputStyle.SHORT).setRequiredRange(0, 100).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", listening);
   }
 
   private void makeModalWatchingActivity(ButtonInteractionEvent buttonEvent) {
+    TextInput input = TextInput
+        .create(watching, settingProvider.getText("set_activity_command.modal.watching_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity_command.modal.watching_input_description"))
+        .setMinLength(1).setMaxLength(100).build();
+
     Modal modal = Modal.create(watching, settingProvider.getText("set_activity_command.modal.watching_name"))
-        .addActionRow(TextInput.create(watching, settingProvider.getText("set_activity_command.modal.watching_input"),
-            TextInputStyle.SHORT).setRequiredRange(0, 100).build())
-        .build();
+        .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", watching);
