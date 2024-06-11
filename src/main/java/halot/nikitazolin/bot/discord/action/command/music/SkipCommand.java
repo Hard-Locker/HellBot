@@ -67,8 +67,7 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public String description() {
-//    return musicProvider.getText("skip_command.description");
-    return "Skip track. Optionally, you can specify the position of some tracks to remove them";
+    return musicProvider.getText("skip_command.description");
   }
 
   @Override
@@ -88,7 +87,8 @@ public class SkipCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] { new OptionData(OptionType.STRING, "positions", "Track positions to skip", false) };
+    return new OptionData[] { new OptionData(OptionType.STRING, musicProvider.getText("skip_command.input.name"),
+        musicProvider.getText("skip_command.input.description"), false) };
   }
 
   @Override
@@ -100,9 +100,9 @@ public class SkipCommand extends BotCommand {
       return;
     }
 
-    if (playerService.getQueue().isEmpty() == true) {
+    if (playerService.getQueue().isEmpty() == true && playerService.getAudioPlayer().getPlayingTrack() == null) {
       EmbedBuilder embed = messageFormatter.createWarningEmbed(
-          context.getUser().getAsMention() + " This command can be used if playing queue have tracks");
+          context.getUser().getAsMention() + " " + musicProvider.getText("skip_command.message.empty_queue"));
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
       log.debug("User try skip track in empty queue" + context.getUser());
 
@@ -123,7 +123,8 @@ public class SkipCommand extends BotCommand {
       playerService.skipTracks(positions);
     }
 
-    EmbedBuilder embed = messageFormatter.createInfoEmbed("Track skiped by user: " + context.getUser().getAsMention());
+    EmbedBuilder embed = messageFormatter.createInfoEmbed(
+        musicProvider.getText("skip_command.message.track_skipped") + ": " + context.getUser().getAsMention());
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     log.debug("Track skiped by user: " + context.getUser());

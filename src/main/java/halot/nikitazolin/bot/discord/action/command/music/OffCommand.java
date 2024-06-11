@@ -9,10 +9,11 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.GuildAudioService;
-import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -33,6 +34,7 @@ public class OffCommand extends BotCommand {
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final MusicProvider musicProvider;
 
   private final String commandName = "off";
 
@@ -62,7 +64,7 @@ public class OffCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Stop music, clear playlist, and disconnect from voice channel";
+    return musicProvider.getText("off_command.description");
   }
 
   @Override
@@ -96,8 +98,8 @@ public class OffCommand extends BotCommand {
 
     guildAudioService.stopAudioSending();
 
-    EmbedBuilder embed = messageFormatter
-        .createWarningEmbed("Player was go off by user: " + context.getUser().getAsMention());
+    EmbedBuilder embed = messageFormatter.createWarningEmbed(
+        musicProvider.getText("off_command.message.success") + ": " + context.getUser().getAsMention());
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     log.debug("Player was go off by user: " + context.getUser());

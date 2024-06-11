@@ -15,6 +15,8 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -39,6 +41,8 @@ public class QueueCommand extends BotCommand {
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final MusicProvider musicProvider;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "queue";
   private final String close = "close";
@@ -71,7 +75,7 @@ public class QueueCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Show queue audio playing";
+    return musicProvider.getText("queue_command.description");
   }
 
   @Override
@@ -103,7 +107,7 @@ public class QueueCommand extends BotCommand {
       return;
     }
     
-    Button closeButton = Button.danger(close, "Close settings");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
     Button nextButton = Button.primary(next, Emoji.fromUnicode("U+2192"));
     Button previousButton = Button.primary(previous, Emoji.fromUnicode("U+2190"));
     List<Button> buttons = List.of(closeButton, nextButton, previousButton);
@@ -111,7 +115,7 @@ public class QueueCommand extends BotCommand {
     if (playerService.getQueue().isEmpty() == false) {
       Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), makeMessage(), buttons);
     } else {
-      EmbedBuilder embed = messageFormatter.createInfoEmbed("Queue is empty");
+      EmbedBuilder embed = messageFormatter.createInfoEmbed(musicProvider.getText("queue_command.message.empty"));
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
   }
@@ -130,7 +134,7 @@ public class QueueCommand extends BotCommand {
     BlockingQueue<AudioItemContext> queue = playerService.getQueue();
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Player queue**").append(newLine);
+    StringBuilder messageContent = new StringBuilder("**" + musicProvider.getText("queue_command.message.title") + "**").append(newLine);
 
     messageContent.append("Track in queue: " + queue.size()).append(newLine);
 

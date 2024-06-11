@@ -10,10 +10,13 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
@@ -28,8 +31,10 @@ public class ClearQueueCommand extends BotCommand {
 
   private final PlayerService playerService;
   private final MessageSender messageSender;
+  private final MessageFormatter messageFormatter;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final MusicProvider musicProvider;
 
   private final String commandName = "clear";
 
@@ -59,7 +64,7 @@ public class ClearQueueCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Clear queue";
+    return musicProvider.getText("clear_queue_command.description");
   }
 
   @Override
@@ -92,6 +97,11 @@ public class ClearQueueCommand extends BotCommand {
     }
 
     playerService.clearQueue();
+
+    EmbedBuilder embed = messageFormatter.createInfoEmbed(
+        musicProvider.getText("clear_queue_command.message.success") + ": " + context.getUser().getAsMention());
+    messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+
     log.debug("Queue cleared by user: " + context.getUser());
   }
 

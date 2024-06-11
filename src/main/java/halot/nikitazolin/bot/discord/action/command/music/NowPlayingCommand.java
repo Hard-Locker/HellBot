@@ -66,7 +66,7 @@ public class NowPlayingCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Show now playing audio";
+    return musicProvider.getText("now_playing_command.description");
   }
 
   @Override
@@ -100,7 +100,8 @@ public class NowPlayingCommand extends BotCommand {
 
     if (playerService.getAudioPlayer().getPlayingTrack() != null) {
       AudioTrackInfo audioTrackInfo = playerService.getAudioPlayer().getPlayingTrack().getInfo();
-      EmbedBuilder embed = messageFormatter.createAudioTrackInfoEmbed(audioTrackInfo, "**" + musicProvider.getText("info.now_playing") + "**");
+      EmbedBuilder embed = messageFormatter.createAudioTrackInfoEmbed(audioTrackInfo,
+          "**" + musicProvider.getText("info.now_playing") + "**");
 
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
       log.debug("User show now playing audio. " + "User: " + context.getUser());

@@ -9,10 +9,11 @@ import org.springframework.stereotype.Component;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
-import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -33,6 +34,7 @@ public class StopCommand extends BotCommand {
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final MusicProvider musicProvider;
 
   private final String commandName = "stop";
 
@@ -62,7 +64,7 @@ public class StopCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Stop player and skip current music";
+    return musicProvider.getText("stop_command.description");
   }
 
   @Override
@@ -96,8 +98,8 @@ public class StopCommand extends BotCommand {
 
     playerService.stop();
 
-    EmbedBuilder embed = messageFormatter
-        .createWarningEmbed("Music was stopped by user: " + context.getUser().getAsMention());
+    EmbedBuilder embed = messageFormatter.createWarningEmbed(
+        musicProvider.getText("stop_command.message.success") + ": " + context.getUser().getAsMention());
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     log.debug("Music was stopped by user: " + context.getUser());

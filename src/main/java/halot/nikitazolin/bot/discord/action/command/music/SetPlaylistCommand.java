@@ -19,6 +19,8 @@ import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
@@ -45,6 +47,8 @@ public class SetPlaylistCommand extends BotCommand {
   private final SettingsSaver settingsSaver;
   private final AllowChecker allowChecker;
   private final ActionMessageCollector actionMessageCollector;
+  private final MusicProvider musicProvider;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "setplaylist";
   private final String close = "close";
@@ -80,7 +84,7 @@ public class SetPlaylistCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Set playlists";
+    return musicProvider.getText("set_playlist_command.description");
   }
 
   @Override
@@ -112,22 +116,27 @@ public class SetPlaylistCommand extends BotCommand {
       return;
     }
 
-    Button closeButton = Button.danger(close, "Close settings");
-    Button addPlaylistPathButton = Button.primary(addPlaylist, "Add playlist");
-    Button removePlaylistPathButton = Button.primary(removePlaylist, "Remove playlist");
+    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+    Button addPlaylistPathButton = Button.primary(addPlaylist,
+        musicProvider.getText("set_playlist_command.button.add_playlist"));
+    Button removePlaylistPathButton = Button.primary(removePlaylist,
+        musicProvider.getText("set_playlist_command.button.remove_playlist"));
     List<Button> buttons = List.of(closeButton, addPlaylistPathButton, removePlaylistPathButton);
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**Settings playlists**").append(newLine);
+    StringBuilder messageContent = new StringBuilder();
+    messageContent.append("**" + musicProvider.getText("set_playlist_command.message.title") + "**");
+    messageContent.append(newLine);
 
     Map<String, String> playlists = settings.getPlaylists();
     if (playlists != null && !playlists.isEmpty()) {
-      messageContent.append("Current playlists:").append(newLine);
+      messageContent.append(musicProvider.getText("set_playlist_command.message.current_playlist") + ":");
+      messageContent.append(newLine);
 
       for (Entry<String, String> entry : playlists.entrySet()) {
-        messageContent.append("Name: **");
-        messageContent.append(entry.getKey());
-        messageContent.append("** Path: ");
+        messageContent.append(musicProvider.getText("set_playlist_command.message.name_playlist") + ": ");
+        messageContent.append("**" + entry.getKey() + "**");
+        messageContent.append(" " + musicProvider.getText("set_playlist_command.message.path_playlist") + ": ");
         messageContent.append(entry.getValue());
         messageContent.append(newLine);
       }
@@ -172,13 +181,17 @@ public class SetPlaylistCommand extends BotCommand {
   }
 
   private void makeModalAddPlaylist(ButtonInteractionEvent buttonEvent) {
-    TextInput nameInput = TextInput.create("name", "Playlist name", TextInputStyle.SHORT)
-        .setPlaceholder("Enter future playlist name").setMinLength(1).setMaxLength(50).build();
+    TextInput nameInput = TextInput
+        .create("name", musicProvider.getText("set_playlist_command.modal.add_playlist_name"), TextInputStyle.SHORT)
+        .setPlaceholder(musicProvider.getText("set_playlist_command.modal.add_playlist_name_input")).setMinLength(1)
+        .setMaxLength(50).build();
 
-    TextInput pathInput = TextInput.create("path", "Playlist path", TextInputStyle.SHORT)
-        .setPlaceholder("Enter path to file or folder").setMinLength(1).setMaxLength(2000).build();
+    TextInput pathInput = TextInput
+        .create("path", musicProvider.getText("set_playlist_command.modal.add_playlist_path"), TextInputStyle.SHORT)
+        .setPlaceholder(musicProvider.getText("set_playlist_command.modal.add_playlist_path_input")).setMinLength(1)
+        .setMaxLength(2000).build();
 
-    Modal modal = Modal.create(addPlaylist, "Add playlist")
+    Modal modal = Modal.create(addPlaylist, musicProvider.getText("set_playlist_command.modal.add_name"))
         .addComponents(ActionRow.of(nameInput), ActionRow.of(pathInput)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -186,8 +199,9 @@ public class SetPlaylistCommand extends BotCommand {
   }
 
   private void makeModalRemovePlaylist(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(removePlaylist, "Remove playlist").addActionRow(TextInput
-        .create(removePlaylist, "Enter playlist name to delete", TextInputStyle.SHORT).setRequiredRange(0, 50).build())
+    Modal modal = Modal.create(removePlaylist, musicProvider.getText("set_playlist_command.modal.remove_name"))
+        .addActionRow(TextInput.create(removePlaylist, musicProvider.getText("set_playlist_command.modal.remove_input"),
+            TextInputStyle.SHORT).setRequiredRange(0, 50).build())
         .build();
 
     buttonEvent.replyModal(modal).queue();
@@ -204,12 +218,14 @@ public class SetPlaylistCommand extends BotCommand {
         settings.getPlaylists().put(nameInput, pathInput);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent.reply(nameInput + " has been added to list").setEphemeral(true).queue();
+        modalEvent.reply(nameInput + " " + musicProvider.getText("set_playlist_command.message.add_success"))
+            .setEphemeral(true).queue();
       } else {
-        modalEvent.reply("Playlist with the same name already exists").setEphemeral(true).queue();
+        modalEvent.reply(musicProvider.getText("set_playlist_command.message.add_already_exists")).setEphemeral(true)
+            .queue();
       }
     } else {
-      modalEvent.reply("Internal error").setEphemeral(true).queue();
+      modalEvent.reply(musicProvider.getText("set_playlist_command.message.add_error")).setEphemeral(true).queue();
     }
   }
 
@@ -221,25 +237,27 @@ public class SetPlaylistCommand extends BotCommand {
       settings.getPlaylists().remove(input);
       settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-      modalEvent.reply(input + " has been removed from this list").setEphemeral(true).queue();
+      modalEvent.reply(input + " " + musicProvider.getText("set_playlist_command.message.remove_success"))
+          .setEphemeral(true).queue();
     } else {
-      modalEvent.reply("Playlist not found in this list").setEphemeral(true).queue();
+      modalEvent.reply(musicProvider.getText("set_playlist_command.message.remove_not_found")).setEphemeral(true)
+          .queue();
     }
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Settings closed").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 
   private void handleUnknownModal(ModalInteractionEvent modalEvent) {
-    modalEvent.reply("Unknown modal").setEphemeral(true).queue();
+    modalEvent.reply(settingProvider.getText("setting.message.modal.unknown")).setEphemeral(true).queue();
     log.debug("Clicked modal button");
   }
 }

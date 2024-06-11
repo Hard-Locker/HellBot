@@ -19,6 +19,8 @@ import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.discord.tool.YoutubeLinkManager;
 import halot.nikitazolin.bot.init.settings.model.Settings;
+import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
+import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -43,6 +45,8 @@ public class PlayCommand extends BotCommand {
   private final ActionMessageCollector actionMessageCollector;
   private final YoutubeLinkManager youtubeLinkManager;
   private final AllowChecker allowChecker;
+  private final MusicProvider musicProvider;
+  private final SettingProvider settingProvider;
 
   private final String commandName = "play";
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
@@ -73,7 +77,7 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public String description() {
-    return "Start playing music from link";
+    return musicProvider.getText("play_command.description");
   }
 
   @Override
@@ -93,7 +97,7 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] { new OptionData(OptionType.STRING, "link", "URL with content", false) };
+    return new OptionData[] { new OptionData(OptionType.STRING, musicProvider.getText("play_command.input.name"), musicProvider.getText("play_command.input.description"), false) };
   }
 
   @Override
@@ -121,7 +125,7 @@ public class PlayCommand extends BotCommand {
 
     if (preparedUrls.isEmpty() == false) {
       EmbedBuilder embed = messageFormatter
-          .createSuccessEmbed("Audiotrack(s) added by user: " + context.getUser().getAsMention());
+          .createSuccessEmbed(musicProvider.getText("play_command.message.success") + ": " + context.getUser().getAsMention());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 
@@ -181,18 +185,23 @@ public class PlayCommand extends BotCommand {
 
   private void makeMessageWithButton(BotCommandContext context, String audioTrack, List<String> additionalAudioTracks) {
     log.debug("Preparation a message with proposal to load additional links");
-    String yes = "yes";
-    String no = "no";
-    String title = audioTrack + " have playlist. Download all tacks?";
+    
+    String idYes = "yes";
+    String idNo = "no";
+    String title = audioTrack + " " + musicProvider.getText("play_command.message.proposal") + "?";
+    
     Map<String, Object> additional = new HashMap<>();
     additional.put("links", additionalAudioTracks);
-
-    List<Button> buttons = List.of(Button.primary(yes, "Yes"), Button.danger(no, "No"));
+    
+    Button yesButton = Button.primary(idYes, settingProvider.getText("setting.text.yes"));
+    Button noButton = Button.danger(idNo, settingProvider.getText("setting.text.no"));
+    List<Button> buttons = List.of(yesButton, noButton);
+    
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), title, buttons);
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 60000, context, additional));
 
-    buttonHandlers.put(yes, this::selectYes);
-    buttonHandlers.put(no, this::selectNo);
+    buttonHandlers.put(idYes, this::selectYes);
+    buttonHandlers.put(idNo, this::selectNo);
     log.debug("Shown proposal to load additional links");
   }
 
@@ -218,20 +227,20 @@ public class PlayCommand extends BotCommand {
 
       guildAudioService.getPlayerService().fillQueue(links, context);
 
-      buttonEvent.reply("Additional links loaded").setEphemeral(true).queue();
+      buttonEvent.reply(musicProvider.getText("play_command.message.add_yes")).setEphemeral(true).queue();
       buttonEvent.getMessage().delete().queue();
-      log.debug("Loading additional links");
+      log.debug("Loaded additional links");
     }
   }
 
   private void selectNo(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Additional links NOT loaded").setEphemeral(true).queue();
+    buttonEvent.reply(musicProvider.getText("play_command.message.add_no")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Closed loading additional links");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply("Unknown button").setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("setting.button.close")).setEphemeral(true).queue();
     log.debug("Clicked unknown button");
   }
 }
