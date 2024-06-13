@@ -1,13 +1,18 @@
 package halot.nikitazolin.bot.discord.action.command.music;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.Consumer;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.discord.action.ActionMessageCollector;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.player.AudioItemContext;
 import halot.nikitazolin.bot.discord.audio.player.PlayerService;
@@ -41,6 +46,7 @@ public class QueueCommand extends BotCommand {
   private final MessageSender messageSender;
   private final Settings settings;
   private final AllowChecker allowChecker;
+  private final ActionMessageCollector actionMessageCollector;
   private final MusicProvider musicProvider;
   private final SettingProvider settingProvider;
 
@@ -48,6 +54,9 @@ public class QueueCommand extends BotCommand {
   private final String close = "close";
   private final String next = "nextPage";
   private final String previous = "previousPage";
+
+  private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
+  private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
 
   @Override
   public String name() {
@@ -98,6 +107,7 @@ public class QueueCommand extends BotCommand {
     return new OptionData[] {};
   }
 
+  // TODO
   @Override
   public void execute(BotCommandContext context) {
     if (checkUserAccess(context.getUser()) == false) {
@@ -106,14 +116,26 @@ public class QueueCommand extends BotCommand {
 
       return;
     }
-    
-    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button nextButton = Button.primary(next, Emoji.fromUnicode("U+2192"));
-    Button previousButton = Button.primary(previous, Emoji.fromUnicode("U+2190"));
-    List<Button> buttons = List.of(closeButton, nextButton, previousButton);
+
+//    Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
+//    Button nextButton = Button.primary(next, Emoji.fromUnicode("U+2192"));
+//    Button previousButton = Button.primary(previous, Emoji.fromUnicode("U+2190"));
+//    List<Button> buttons = List.of(closeButton, nextButton, previousButton);
+//
+//    if (playerService.getQueue().isEmpty() == false) {
+//      Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), makeMessage(), buttons);
+//      buttonHandlers.put(close, this::selectClose);
+////      modalHandlers.put(input, this::handleModalInput);
+//      actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
+//    } else {
+//      EmbedBuilder embed = messageFormatter.createInfoEmbed(musicProvider.getText("queue_command.message.empty"));
+//      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
+//    }
 
     if (playerService.getQueue().isEmpty() == false) {
-      Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), makeMessage(), buttons);
+      EmbedBuilder embed = messageFormatter.createInfoEmbed(
+          musicProvider.getText("queue_command.message.size") + ": " + playerService.getQueue().size());
+      messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     } else {
       EmbedBuilder embed = messageFormatter.createInfoEmbed(musicProvider.getText("queue_command.message.empty"));
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
@@ -122,25 +144,57 @@ public class QueueCommand extends BotCommand {
 
   @Override
   public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
-    return;
+    if (checkUserAccess(buttonEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(buttonEvent.getUser());
+      log.debug("User {} does not have access to use: {}", buttonEvent.getUser(), commandName);
+
+      return;
+    }
+
+    String componentId = buttonEvent.getComponentId();
+    buttonHandlers.getOrDefault(componentId, this::handleUnknownButton).accept(buttonEvent);
   }
 
   @Override
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
-    return;
+    if (checkUserAccess(modalEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(modalEvent.getUser());
+      log.debug("User {} does not have access to use: {}", modalEvent.getUser(), commandName);
+
+      return;
+    }
+
+    String modalId = modalEvent.getModalId();
+    modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
   private MessageCreateData makeMessage() {
     BlockingQueue<AudioItemContext> queue = playerService.getQueue();
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**" + musicProvider.getText("queue_command.message.title") + "**").append(newLine);
+    StringBuilder messageContent = new StringBuilder("**" + musicProvider.getText("queue_command.message.title") + "**")
+        .append(newLine);
 
     messageContent.append("Track in queue: " + queue.size()).append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    
+
     return messageCreateData;
   }
 
+  private void selectClose(ButtonInteractionEvent buttonEvent) {
+    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
+    buttonEvent.getMessage().delete().queue();
+    log.debug("Settings closed");
+  }
+
+  private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
+    buttonEvent.reply(settingProvider.getText("setting.message.button.unknown")).setEphemeral(true).queue();
+    log.debug("Clicked unknown button");
+  }
+
+  private void handleUnknownModal(ModalInteractionEvent modalEvent) {
+    modalEvent.reply(settingProvider.getText("setting.message.modal.unknown")).setEphemeral(true).queue();
+    log.debug("Clicked modal button");
+  }
 }
