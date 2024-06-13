@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import org.springframework.context.annotation.Scope;
@@ -14,10 +15,10 @@ import halot.nikitazolin.bot.discord.action.BotCommandContext;
 import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.action.model.BotCommand;
 import halot.nikitazolin.bot.discord.audio.GuildAudioService;
+import halot.nikitazolin.bot.discord.audio.loader.InputLinkLoader;
 import halot.nikitazolin.bot.discord.tool.AllowChecker;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
-import halot.nikitazolin.bot.discord.tool.YoutubeLinkManager;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
@@ -43,12 +44,15 @@ public class PlayCommand extends BotCommand {
   private final MessageSender messageSender;
   private final Settings settings;
   private final ActionMessageCollector actionMessageCollector;
-  private final YoutubeLinkManager youtubeLinkManager;
   private final AllowChecker allowChecker;
   private final MusicProvider musicProvider;
   private final SettingProvider settingProvider;
+  private final InputLinkLoader inputLinkLoader;
 
   private final String commandName = "play";
+  private final String idYes = "yes";
+  private final String idNo = "no";
+  private final String idlinks = "links";
   private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
 
   @Override
@@ -97,7 +101,8 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] { new OptionData(OptionType.STRING, musicProvider.getText("play_command.input.name"), musicProvider.getText("play_command.input.description"), false) };
+    return new OptionData[] { new OptionData(OptionType.STRING, musicProvider.getText("play_command.input.name"),
+        musicProvider.getText("play_command.input.description"), false) };
   }
 
   @Override
@@ -116,7 +121,7 @@ public class PlayCommand extends BotCommand {
     }
 
     List<String> inputLinks = context.getCommandArguments().getString();
-    List<String> preparedUrls = processingInputLinks(inputLinks);
+    List<String> preparedUrls = inputLinkLoader.processingInputLinks(inputLinks);
 
     // Only adding URL to queue
     guildAudioService.getPlayerService().fillQueue(preparedUrls, context);
@@ -124,14 +129,20 @@ public class PlayCommand extends BotCommand {
     guildAudioService.getPlayerService().play();
 
     if (preparedUrls.isEmpty() == false) {
-      EmbedBuilder embed = messageFormatter
-          .createSuccessEmbed(musicProvider.getText("play_command.message.success") + ": " + context.getUser().getAsMention());
+      EmbedBuilder embed = messageFormatter.createSuccessEmbed(
+          musicProvider.getText("play_command.message.success") + ": " + context.getUser().getAsMention());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 
     // If input links contains YouTube mix/playlist, bot will offer to load all
     // links from playlist.
-    checkAndHandlePlaylistLink(context, inputLinks);
+    CompletableFuture.runAsync(() -> {
+      for (String link : inputLinks) {
+        if (inputLinkLoader.isPlaylist(link)) {
+          makeMessageWithButton(context, link);
+        }
+      }
+    });
 
     log.debug("User added links to playing music. " + "User: " + context.getUser());
   }
@@ -154,49 +165,17 @@ public class PlayCommand extends BotCommand {
     return;
   }
 
-  private List<String> processingInputLinks(List<String> links) {
-    List<String> preparedLinks = new ArrayList<>();
-
-    for (String link : links) {
-      if (youtubeLinkManager.isYouTubeUrl(link)) {
-        String simpleLink = youtubeLinkManager.extractSimpleUrl(link);
-        preparedLinks.add(simpleLink);
-        log.debug("Exctracted simlpe URL: {} from link: {}", simpleLink, link);
-      } else {
-        preparedLinks.add(link);
-        log.debug("Added link: {}", link);
-      }
-    }
-
-    return preparedLinks;
-  }
-
-  private void checkAndHandlePlaylistLink(BotCommandContext context, List<String> links) {
-    for (String link : links) {
-      if (youtubeLinkManager.isYouTubePlaylist(link)) {
-        List<String> additionalLinks = youtubeLinkManager.extractVideoLinks(link);
-        additionalLinks.remove(0);
-        log.debug("Link have playlist. Link: {}", link);
-
-        makeMessageWithButton(context, link, additionalLinks);
-      }
-    }
-  }
-
-  private void makeMessageWithButton(BotCommandContext context, String audioTrack, List<String> additionalAudioTracks) {
+  private void makeMessageWithButton(BotCommandContext context, String link) {
     log.debug("Preparation a message with proposal to load additional links");
-    
-    String idYes = "yes";
-    String idNo = "no";
-    String title = audioTrack + " " + musicProvider.getText("play_command.message.proposal") + "?";
-    
+
+    String title = link + " " + musicProvider.getText("play_command.message.proposal") + "?";
     Map<String, Object> additional = new HashMap<>();
-    additional.put("links", additionalAudioTracks);
-    
+    additional.put(idlinks, List.of(link));
+
     Button yesButton = Button.primary(idYes, settingProvider.getText("setting.text.yes"));
     Button noButton = Button.danger(idNo, settingProvider.getText("setting.text.no"));
     List<Button> buttons = List.of(yesButton, noButton);
-    
+
     Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), title, buttons);
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 60000, context, additional));
 
@@ -207,30 +186,11 @@ public class PlayCommand extends BotCommand {
 
   private void selectYes(ButtonInteractionEvent buttonEvent) {
     log.debug("User select loading additional links");
-    ActionMessage actionMessage = actionMessageCollector.findMessage(buttonEvent.getMessageIdLong());
 
-    if (actionMessage != null) {
-      BotCommandContext context = actionMessage.getContext();
-      Map<String, Object> additional = actionMessage.getAdditionalData();
-      List<String> links = new ArrayList<>();
-      Object linksObject = additional.get("links");
+    buttonEvent.getMessage().delete().queue();
+    buttonEvent.reply(musicProvider.getText("play_command.message.adding")).setEphemeral(true).queue();
 
-      if (linksObject instanceof List<?>) {
-        List<?> rawList = (List<?>) linksObject;
-
-        for (Object item : rawList) {
-          if (item instanceof String) {
-            links.add((String) item);
-          }
-        }
-      }
-
-      guildAudioService.getPlayerService().fillQueue(links, context);
-
-      buttonEvent.reply(musicProvider.getText("play_command.message.add_yes")).setEphemeral(true).queue();
-      buttonEvent.getMessage().delete().queue();
-      log.debug("Loaded additional links");
-    }
+    inputLinkLoader.loadAdditionalLink(buttonEvent.getMessageIdLong(), idlinks);
   }
 
   private void selectNo(ButtonInteractionEvent buttonEvent) {

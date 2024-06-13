@@ -16,7 +16,14 @@ public class ActionMessage {
   private final long expireTime;
   private BotCommandContext context;
   private Map<String, Object> additionalData = new HashMap<>();
-  
+
+  public ActionMessage(Long messageId, String commandName, long expireTime, BotCommandContext context) {
+    this.messageId = messageId;
+    this.commandName = commandName;
+    this.expireTime = expireTime;
+    this.context = context;
+  }
+
   public ActionMessage(Long messageId, String commandName, long expireTime, BotCommandContext context, Map<String, Object> additional) {
     this.messageId = messageId;
     this.commandName = commandName;
