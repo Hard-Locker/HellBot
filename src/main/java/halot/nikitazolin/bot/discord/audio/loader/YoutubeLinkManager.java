@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.tool;
+package halot.nikitazolin.bot.discord.audio.loader;
 
 import java.time.Duration;
 import java.util.ArrayList;

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import halot.nikitazolin.bot.discord.jda.JdaMaker;
 import halot.nikitazolin.bot.discord.listener.JdaListenerService;
+import halot.nikitazolin.bot.discord.listener.UpdateNotifier;
 import halot.nikitazolin.bot.discord.tool.StatusManager;
-import halot.nikitazolin.bot.discord.tool.UpdateNotifier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

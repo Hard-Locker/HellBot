@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.tool;
+package halot.nikitazolin.bot.discord.listener;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

@@ -11,7 +11,6 @@ import halot.nikitazolin.bot.discord.action.model.ActionMessage;
 import halot.nikitazolin.bot.discord.audio.GuildAudioService;
 import halot.nikitazolin.bot.discord.tool.MessageFormatter;
 import halot.nikitazolin.bot.discord.tool.MessageSender;
-import halot.nikitazolin.bot.discord.tool.YoutubeLinkManager;
 import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +23,18 @@ public class InputLinkLoader {
 
   private final GuildAudioService guildAudioService;
   private final ActionMessageCollector actionMessageCollector;
-  private final YoutubeLinkManager youtubeLinkManager;
   private final MessageFormatter messageFormatter;
   private final MessageSender messageSender;
   private final MusicProvider musicProvider;
+  private final YoutubeLinkManager youtubeLinkManager;
+  private final LocalLinkManager localLinkManager;
 
   public boolean isPlaylist(String link) {
     if (youtubeLinkManager.isYouTubePlaylist(link)) {
+      return true;
+    }
+
+    if (localLinkManager.isLocalDirectory(link) && localLinkManager.hasAudioFiles(link)) {
       return true;
     }
 
@@ -60,6 +64,10 @@ public class InputLinkLoader {
 
       List<String> extractedUrls = extractPlaylistLinks(links);
       guildAudioService.getPlayerService().fillQueue(extractedUrls, actionMessage.getContext());
+
+      if (guildAudioService.getPlayerService().getAudioPlayer().getPlayingTrack() == null) {
+        guildAudioService.getPlayerService().play();
+      }
 
       EmbedBuilder embed = messageFormatter
           .createSuccessEmbed(extractedUrls.size() + " " + musicProvider.getText("play_command.message.adding_success")
@@ -100,6 +108,12 @@ public class InputLinkLoader {
         extractedLinks.addAll(youtubeLinkManager.extractVideoLinks(link));
         extractedLinks.remove(0);
         log.debug("Link have playlist. Link: {}", link);
+      }
+
+      if (localLinkManager.isLocalDirectory(link)) {
+        List<String> audioFiles = localLinkManager.listAudioFiles(link);
+        extractedLinks.addAll(audioFiles);
+        log.debug("Link is a local directory. Link: {}, audio files found: {}", link, audioFiles.size());
       }
     }
 

@@ -1,4 +1,4 @@
-package halot.nikitazolin.bot.discord.tool;
+package halot.nikitazolin.bot.discord.listener;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,6 +7,9 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import halot.nikitazolin.bot.discord.tool.DiscordDataReceiver;
+import halot.nikitazolin.bot.discord.tool.MessageFormatter;
+import halot.nikitazolin.bot.discord.tool.MessageSender;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider;
 import halot.nikitazolin.bot.util.VersionChecker;
