@@ -1,5 +1,6 @@
 package halot.nikitazolin.bot.discord.audio.player;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.context.annotation.Scope;
@@ -121,6 +122,13 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
       guildAudioService.stopAudioSending();
     }
 
+    // If track was a temporary file (message attachment), file will be deleted
+    // after loading
+    if (endReason == AudioTrackEndReason.FINISHED || endReason == AudioTrackEndReason.STOPPED
+        || endReason == AudioTrackEndReason.CLEANUP || endReason == AudioTrackEndReason.LOAD_FAILED) {
+      deleteTempFile(track.getIdentifier());
+    }
+
     if (endReason == AudioTrackEndReason.FINISHED) {
       log.trace("Track ended, try start new track");
       playerService.play();
@@ -149,6 +157,18 @@ public class TrackScheduler extends AudioEventAdapter implements AudioEventListe
 
     for (TextChannel textChannel : textChannels) {
       textChannel.getManager().setTopic(topic).queue();
+    }
+  }
+
+  private void deleteTempFile(String filePath) {
+    if (filePath.contains("/src/main/resources/temp/") || filePath.contains("\\src\\main\\resources\\temp\\")) {
+      File file = new File(filePath);
+
+      if (file.exists() && file.delete()) {
+        log.debug("Deleted file: " + file.getPath());
+      } else {
+        log.debug("Failed to delete file: " + file.getPath());
+      }
     }
   }
 }

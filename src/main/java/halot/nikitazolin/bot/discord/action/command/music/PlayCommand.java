@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -121,21 +122,25 @@ public class PlayCommand extends BotCommand {
     }
 
     List<String> inputLinks = context.getCommandArguments().getString();
+    List<Attachment> inputAttachments = context.getCommandArguments().getAttachment();
     List<String> preparedUrls = inputLinkLoader.processingInputLinks(inputLinks);
+    List<String> preparedAttachments = inputLinkLoader.processingInputAttachments(inputAttachments);
 
-    // Only adding URL to queue
+    // Only fill queue
     guildAudioService.getPlayerService().fillQueue(preparedUrls, context);
-    // Getting a URL from the queue and trying to play it
-    guildAudioService.getPlayerService().play();
+    guildAudioService.getPlayerService().fillQueue(preparedAttachments, context);
 
-    if (preparedUrls.isEmpty() == false) {
+    // Getting a link from the queue and trying to play it
+    if (guildAudioService.getPlayerService().getQueue().isEmpty() == false) {
+      guildAudioService.getPlayerService().play();
+
       EmbedBuilder embed = messageFormatter.createSuccessEmbed(
           musicProvider.getText("play_command.message.success") + ": " + context.getUser().getAsMention());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 
-    // If input links contains YouTube mix/playlist, bot will offer to load all
-    // links from playlist.
+    // If input links contains additional tracks, bot will offer to load all
+    // additional tracks
     CompletableFuture.runAsync(() -> {
       for (String link : inputLinks) {
         if (inputLinkLoader.isPlaylist(link)) {

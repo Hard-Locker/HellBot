@@ -115,7 +115,10 @@ public class PlayerService implements AudioSendHandler {
 
   public void skipTrack() {
     audioPlayer.stopTrack();
-    play();
+
+    if (queue.isEmpty() == false) {
+      play();
+    }
   }
 
   public void skipTracks(List<Integer> positions) {
@@ -167,6 +170,11 @@ public class PlayerService implements AudioSendHandler {
   }
 
   public void fillQueue(List<String> links, BotCommandContext context) {
+    if (links.isEmpty() == true) {
+      log.debug("Empty input");
+      return;
+    }
+
     for (String link : links) {
       AudioItemContext audioItemContext = new AudioItemContext(link, context);
       boolean result = queue.offer(audioItemContext);

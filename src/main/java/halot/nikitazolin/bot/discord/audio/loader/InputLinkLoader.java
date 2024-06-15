@@ -1,8 +1,13 @@
 package halot.nikitazolin.bot.discord.audio.loader;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
 
@@ -15,6 +20,7 @@ import halot.nikitazolin.bot.localization.action.command.music.MusicProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message.Attachment;
 
 @Component
 @Slf4j
@@ -86,6 +92,10 @@ public class InputLinkLoader {
   public List<String> processingInputLinks(List<String> rawLinks) {
     List<String> preparedLinks = new ArrayList<>();
 
+    if (rawLinks.isEmpty() == true) {
+      return new ArrayList<>();
+    }
+
     for (String link : rawLinks) {
       if (youtubeLinkManager.isYouTubeUrl(link)) {
         String simpleLink = youtubeLinkManager.extractSimpleUrl(link);
@@ -98,6 +108,103 @@ public class InputLinkLoader {
     }
 
     return preparedLinks;
+  }
+
+//  public List<String> processingInputAttachments(List<Attachment> attachments) {
+//    List<String> innerLinks = new ArrayList<>();
+//
+//    if (attachments.isEmpty()) {
+//      return innerLinks;
+//    }
+//
+//    List<CompletableFuture<Void>> futures = attachments.stream().filter(this::isAudioAttachment)
+//        .map(attachment -> processAttachment(attachment, innerLinks)).toList();
+//
+//    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+//
+//    return innerLinks;
+//  }
+
+  public List<String> processingInputAttachments(List<Attachment> attachments) {
+    List<Path> filePaths = new ArrayList<>();
+
+    if (attachments.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    List<CompletableFuture<Path>> futures = attachments.stream().filter(this::isAudioAttachment)
+        .map(this::processAttachment).toList();
+
+    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+    for (CompletableFuture<Path> future : futures) {
+      try {
+        Path path = future.get();
+
+        if (path != null) {
+          filePaths.add(path);
+        }
+      } catch (Exception e) {
+        log.error("Failed to get future result", e);
+      }
+    }
+
+    return filePaths.stream().map(Path::toString).toList();
+  }
+
+  private boolean isAudioAttachment(Attachment attachment) {
+    String extension = "." + attachment.getFileExtension();
+    return localLinkManager.isAudioFile(extension);
+  }
+
+//  private CompletableFuture<Void> processAttachment(Attachment attachment, List<String> innerLinks) {
+//    try {
+//      File tempDir = new File("src/main/resources/temp");
+//
+//      if (!tempDir.exists()) {
+//        tempDir.mkdirs();
+//      }
+//
+//      String extension = "." + attachment.getFileExtension();
+//      Path tempFile = Files.createTempFile(tempDir.toPath(), "audio_", extension);
+//
+//      return attachment.getProxy().downloadToFile(tempFile.toFile()).thenAccept(file -> {
+//        log.debug("File downloaded: " + file.getPath());
+//        innerLinks.add(file.getPath());
+//        file.deleteOnExit();
+//      }).exceptionally(e -> {
+//        log.error("Failed to download file", e);
+//        return null;
+//      });
+//    } catch (IOException e) {
+//      log.error("Failed to create temp file", e);
+//      return CompletableFuture.completedFuture(null);
+//    }
+//  }
+
+  private CompletableFuture<Path> processAttachment(Attachment attachment) {
+    try {
+      File tempDir = new File("src/main/resources/temp");
+
+      if (!tempDir.exists()) {
+        tempDir.mkdirs();
+      }
+
+      String extension = "." + attachment.getFileExtension();
+      Path tempFile = Files.createTempFile(tempDir.toPath(), "audio_", extension);
+
+      return attachment.getProxy().downloadToFile(tempFile.toFile()).thenApply(file -> {
+        log.debug("File downloaded: " + file.getPath());
+        file.deleteOnExit();
+        return file.toPath();
+      }).exceptionally(e -> {
+        log.error("Failed to download file", e);
+        return null;
+      });
+    } catch (IOException e) {
+      log.error("Failed to create temp file", e);
+      return CompletableFuture.completedFuture(null);
+    }
   }
 
   private List<String> extractPlaylistLinks(List<String> rawLinks) {

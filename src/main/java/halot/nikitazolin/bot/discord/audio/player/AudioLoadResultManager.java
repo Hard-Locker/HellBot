@@ -25,7 +25,6 @@ public class AudioLoadResultManager implements AudioLoadResultHandler {
   @Override
   public void trackLoaded(AudioTrack track) {
     audioPlayer.playTrack(track);
-
     log.debug("Play track: " + track);
 
     saveSongHistoryToDb(track);
@@ -33,17 +32,17 @@ public class AudioLoadResultManager implements AudioLoadResultHandler {
 
   @Override
   public void playlistLoaded(AudioPlaylist playlist) {
-
+    log.debug("Loaded playlist");
   }
 
   @Override
   public void noMatches() {
-
+    log.debug("Not found music");
   }
 
   @Override
   public void loadFailed(FriendlyException exception) {
-
+    log.debug("Failed to load music");
   }
 
   private void saveSongHistoryToDb(AudioTrack track) {

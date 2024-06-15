@@ -44,6 +44,12 @@ public class LocalLinkManager {
     }
   }
 
+  public boolean isAudioFile(String file) {
+    String lowerCaseFile = file.toLowerCase();
+    return lowerCaseFile.endsWith(".flac") || lowerCaseFile.endsWith(".mp3") || lowerCaseFile.endsWith(".mp4")
+        || lowerCaseFile.endsWith(".m4a") || lowerCaseFile.endsWith(".ogg") || lowerCaseFile.endsWith(".wav");
+  }
+
   private String extractDirectoryPathFromFile(String link) {
     Path path = Paths.get(link);
 
@@ -52,11 +58,5 @@ public class LocalLinkManager {
     }
 
     return link;
-  }
-
-  private boolean isAudioFile(String file) {
-    String lowerCaseFile = file.toLowerCase();
-    return lowerCaseFile.endsWith(".flac") || lowerCaseFile.endsWith(".mp3") || lowerCaseFile.endsWith(".mp4")
-        || lowerCaseFile.endsWith(".m4a") || lowerCaseFile.endsWith(".ogg") || lowerCaseFile.endsWith(".wav");
   }
 }
