@@ -1,6 +1,8 @@
 package halot.nikitazolin.bot.discord.audio.loader;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,8 +18,23 @@ import lombok.extern.slf4j.Slf4j;
 public class LocalLinkManager {
 
   public boolean isLocalDirectory(String link) {
-    Path path = Paths.get(link);
-    return Files.exists(path);
+    try {
+      URI uri = new URI(link);
+      if (isLocalUri(uri)) {
+        return isLocalPath(Paths.get(uri));
+      }
+    } catch (URISyntaxException e) {
+      return isLocalPath(Paths.get(link));
+    } catch (Exception e) {
+      log.error("Error with checking path: {}", link, e);
+    }
+    return false;
+  }
+
+  public boolean isAudioFile(String file) {
+    String lowerCaseFile = file.toLowerCase();
+    return lowerCaseFile.endsWith(".flac") || lowerCaseFile.endsWith(".mp3") || lowerCaseFile.endsWith(".mp4")
+        || lowerCaseFile.endsWith(".m4a") || lowerCaseFile.endsWith(".ogg") || lowerCaseFile.endsWith(".wav");
   }
 
   public boolean hasAudioFiles(String path) {
@@ -44,12 +61,6 @@ public class LocalLinkManager {
     }
   }
 
-  public boolean isAudioFile(String file) {
-    String lowerCaseFile = file.toLowerCase();
-    return lowerCaseFile.endsWith(".flac") || lowerCaseFile.endsWith(".mp3") || lowerCaseFile.endsWith(".mp4")
-        || lowerCaseFile.endsWith(".m4a") || lowerCaseFile.endsWith(".ogg") || lowerCaseFile.endsWith(".wav");
-  }
-
   private String extractDirectoryPathFromFile(String link) {
     Path path = Paths.get(link);
 
@@ -58,5 +69,18 @@ public class LocalLinkManager {
     }
 
     return link;
+  }
+
+  private boolean isLocalUri(URI uri) {
+    return !uri.isAbsolute() || "file".equals(uri.getScheme());
+  }
+
+  private boolean isLocalPath(Path path) {
+    try {
+      return Files.exists(path) && Files.isDirectory(path);
+    } catch (Exception e) {
+      log.error("Error with checking path: {}", path, e);
+      return false;
+    }
   }
 }

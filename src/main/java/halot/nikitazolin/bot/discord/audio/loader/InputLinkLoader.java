@@ -110,21 +110,6 @@ public class InputLinkLoader {
     return preparedLinks;
   }
 
-//  public List<String> processingInputAttachments(List<Attachment> attachments) {
-//    List<String> innerLinks = new ArrayList<>();
-//
-//    if (attachments.isEmpty()) {
-//      return innerLinks;
-//    }
-//
-//    List<CompletableFuture<Void>> futures = attachments.stream().filter(this::isAudioAttachment)
-//        .map(attachment -> processAttachment(attachment, innerLinks)).toList();
-//
-//    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-//
-//    return innerLinks;
-//  }
-
   public List<String> processingInputAttachments(List<Attachment> attachments) {
     List<Path> filePaths = new ArrayList<>();
 
@@ -156,31 +141,6 @@ public class InputLinkLoader {
     String extension = "." + attachment.getFileExtension();
     return localLinkManager.isAudioFile(extension);
   }
-
-//  private CompletableFuture<Void> processAttachment(Attachment attachment, List<String> innerLinks) {
-//    try {
-//      File tempDir = new File("src/main/resources/temp");
-//
-//      if (!tempDir.exists()) {
-//        tempDir.mkdirs();
-//      }
-//
-//      String extension = "." + attachment.getFileExtension();
-//      Path tempFile = Files.createTempFile(tempDir.toPath(), "audio_", extension);
-//
-//      return attachment.getProxy().downloadToFile(tempFile.toFile()).thenAccept(file -> {
-//        log.debug("File downloaded: " + file.getPath());
-//        innerLinks.add(file.getPath());
-//        file.deleteOnExit();
-//      }).exceptionally(e -> {
-//        log.error("Failed to download file", e);
-//        return null;
-//      });
-//    } catch (IOException e) {
-//      log.error("Failed to create temp file", e);
-//      return CompletableFuture.completedFuture(null);
-//    }
-//  }
 
   private CompletableFuture<Path> processAttachment(Attachment attachment) {
     try {

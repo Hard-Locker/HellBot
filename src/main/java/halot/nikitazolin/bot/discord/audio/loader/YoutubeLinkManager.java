@@ -27,12 +27,14 @@ public class YoutubeLinkManager {
     WebDriver webDriver = new ChromeDriver(options);
 
     List<String> videoLinks = new ArrayList<>();
+
     try {
       webDriver.get(playlistUrl);
       webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5L));
 
-      List<WebElement> videoElements = webDriver
-          .findElements(By.cssSelector("ytd-playlist-panel-video-renderer a#wc-endpoint"));
+//      String selector = "ytd-playlist-panel-renderer a#wc-endpoint";
+      String selector = "ytd-playlist-panel-video-renderer a#wc-endpoint";
+      List<WebElement> videoElements = webDriver.findElements(By.cssSelector(selector));
       log.debug("Found {} video elements", videoElements.size());
 
       for (WebElement videoElement : videoElements) {
