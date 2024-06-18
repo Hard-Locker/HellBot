@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -140,7 +141,7 @@ public class SetUpdateCommand extends BotCommand {
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(enableUpdateNotifier, this::handleButtonEnable);
@@ -162,7 +163,13 @@ public class SetUpdateCommand extends BotCommand {
     buttonHandlers.getOrDefault(componentId, this::handleUnknownButton).accept(buttonEvent);
   }
 
+  @Override
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
+    return;
+  }
+
+  @Override
+  public void stringSelectProcessing(StringSelectInteractionEvent stringSelectEvent) {
     return;
   }
 

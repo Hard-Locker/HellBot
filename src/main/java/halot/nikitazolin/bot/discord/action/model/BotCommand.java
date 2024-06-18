@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public abstract class BotCommand {
@@ -32,4 +33,6 @@ public abstract class BotCommand {
   public abstract void buttonClickProcessing(ButtonInteractionEvent buttonEvent);
 
   public abstract void modalInputProcessing(ModalInteractionEvent modalEvent);
+
+  public abstract void stringSelectProcessing(StringSelectInteractionEvent stringSelectEvent);
 }

@@ -7,12 +7,14 @@ import halot.nikitazolin.bot.discord.listener.manager.GenericGuildVoiceEventMana
 import halot.nikitazolin.bot.discord.listener.manager.MessageReceivedEventManager;
 import halot.nikitazolin.bot.discord.listener.manager.ModalInteractionEventManager;
 import halot.nikitazolin.bot.discord.listener.manager.SlashCommandInteractionEventManager;
+import halot.nikitazolin.bot.discord.listener.manager.StringSelectInteractionEventManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -25,6 +27,7 @@ public class EventsListener extends ListenerAdapter {
   private final MessageReceivedEventManager messageReceivedEventManager;
   private final ButtonEventManager buttonEventManager;
   private final ModalInteractionEventManager modalInteractionEventManager;
+  private final StringSelectInteractionEventManager stringSelectInteractionEventManager;
   private final GenericGuildVoiceEventManager genericGuildVoiceEventManager;
 
   @Override
@@ -49,6 +52,12 @@ public class EventsListener extends ListenerAdapter {
   public void onModalInteraction(ModalInteractionEvent modalInteractionEvent) {
     log.debug("Call event: {}", modalInteractionEvent);
     modalInteractionEventManager.processingEvent(modalInteractionEvent);
+  }
+  
+  @Override
+  public void onStringSelectInteraction(StringSelectInteractionEvent stringSelectInteractionEvent) {
+    log.debug("Call event: {}", stringSelectInteractionEvent);
+    stringSelectInteractionEventManager.processingEvent(stringSelectInteractionEvent);
   }
 
   @Override

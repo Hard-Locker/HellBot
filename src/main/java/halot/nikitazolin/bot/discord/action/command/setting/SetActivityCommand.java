@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -131,7 +132,7 @@ public class SetActivityCommand extends BotCommand {
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(playing, this::makeModalPlayingActivity);
@@ -160,6 +161,7 @@ public class SetActivityCommand extends BotCommand {
     buttonHandlers.getOrDefault(componentId, this::handleUnknownButton).accept(buttonEvent);
   }
 
+  @Override
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
     if (checkUserAccess(modalEvent.getUser()) == false) {
       messageSender.sendPrivateMessageAccessError(modalEvent.getUser());
@@ -170,6 +172,11 @@ public class SetActivityCommand extends BotCommand {
 
     String modalId = modalEvent.getModalId();
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
+  }
+
+  @Override
+  public void stringSelectProcessing(StringSelectInteractionEvent stringSelectEvent) {
+    return;
   }
 
   private void makeModalPlayingActivity(ButtonInteractionEvent buttonEvent) {

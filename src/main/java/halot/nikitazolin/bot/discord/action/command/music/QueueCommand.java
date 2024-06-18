@@ -30,6 +30,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -166,6 +167,11 @@ public class QueueCommand extends BotCommand {
 
     String modalId = modalEvent.getModalId();
     modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
+  }
+
+  @Override
+  public void stringSelectProcessing(StringSelectInteractionEvent stringSelectEvent) {
+    return;
   }
 
   private MessageCreateData makeMessage() {

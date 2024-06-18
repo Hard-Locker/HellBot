@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
@@ -50,8 +51,9 @@ public class SetVolumeCommand extends BotCommand {
   private final String commandName = "volume";
   private final String close = "close";
   private final String volume = "volume";
-  private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers;
-  private Map<String, Consumer<ModalInteractionEvent>> modalHandlers;
+
+  private Map<String, Consumer<ButtonInteractionEvent>> buttonHandlers = new HashMap<>();
+  private Map<String, Consumer<ModalInteractionEvent>> modalHandlers = new HashMap<>();
 
   @Override
   public String name() {
@@ -128,6 +130,37 @@ public class SetVolumeCommand extends BotCommand {
     }
   }
 
+  @Override
+  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
+    if (checkUserAccess(buttonEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(buttonEvent.getUser());
+      log.debug("User {} does not have access to use: {}", buttonEvent.getUser(), commandName);
+
+      return;
+    }
+
+    String componentId = buttonEvent.getComponentId();
+    buttonHandlers.getOrDefault(componentId, this::handleUnknownButton).accept(buttonEvent);
+  }
+
+  @Override
+  public void modalInputProcessing(ModalInteractionEvent modalEvent) {
+    if (checkUserAccess(modalEvent.getUser()) == false) {
+      messageSender.sendPrivateMessageAccessError(modalEvent.getUser());
+      log.debug("User {} does not have access to use: {}", modalEvent.getUser(), commandName);
+
+      return;
+    }
+
+    String modalId = modalEvent.getModalId();
+    modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
+  }
+
+  @Override
+  public void stringSelectProcessing(StringSelectInteractionEvent stringSelectEvent) {
+    return;
+  }
+
   private void makeGui(BotCommandContext context) {
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
     Button volumeButton = Button.primary(volume, settingProvider.getText("set_volume_command.button.set_volume"));
@@ -143,7 +176,7 @@ public class SetVolumeCommand extends BotCommand {
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
 
     buttonHandlers = new HashMap<>();
     buttonHandlers.put(close, this::selectClose);
@@ -158,31 +191,6 @@ public class SetVolumeCommand extends BotCommand {
   private void updateVolume(int volumeLevel) {
     playerService.setVolume(volumeLevel);
     log.debug("Current volume level: {}", volumeLevel);
-  }
-
-  @Override
-  public void buttonClickProcessing(ButtonInteractionEvent buttonEvent) {
-    if (checkUserAccess(buttonEvent.getUser()) == false) {
-      messageSender.sendPrivateMessageAccessError(buttonEvent.getUser());
-      log.debug("User {} does not have access to use: {}", buttonEvent.getUser(), commandName);
-
-      return;
-    }
-
-    String componentId = buttonEvent.getComponentId();
-    buttonHandlers.getOrDefault(componentId, this::handleUnknownButton).accept(buttonEvent);
-  }
-
-  public void modalInputProcessing(ModalInteractionEvent modalEvent) {
-    if (checkUserAccess(modalEvent.getUser()) == false) {
-      messageSender.sendPrivateMessageAccessError(modalEvent.getUser());
-      log.debug("User {} does not have access to use: {}", modalEvent.getUser(), commandName);
-
-      return;
-    }
-
-    String modalId = modalEvent.getModalId();
-    modalHandlers.getOrDefault(modalId, this::handleUnknownModal).accept(modalEvent);
   }
 
   private void makeModalVolume(ButtonInteractionEvent buttonEvent) {

@@ -30,6 +30,7 @@ import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -170,6 +171,11 @@ public class PlayCommand extends BotCommand {
     return;
   }
 
+  @Override
+  public void stringSelectProcessing(StringSelectInteractionEvent stringSelectEvent) {
+    return;
+  }
+
   private void makeMessageWithButton(BotCommandContext context, String link) {
     log.debug("Preparation a message with proposal to load additional links");
 
@@ -181,7 +187,7 @@ public class PlayCommand extends BotCommand {
     Button noButton = Button.danger(idNo, settingProvider.getText("setting.text.no"));
     List<Button> buttons = List.of(yesButton, noButton);
 
-    Long messageId = messageSender.sendMessageWithButtons(context.getTextChannel(), title, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), title, buttons);
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 60000, context, additional));
 
     buttonHandlers.put(idYes, this::selectYes);

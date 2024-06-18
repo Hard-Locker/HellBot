@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -107,6 +108,11 @@ public class AboutCommand extends BotCommand {
 
   @Override
   public void modalInputProcessing(ModalInteractionEvent modalEvent) {
+    return;
+  }
+
+  @Override
+  public void stringSelectProcessing(StringSelectInteractionEvent stringSelectEvent) {
     return;
   }
 }

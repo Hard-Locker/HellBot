@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 @Component
@@ -113,6 +114,11 @@ public class ShowSettingsCommand extends BotCommand {
     return;
   }
 
+  @Override
+  public void stringSelectProcessing(StringSelectInteractionEvent stringSelectEvent) {
+    return;
+  }
+
   private EmbedBuilder makeMessage() {
     List<String> allowedTextChannels = getAllowedTextChannelMentions();
     List<String> allowedVoiceChannels = getAllowedVoiceChannelMentions();
@@ -148,16 +154,23 @@ public class ShowSettingsCommand extends BotCommand {
 
     String language = String.valueOf(settings.getLanguage());
     String volume = String.valueOf(settings.getVolume());
-    String ownerUser = settings.getOwnerUserId() != null ? discordDataReceiver.getUserById(settings.getOwnerUserId()).getAsMention() : localNotSet;
+    String ownerUser = settings.getOwnerUserId() != null
+        ? discordDataReceiver.getUserById(settings.getOwnerUserId()).getAsMention()
+        : localNotSet;
     String botStatus = settings.getBotStatus() != null ? settings.getBotStatus() : localNotSet;
     String songInActivity = settings.isSongInActivity() == true ? localYes : localNo;
     String songInTopic = settings.isSongInTopic() == true ? localYes : localNo;
     String songInTextChannel = settings.isSongInTextChannel() == true ? localYes : localNo;
     String stayInChannel = settings.isStayInChannel() == true ? localYes : localNo;
-    String aloneTimeUntilStop = settings.getAloneTimeUntilStop() == 0 ? localNotSet : String.valueOf(settings.getAloneTimeUntilStop());
+    String aloneTimeUntilStop = settings.getAloneTimeUntilStop() == 0 ? localNotSet
+        : String.valueOf(settings.getAloneTimeUntilStop());
     String updateNotification = settings.isUpdateNotification() == true ? localYes : localNo;
-    String lineAllowedTextChannels = allowedTextChannels.isEmpty() == false ? allowedTextChannels.stream().collect(Collectors.joining(", ")) : localNotSet;
-    String lineAllowedVoiceChannels = allowedVoiceChannels.isEmpty() == false ? allowedVoiceChannels.stream().collect(Collectors.joining(", ")) : localNotSet;
+    String lineAllowedTextChannels = allowedTextChannels.isEmpty() == false
+        ? allowedTextChannels.stream().collect(Collectors.joining(", "))
+        : localNotSet;
+    String lineAllowedVoiceChannels = allowedVoiceChannels.isEmpty() == false
+        ? allowedVoiceChannels.stream().collect(Collectors.joining(", "))
+        : localNotSet;
     String lineAdminUsers = admins.isEmpty() == false ? admins.stream().collect(Collectors.joining(", ")) : localNotSet;
     String lineDjUsers = djs.isEmpty() == false ? djs.stream().collect(Collectors.joining(", ")) : localNotSet;
     String lineBannedUsers = bans.isEmpty() == false ? bans.stream().collect(Collectors.joining(", ")) : localNotSet;
