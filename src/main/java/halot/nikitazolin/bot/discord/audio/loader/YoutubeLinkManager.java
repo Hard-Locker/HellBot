@@ -20,6 +20,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class YoutubeLinkManager {
 
+  private static final String PROTOCOL_REGEX = "?(http://|https://)";
+  private static final String DOMAIN_REGEX = "?(www\\.|music\\.)(youtube\\.com|youtu\\.be)";
+  private static final String BASE_URL_REGEX = PROTOCOL_REGEX + DOMAIN_REGEX;
+  private static final String VIDEO_ID_REGEX = "?(/watch\\?v=|/)";
+
+  private static final Pattern YOUTUBE_URL = Pattern.compile("^" + BASE_URL_REGEX + "/.*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern YOUTUBE_URL_WITH_PLAYLIST = Pattern.compile("^" + BASE_URL_REGEX + "/.*[?&]list=.*$",
+      Pattern.CASE_INSENSITIVE);
+  private static final Pattern DIRECT_VIDEO_URL = Pattern.compile("^" + BASE_URL_REGEX + VIDEO_ID_REGEX + "[^&?]*",
+      Pattern.CASE_INSENSITIVE);
+
+  // TODO Need improve processing incorrect playlist URL. Incorrect URL have not
+  // "www."
   public List<String> extractVideoLinks(String playlistUrl) {
     WebDriverManager.chromedriver().setup();
     ChromeOptions options = new ChromeOptions();
@@ -52,37 +65,33 @@ public class YoutubeLinkManager {
 
   public String extractSimpleUrl(String url) {
     log.debug("Extracting simple URL from: {}", url);
-    Pattern youtubePattern = Pattern.compile("^(https://)(www\\.youtube\\.com|youtu\\.be)/watch\\?v=[^&]*",
-        Pattern.CASE_INSENSITIVE);
-    Matcher matcher = youtubePattern.matcher(url);
+    Matcher matcher = DIRECT_VIDEO_URL.matcher(url);
 
     if (matcher.find()) {
       String extractedUrl = matcher.group();
       log.debug("Extracted URL: {}", extractedUrl);
+
       return extractedUrl;
     }
 
     log.debug("No match found for URL: {}", url);
+
     return url;
   }
 
   public boolean isYouTubeUrl(String url) {
     log.debug("Checking if URL is a YouTube URL: {}", url);
-    Pattern youtubePattern = Pattern.compile("^(https://)(www\\.youtube\\.com|youtu\\.be)/.*",
-        Pattern.CASE_INSENSITIVE);
-
-    boolean matches = youtubePattern.matcher(url).matches();
+    boolean matches = YOUTUBE_URL.matcher(url).matches();
     log.debug("URL {} is a YouTube URL: {}", url, matches);
+
     return matches;
   }
 
   public boolean isYouTubePlaylist(String url) {
     log.debug("Checking if URL is a YouTube playlist: {}", url);
-    Pattern youtubePattern = Pattern.compile("^(https://)(www\\.youtube\\.com|youtu\\.be)/.*[?&]list=.*$",
-        Pattern.CASE_INSENSITIVE);
-
-    boolean matches = youtubePattern.matcher(url).matches();
+    boolean matches = YOUTUBE_URL_WITH_PLAYLIST.matcher(url).matches();
     log.info("URL {} is a YouTube playlist: {}", url, matches);
+
     return matches;
   }
 }

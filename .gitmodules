@@ -1,0 +1,3 @@
+[submodule "local-share"]
+	path = local-share
+	url = git@github.com:Hard-Locker/hell-bot-local.git
