@@ -56,11 +56,11 @@ public class InputLinkLoader {
     }
 
     Map<String, Object> additional = actionMessage.getAdditionalData();
-    Object linksObject = additional.get(key);
-    List<String> links = new ArrayList<>();
+    Object object = additional.get(key);
 
-    if (linksObject instanceof List<?>) {
-      List<?> rawList = (List<?>) linksObject;
+    if (object instanceof List<?>) {
+      List<String> links = new ArrayList<>();
+      List<?> rawList = (List<?>) object;
 
       for (Object item : rawList) {
         if (item instanceof String) {

@@ -103,8 +103,13 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public OptionData[] options() {
-    return new OptionData[] { new OptionData(OptionType.STRING, musicProvider.getText("play_command.input.name"),
-        musicProvider.getText("play_command.input.description"), false) };
+    return new OptionData[] {
+        new OptionData(OptionType.STRING, musicProvider.getText("play_command.input.name_link"),
+            musicProvider.getText("play_command.input.description_link"), false),
+        new OptionData(OptionType.STRING, musicProvider.getText("play_command.input.name_playlist"),
+            musicProvider.getText("play_command.input.description_playlist"), false),
+        new OptionData(OptionType.ATTACHMENT, musicProvider.getText("play_command.input.name_attachment"),
+            musicProvider.getText("play_command.input.description_attachment"), false)};
   }
 
   @Override
@@ -142,13 +147,7 @@ public class PlayCommand extends BotCommand {
 
     // If input links contains additional tracks, bot will offer to load all
     // additional tracks
-    CompletableFuture.runAsync(() -> {
-      for (String link : inputLinks) {
-        if (inputLinkLoader.isPlaylist(link)) {
-          makeMessageWithButton(context, link);
-        }
-      }
-    });
+    ifPlaylistThenProposeLoad(context, inputLinks);
 
     log.debug("User added links to playing music. " + "User: " + context.getUser());
   }
@@ -176,6 +175,26 @@ public class PlayCommand extends BotCommand {
     return;
   }
 
+  private void selectYes(ButtonInteractionEvent buttonEvent) {
+    log.debug("User select loading additional links");
+
+    buttonEvent.getMessage().delete().queue();
+    buttonEvent.reply(musicProvider.getText("play_command.message.adding")).setEphemeral(true).queue();
+
+    inputLinkLoader.loadAdditionalLink(buttonEvent.getMessageIdLong(), idlinks);
+  }
+
+  private void selectNo(ButtonInteractionEvent buttonEvent) {
+    buttonEvent.reply(musicProvider.getText("play_command.message.add_no")).setEphemeral(true).queue();
+    buttonEvent.getMessage().delete().queue();
+    log.debug("Closed loading additional links");
+  }
+
+  private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
+    buttonEvent.reply(settingProvider.getText("setting.button.close")).setEphemeral(true).queue();
+    log.debug("Clicked unknown button");
+  }
+
   private void makeMessageWithButton(BotCommandContext context, String link) {
     log.debug("Preparation a message with proposal to load additional links");
 
@@ -195,23 +214,21 @@ public class PlayCommand extends BotCommand {
     log.debug("Shown proposal to load additional links");
   }
 
-  private void selectYes(ButtonInteractionEvent buttonEvent) {
-    log.debug("User select loading additional links");
+  private void ifPlaylistThenProposeLoad(BotCommandContext context, List<String> lines) {
+    CompletableFuture.runAsync(() -> {
+      for (String line : lines) {
+        if (inputLinkLoader.isPlaylist(line)) {
+          makeMessageWithButton(context, line);
+        }
 
-    buttonEvent.getMessage().delete().queue();
-    buttonEvent.reply(musicProvider.getText("play_command.message.adding")).setEphemeral(true).queue();
+        if (settings.getPlaylists().containsKey(line)) {
+          String playlistPath = settings.getPlaylists().get(line);
 
-    inputLinkLoader.loadAdditionalLink(buttonEvent.getMessageIdLong(), idlinks);
-  }
-
-  private void selectNo(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply(musicProvider.getText("play_command.message.add_no")).setEphemeral(true).queue();
-    buttonEvent.getMessage().delete().queue();
-    log.debug("Closed loading additional links");
-  }
-
-  private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply(settingProvider.getText("setting.button.close")).setEphemeral(true).queue();
-    log.debug("Clicked unknown button");
+          if (inputLinkLoader.isPlaylist(playlistPath)) {
+            makeMessageWithButton(context, playlistPath);
+          }
+        }
+      }
+    });
   }
 }
