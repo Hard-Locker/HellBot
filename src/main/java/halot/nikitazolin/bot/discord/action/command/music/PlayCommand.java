@@ -83,7 +83,7 @@ public class PlayCommand extends BotCommand {
 
   @Override
   public String description() {
-    return musicProvider.getText("play_command.description");
+    return musicProvider.getText("play.description");
   }
 
   @Override
@@ -104,12 +104,12 @@ public class PlayCommand extends BotCommand {
   @Override
   public OptionData[] options() {
     return new OptionData[] {
-        new OptionData(OptionType.STRING, musicProvider.getText("play_command.input.name_link"),
-            musicProvider.getText("play_command.input.description_link"), false),
-        new OptionData(OptionType.STRING, musicProvider.getText("play_command.input.name_playlist"),
-            musicProvider.getText("play_command.input.description_playlist"), false),
-        new OptionData(OptionType.ATTACHMENT, musicProvider.getText("play_command.input.name_attachment"),
-            musicProvider.getText("play_command.input.description_attachment"), false)};
+        new OptionData(OptionType.STRING, musicProvider.getText("play.input.name_link"),
+            musicProvider.getText("play.input.description_link"), false),
+        new OptionData(OptionType.STRING, musicProvider.getText("play.input.name_playlist"),
+            musicProvider.getText("play.input.description_playlist"), false),
+        new OptionData(OptionType.ATTACHMENT, musicProvider.getText("play.input.name_attachment"),
+            musicProvider.getText("play.input.description_attachment"), false) };
   }
 
   @Override
@@ -140,8 +140,8 @@ public class PlayCommand extends BotCommand {
     if (guildAudioService.getPlayerService().getQueue().isEmpty() == false) {
       guildAudioService.getPlayerService().play();
 
-      EmbedBuilder embed = messageFormatter.createSuccessEmbed(
-          musicProvider.getText("play_command.message.success") + ": " + context.getUser().getAsMention());
+      EmbedBuilder embed = messageFormatter
+          .createSuccessEmbed(musicProvider.getText("play.message.success") + ": " + context.getUser().getAsMention());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 
@@ -179,13 +179,13 @@ public class PlayCommand extends BotCommand {
     log.debug("User select loading additional links");
 
     buttonEvent.getMessage().delete().queue();
-    buttonEvent.reply(musicProvider.getText("play_command.message.adding")).setEphemeral(true).queue();
+    buttonEvent.reply(musicProvider.getText("play.message.adding")).setEphemeral(true).queue();
 
     inputLinkLoader.loadAdditionalLink(buttonEvent.getMessageIdLong(), idlinks);
   }
 
   private void selectNo(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply(musicProvider.getText("play_command.message.add_no")).setEphemeral(true).queue();
+    buttonEvent.reply(musicProvider.getText("play.message.add_no")).setEphemeral(true).queue();
     buttonEvent.getMessage().delete().queue();
     log.debug("Closed loading additional links");
   }
@@ -198,7 +198,7 @@ public class PlayCommand extends BotCommand {
   private void makeMessageWithButton(BotCommandContext context, String link) {
     log.debug("Preparation a message with proposal to load additional links");
 
-    String title = link + " " + musicProvider.getText("play_command.message.proposal") + "?";
+    String title = link + " " + musicProvider.getText("play.message.proposal") + "?";
     Map<String, Object> additional = new HashMap<>();
     additional.put(idlinks, List.of(link));
 

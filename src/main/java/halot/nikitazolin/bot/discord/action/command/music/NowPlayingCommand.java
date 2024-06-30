@@ -67,7 +67,7 @@ public class NowPlayingCommand extends BotCommand {
 
   @Override
   public String description() {
-    return musicProvider.getText("now_playing_command.description");
+    return musicProvider.getText("now_playing.description");
   }
 
   @Override

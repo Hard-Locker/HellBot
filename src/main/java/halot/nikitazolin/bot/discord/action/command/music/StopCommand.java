@@ -65,7 +65,7 @@ public class StopCommand extends BotCommand {
 
   @Override
   public String description() {
-    return musicProvider.getText("stop_command.description");
+    return musicProvider.getText("stop.description");
   }
 
   @Override
@@ -100,7 +100,7 @@ public class StopCommand extends BotCommand {
     playerService.stop();
 
     EmbedBuilder embed = messageFormatter.createWarningEmbed(
-        musicProvider.getText("stop_command.message.success") + ": " + context.getUser().getAsMention());
+        musicProvider.getText("stop.message.success") + ": " + context.getUser().getAsMention());
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     log.debug("Music was stopped by user: " + context.getUser());

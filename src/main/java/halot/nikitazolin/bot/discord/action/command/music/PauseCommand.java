@@ -65,7 +65,7 @@ public class PauseCommand extends BotCommand {
 
   @Override
   public String description() {
-    return musicProvider.getText("pause_command.description");
+    return musicProvider.getText("pause.description");
   }
 
   @Override
@@ -100,12 +100,12 @@ public class PauseCommand extends BotCommand {
     playerService.pause();
 
     if (playerService.getAudioPlayer().isPaused() == true) {
-      EmbedBuilder embed = messageFormatter.createInfoEmbed(
-          musicProvider.getText("pause_command.message.pause") + ": " + context.getUser().getAsMention());
+      EmbedBuilder embed = messageFormatter
+          .createInfoEmbed(musicProvider.getText("pause.message.pause") + ": " + context.getUser().getAsMention());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     } else {
-      EmbedBuilder embed = messageFormatter.createInfoEmbed(
-          musicProvider.getText("pause_command.message.resume") + ": " + context.getUser().getAsMention());
+      EmbedBuilder embed = messageFormatter
+          .createInfoEmbed(musicProvider.getText("pause.message.resume") + ": " + context.getUser().getAsMention());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
 

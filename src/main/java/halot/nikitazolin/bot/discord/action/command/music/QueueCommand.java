@@ -85,7 +85,7 @@ public class QueueCommand extends BotCommand {
 
   @Override
   public String description() {
-    return musicProvider.getText("queue_command.description");
+    return musicProvider.getText("queue.description");
   }
 
   @Override
@@ -135,10 +135,10 @@ public class QueueCommand extends BotCommand {
 
     if (playerService.getQueue().isEmpty() == false) {
       EmbedBuilder embed = messageFormatter.createInfoEmbed(
-          musicProvider.getText("queue_command.message.size") + ": " + playerService.getQueue().size());
+          musicProvider.getText("queue.message.size") + ": " + playerService.getQueue().size());
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     } else {
-      EmbedBuilder embed = messageFormatter.createInfoEmbed(musicProvider.getText("queue_command.message.empty"));
+      EmbedBuilder embed = messageFormatter.createInfoEmbed(musicProvider.getText("queue.message.empty"));
       messageSender.sendMessageEmbed(context.getTextChannel(), embed);
     }
   }
@@ -178,7 +178,7 @@ public class QueueCommand extends BotCommand {
     BlockingQueue<AudioItemContext> queue = playerService.getQueue();
 
     String newLine = System.lineSeparator();
-    StringBuilder messageContent = new StringBuilder("**" + musicProvider.getText("queue_command.message.title") + "**")
+    StringBuilder messageContent = new StringBuilder("**" + musicProvider.getText("queue.message.title") + "**")
         .append(newLine);
 
     messageContent.append("Track in queue: " + queue.size()).append(newLine);
@@ -186,12 +186,6 @@ public class QueueCommand extends BotCommand {
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
 
     return messageCreateData;
-  }
-
-  private void selectClose(ButtonInteractionEvent buttonEvent) {
-    buttonEvent.reply(settingProvider.getText("setting.message.close")).setEphemeral(true).queue();
-    buttonEvent.getMessage().delete().queue();
-    log.debug("Settings closed");
   }
 
   private void handleUnknownButton(ButtonInteractionEvent buttonEvent) {

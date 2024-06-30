@@ -65,7 +65,7 @@ public class OffCommand extends BotCommand {
 
   @Override
   public String description() {
-    return musicProvider.getText("off_command.description");
+    return musicProvider.getText("off.description");
   }
 
   @Override
@@ -99,8 +99,8 @@ public class OffCommand extends BotCommand {
 
     guildAudioService.stopAudioSending();
 
-    EmbedBuilder embed = messageFormatter.createWarningEmbed(
-        musicProvider.getText("off_command.message.success") + ": " + context.getUser().getAsMention());
+    EmbedBuilder embed = messageFormatter
+        .createWarningEmbed(musicProvider.getText("off.message.success") + ": " + context.getUser().getAsMention());
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     log.debug("Player was go off by user: " + context.getUser());

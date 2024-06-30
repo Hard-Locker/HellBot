@@ -65,7 +65,7 @@ public class ClearQueueCommand extends BotCommand {
 
   @Override
   public String description() {
-    return musicProvider.getText("clear_queue_command.description");
+    return musicProvider.getText("clear_queue.description");
   }
 
   @Override
@@ -100,7 +100,7 @@ public class ClearQueueCommand extends BotCommand {
     playerService.clearQueue();
 
     EmbedBuilder embed = messageFormatter.createInfoEmbed(
-        musicProvider.getText("clear_queue_command.message.success") + ": " + context.getUser().getAsMention());
+        musicProvider.getText("clear_queue.message.success") + ": " + context.getUser().getAsMention());
     messageSender.sendMessageEmbed(context.getTextChannel(), embed);
 
     log.debug("Queue cleared by user: " + context.getUser());
