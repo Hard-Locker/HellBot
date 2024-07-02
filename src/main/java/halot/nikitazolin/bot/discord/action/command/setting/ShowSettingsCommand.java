@@ -68,7 +68,7 @@ public class ShowSettingsCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("show_settings_command.description");
+    return settingProvider.getText("show_settings.description");
   }
 
   @Override
@@ -130,47 +130,40 @@ public class ShowSettingsCommand extends BotCommand {
     String localYes = settingProvider.getText("setting.text.yes");
     String localNo = settingProvider.getText("setting.text.no");
     String localNotSet = settingProvider.getText("setting.text.not_set");
-    String localLanguage = settingProvider.getText("show_settings_command.message.language");
-    String localVolume = settingProvider.getText("show_settings_command.message.volume");
-    String localOwner = settingProvider.getText("show_settings_command.message.owner");
-    String localStatus = settingProvider.getText("show_settings_command.message.status");
-    String localSongInActivity = settingProvider.getText("show_settings_command.message.songInActivity");
-    String localSongInTopic = settingProvider.getText("show_settings_command.message.songInTopic");
-    String localSongInTextChannel = settingProvider.getText("show_settings_command.message.songInTextChannel");
-    String localStayInChannel = settingProvider.getText("show_settings_command.message.stayInChannel");
-    String localAloneTime = settingProvider.getText("show_settings_command.message.aloneTime");
-    String localUpdate = settingProvider.getText("show_settings_command.message.update");
-    String localAllowedTextChannel = settingProvider.getText("show_settings_command.message.allowedTextChannel");
-    String localAllowedVoiceChannel = settingProvider.getText("show_settings_command.message.allowedVoiceChannel");
-    String localAdmins = settingProvider.getText("show_settings_command.message.admins");
-    String localDjs = settingProvider.getText("show_settings_command.message.djs");
-    String localBan = settingProvider.getText("show_settings_command.message.ban");
-    String localPlaylists = settingProvider.getText("show_settings_command.message.playlists");
-    String localPrefixes = settingProvider.getText("show_settings_command.message.prefixes");
-    String localNameAliases = settingProvider.getText("show_settings_command.message.nameAliases");
-    String localMessageTitle = settingProvider.getText("show_settings_command.message.title");
+    String localLanguage = settingProvider.getText("show_settings.message.language");
+    String localVolume = settingProvider.getText("show_settings.message.volume");
+    String localOwner = settingProvider.getText("show_settings.message.owner");
+    String localStatus = settingProvider.getText("show_settings.message.status");
+    String localSongInActivity = settingProvider.getText("show_settings.message.songInActivity");
+    String localSongInTopic = settingProvider.getText("show_settings.message.songInTopic");
+    String localSongInTextChannel = settingProvider.getText("show_settings.message.songInTextChannel");
+    String localStayInChannel = settingProvider.getText("show_settings.message.stayInChannel");
+    String localAloneTime = settingProvider.getText("show_settings.message.aloneTime");
+    String localUpdate = settingProvider.getText("show_settings.message.update");
+    String localAllowedTextChannel = settingProvider.getText("show_settings.message.allowedTextChannel");
+    String localAllowedVoiceChannel = settingProvider.getText("show_settings.message.allowedVoiceChannel");
+    String localAdmins = settingProvider.getText("show_settings.message.admins");
+    String localDjs = settingProvider.getText("show_settings.message.djs");
+    String localBan = settingProvider.getText("show_settings.message.ban");
+    String localPlaylists = settingProvider.getText("show_settings.message.playlists");
+    String localPrefixes = settingProvider.getText("show_settings.message.prefixes");
+    String localNameAliases = settingProvider.getText("show_settings.message.nameAliases");
+    String localMessageTitle = settingProvider.getText("show_settings.message.title");
 
     EmbedBuilder embed = messageFormatter.createAltInfoEmbed(localMessageTitle + ":");
 
     String language = String.valueOf(settings.getLanguage());
     String volume = String.valueOf(settings.getVolume());
-    String ownerUser = settings.getOwnerUserId() != null
-        ? discordDataReceiver.getUserById(settings.getOwnerUserId()).getAsMention()
-        : localNotSet;
+    String ownerUser = settings.getOwnerUserId() != null ? discordDataReceiver.getUserById(settings.getOwnerUserId()).getAsMention() : localNotSet;
     String botStatus = settings.getBotStatus() != null ? settings.getBotStatus() : localNotSet;
     String songInActivity = settings.isSongInActivity() == true ? localYes : localNo;
     String songInTopic = settings.isSongInTopic() == true ? localYes : localNo;
     String songInTextChannel = settings.isSongInTextChannel() == true ? localYes : localNo;
     String stayInChannel = settings.isStayInChannel() == true ? localYes : localNo;
-    String aloneTimeUntilStop = settings.getAloneTimeUntilStop() == 0 ? localNotSet
-        : String.valueOf(settings.getAloneTimeUntilStop());
+    String aloneTimeUntilStop = settings.getAloneTimeUntilStop() == 0 ? localNotSet : String.valueOf(settings.getAloneTimeUntilStop());
     String updateNotification = settings.isUpdateNotification() == true ? localYes : localNo;
-    String lineAllowedTextChannels = allowedTextChannels.isEmpty() == false
-        ? allowedTextChannels.stream().collect(Collectors.joining(", "))
-        : localNotSet;
-    String lineAllowedVoiceChannels = allowedVoiceChannels.isEmpty() == false
-        ? allowedVoiceChannels.stream().collect(Collectors.joining(", "))
-        : localNotSet;
+    String lineAllowedTextChannels = allowedTextChannels.isEmpty() == false ? allowedTextChannels.stream().collect(Collectors.joining(", ")) : localNotSet;
+    String lineAllowedVoiceChannels = allowedVoiceChannels.isEmpty() == false ? allowedVoiceChannels.stream().collect(Collectors.joining(", ")) : localNotSet;
     String lineAdminUsers = admins.isEmpty() == false ? admins.stream().collect(Collectors.joining(", ")) : localNotSet;
     String lineDjUsers = djs.isEmpty() == false ? djs.stream().collect(Collectors.joining(", ")) : localNotSet;
     String lineBannedUsers = bans.isEmpty() == false ? bans.stream().collect(Collectors.joining(", ")) : localNotSet;

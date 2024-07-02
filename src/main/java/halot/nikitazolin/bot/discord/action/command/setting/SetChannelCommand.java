@@ -88,7 +88,7 @@ public class SetChannelCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_channel_command.description");
+    return settingProvider.getText("set_channel.description");
   }
 
   @Override
@@ -122,24 +122,23 @@ public class SetChannelCommand extends BotCommand {
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
     Button addTextChannelButton = Button.primary(addTextChannel,
-        settingProvider.getText("set_channel_command.button.add_text_channel"));
+        settingProvider.getText("set_channel.button.add_text_channel"));
     Button removeTextChannelButton = Button.primary(removeTextChannel,
-        settingProvider.getText("set_channel_command.button.remove_text_channel"));
+        settingProvider.getText("set_channel.button.remove_text_channel"));
     Button addVoiceChannelButton = Button.primary(addVoiceChannel,
-        settingProvider.getText("set_channel_command.button.add_voice_channel"));
+        settingProvider.getText("set_channel.button.add_voice_channel"));
     Button removeVoiceChannelButton = Button.primary(removeVoiceChannel,
-        settingProvider.getText("set_channel_command.button.remove_voice_cahnnel"));
+        settingProvider.getText("set_channel.button.remove_voice_cahnnel"));
     List<Button> buttons = List.of(closeButton, addTextChannelButton, removeTextChannelButton, addVoiceChannelButton,
         removeVoiceChannelButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_channel_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_channel.message.title") + "**");
     messageContent.append(newLine);
 
     if (settings.getAllowedTextChannelIds() != null && !settings.getAllowedTextChannelIds().isEmpty()) {
-      messageContent.append(settingProvider.getText("set_channel_command.message.current_text_channel") + ":")
-          .append(newLine);
+      messageContent.append(settingProvider.getText("set_channel.message.current_text_channel") + ":").append(newLine);
       List<TextChannel> textChannels = discordDataReceiver.getTextChannelsByIds(settings.getAllowedTextChannelIds());
 
       for (TextChannel textChannel : textChannels) {
@@ -153,8 +152,7 @@ public class SetChannelCommand extends BotCommand {
     messageContent.append(newLine);
 
     if (settings.getAllowedVoiceChannelIds() != null && !settings.getAllowedVoiceChannelIds().isEmpty()) {
-      messageContent.append(settingProvider.getText("set_channel_command.message.current_voice_channel") + ":")
-          .append(newLine);
+      messageContent.append(settingProvider.getText("set_channel.message.current_voice_channel") + ":").append(newLine);
       List<VoiceChannel> voiceChannels = discordDataReceiver
           .getVoiceChannelsByIds(settings.getAllowedVoiceChannelIds());
 
@@ -216,13 +214,12 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalAddTextChannel(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addTextChannel, settingProvider.getText("set_channel_command.modal.add_text_channel_input"),
+        .create(addTextChannel, settingProvider.getText("set_channel.modal.add_text_channel_input"),
             TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_channel_command.modal.add_text_channel_input_description"))
+        .setPlaceholder(settingProvider.getText("set_channel.modal.add_text_channel_input_description"))
         .setMinLength(16).setMaxLength(20).build();
 
-    Modal modal = Modal
-        .create(addTextChannel, settingProvider.getText("set_channel_command.modal.add_text_channel_name"))
+    Modal modal = Modal.create(addTextChannel, settingProvider.getText("set_channel.modal.add_text_channel_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -231,13 +228,12 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalRemoveTextChannel(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removeTextChannel, settingProvider.getText("set_channel_command.modal.remove_text_channel_input"),
+        .create(removeTextChannel, settingProvider.getText("set_channel.modal.remove_text_channel_input"),
             TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_channel_command.modal.remove_text_channel_input_description"))
+        .setPlaceholder(settingProvider.getText("set_channel.modal.remove_text_channel_input_description"))
         .setMinLength(16).setMaxLength(20).build();
 
-    Modal modal = Modal
-        .create(removeTextChannel, settingProvider.getText("set_channel_command.modal.remove_text_channel_name"))
+    Modal modal = Modal.create(removeTextChannel, settingProvider.getText("set_channel.modal.remove_text_channel_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -246,13 +242,12 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalAddVoiceChannel(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addVoiceChannel, settingProvider.getText("set_channel_command.modal.add_voice_channel_input"),
+        .create(addVoiceChannel, settingProvider.getText("set_channel.modal.add_voice_channel_input"),
             TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_channel_command.modal.add_voice_channel_input_description"))
+        .setPlaceholder(settingProvider.getText("set_channel.modal.add_voice_channel_input_description"))
         .setMinLength(16).setMaxLength(20).build();
 
-    Modal modal = Modal
-        .create(addVoiceChannel, settingProvider.getText("set_channel_command.modal.add_voice_channel_name"))
+    Modal modal = Modal.create(addVoiceChannel, settingProvider.getText("set_channel.modal.add_voice_channel_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -261,13 +256,13 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalRemoveVoiceChannel(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removeVoiceChannel, settingProvider.getText("set_channel_command.modal.remove_voice_channel_input"),
+        .create(removeVoiceChannel, settingProvider.getText("set_channel.modal.remove_voice_channel_input"),
             TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_channel_command.modal.remove_voice_channel_input_description"))
+        .setPlaceholder(settingProvider.getText("set_channel.modal.remove_voice_channel_input_description"))
         .setMinLength(16).setMaxLength(20).build();
 
     Modal modal = Modal
-        .create(removeVoiceChannel, settingProvider.getText("set_channel_command.modal.remove_voice_channel_name"))
+        .create(removeVoiceChannel, settingProvider.getText("set_channel.modal.remove_voice_channel_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -294,17 +289,16 @@ public class SetChannelCommand extends BotCommand {
         settings.getAllowedTextChannelIds().add(channelId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent
-            .reply(textChannel.getAsMention() + " "
-                + settingProvider.getText("set_channel_command.message.add_text_channel_success"))
+        modalEvent.reply(
+            textChannel.getAsMention() + " " + settingProvider.getText("set_channel.message.add_text_channel_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(settingProvider.getText("set_channel_command.message.add_text_channel_already_exists"))
+        modalEvent.reply(settingProvider.getText("set_channel.message.add_text_channel_already_exists"))
             .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_channel_command.message.add_text_channel_not_found"))
-          .setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_channel.message.add_text_channel_not_found")).setEphemeral(true)
+          .queue();
     }
   }
 
@@ -330,16 +324,15 @@ public class SetChannelCommand extends BotCommand {
       if (textChannel != null) {
         modalEvent
             .reply(textChannel.getAsMention() + " "
-                + settingProvider.getText("set_channel_command.message.remove_text_channel_success"))
+                + settingProvider.getText("set_channel.message.remove_text_channel_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent
-            .reply(channelId + " " + settingProvider.getText("set_channel_command.message.remove_text_channel_success"))
+        modalEvent.reply(channelId + " " + settingProvider.getText("set_channel.message.remove_text_channel_success"))
             .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_channel_command.message.remove_text_channel_not_found"))
-          .setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_channel.message.remove_text_channel_not_found")).setEphemeral(true)
+          .queue();
     }
   }
 
@@ -363,17 +356,15 @@ public class SetChannelCommand extends BotCommand {
         settings.getAllowedVoiceChannelIds().add(channelId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent
-            .reply(voiceChannel.getAsMention() + " "
-                + settingProvider.getText("set_channel_command.message.add_voice_channel_success"))
-            .setEphemeral(true).queue();
+        modalEvent.reply(voiceChannel.getAsMention() + " "
+            + settingProvider.getText("set_channel.message.add_voice_channel_success")).setEphemeral(true).queue();
       } else {
-        modalEvent.reply(settingProvider.getText("set_channel_command.message.add_voice_channel_already_exists"))
+        modalEvent.reply(settingProvider.getText("set_channel.message.add_voice_channel_already_exists"))
             .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_channel_command.message.add_voice_channel_not_found"))
-          .setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_channel.message.add_voice_channel_not_found")).setEphemeral(true)
+          .queue();
     }
   }
 
@@ -399,17 +390,15 @@ public class SetChannelCommand extends BotCommand {
       if (voiceChannel != null) {
         modalEvent
             .reply(voiceChannel.getAsMention() + " "
-                + settingProvider.getText("set_channel_command.message.remove_voice_channel_success"))
+                + settingProvider.getText("set_channel.message.remove_voice_channel_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent
-            .reply(
-                channelId + " " + settingProvider.getText("set_channel_command.message.remove_voice_channel_success"))
+        modalEvent.reply(channelId + " " + settingProvider.getText("set_channel.message.remove_voice_channel_success"))
             .setEphemeral(true).queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_channel_command.message.remove_voice_channel_not_found"))
-          .setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_channel.message.remove_voice_channel_not_found")).setEphemeral(true)
+          .queue();
     }
   }
 

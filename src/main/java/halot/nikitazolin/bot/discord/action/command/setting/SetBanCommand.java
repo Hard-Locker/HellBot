@@ -84,7 +84,7 @@ public class SetBanCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_ban_command.description");
+    return settingProvider.getText("set_ban.description");
   }
 
   @Override
@@ -117,17 +117,17 @@ public class SetBanCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button banUserButton = Button.primary(ban, settingProvider.getText("set_ban_command.button.ban"));
-    Button unbanUserButton = Button.primary(unban, settingProvider.getText("set_ban_command.button.unban"));
+    Button banUserButton = Button.primary(ban, settingProvider.getText("set_ban.button.ban"));
+    Button unbanUserButton = Button.primary(unban, settingProvider.getText("set_ban.button.unban"));
     List<Button> buttons = List.of(closeButton, banUserButton, unbanUserButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_ban_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_ban.message.title") + "**");
     messageContent.append(newLine);
 
     if (settings.getBannedUserIds() != null && !settings.getBannedUserIds().isEmpty()) {
-      messageContent.append(settingProvider.getText("set_ban_command.message.current_ban") + ":").append(newLine);
+      messageContent.append(settingProvider.getText("set_ban.message.current_ban") + ":").append(newLine);
       List<User> users = discordDataReceiver.getUsersByIds(settings.getBannedUserIds());
 
       for (User user : users) {
@@ -183,12 +183,11 @@ public class SetBanCommand extends BotCommand {
   }
 
   private void makeModalBanUser(ButtonInteractionEvent buttonEvent) {
-    TextInput input = TextInput
-        .create(ban, settingProvider.getText("set_ban_command.modal.ban_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_ban_command.modal.ban_input_description")).setMinLength(16)
+    TextInput input = TextInput.create(ban, settingProvider.getText("set_ban.modal.ban_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_ban.modal.ban_input_description")).setMinLength(16)
         .setMaxLength(20).build();
 
-    Modal modal = Modal.create(ban, settingProvider.getText("set_ban_command.modal.ban_name"))
+    Modal modal = Modal.create(ban, settingProvider.getText("set_ban.modal.ban_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -197,11 +196,11 @@ public class SetBanCommand extends BotCommand {
 
   private void makeModalUnbanUser(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(unban, settingProvider.getText("set_ban_command.modal.unban_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_ban_command.modal.unban_input_description")).setMinLength(16)
+        .create(unban, settingProvider.getText("set_ban.modal.unban_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_ban.modal.unban_input_description")).setMinLength(16)
         .setMaxLength(20).build();
 
-    Modal modal = Modal.create(unban, settingProvider.getText("set_ban_command.modal.unban_name"))
+    Modal modal = Modal.create(unban, settingProvider.getText("set_ban.modal.unban_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -227,11 +226,10 @@ public class SetBanCommand extends BotCommand {
       if (!settings.getBannedUserIds().contains(userId)) {
         settings.getBannedUserIds().add(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_ban_command.message.ban_success"))
+        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_ban.message.ban_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(settingProvider.getText("set_ban_command.message.ban_already_exists")).setEphemeral(true)
-            .queue();
+        modalEvent.reply(settingProvider.getText("set_ban.message.ban_already_exists")).setEphemeral(true).queue();
       }
     } else {
       modalEvent.reply(settingProvider.getText("setting.message.user_not_found")).setEphemeral(true).queue();
@@ -258,14 +256,14 @@ public class SetBanCommand extends BotCommand {
       User user = discordDataReceiver.getUserById(userId);
 
       if (user != null) {
-        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_ban_command.message.unban_success"))
+        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_ban.message.unban_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(userId + " " + settingProvider.getText("set_ban_command.message.unban_success"))
-            .setEphemeral(true).queue();
+        modalEvent.reply(userId + " " + settingProvider.getText("set_ban.message.unban_success")).setEphemeral(true)
+            .queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_ban_command.message.unban_not_found")).setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_ban.message.unban_not_found")).setEphemeral(true).queue();
     }
   }
 

@@ -84,7 +84,7 @@ public class SetAdminCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_admin_command.description");
+    return settingProvider.getText("set_admin.description");
   }
 
   @Override
@@ -117,18 +117,17 @@ public class SetAdminCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button addAdminButton = Button.primary(addAdmin, settingProvider.getText("set_admin_command.button.add_admin"));
-    Button removeAdminButton = Button.primary(removeAdmin,
-        settingProvider.getText("set_admin_command.button.remove_admin"));
+    Button addAdminButton = Button.primary(addAdmin, settingProvider.getText("set_admin.button.add_admin"));
+    Button removeAdminButton = Button.primary(removeAdmin, settingProvider.getText("set_admin.button.remove_admin"));
     List<Button> buttons = List.of(closeButton, addAdminButton, removeAdminButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_admin_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_admin.message.title") + "**");
     messageContent.append(newLine);
 
     if (settings.getAdminUserIds() != null && !settings.getAdminUserIds().isEmpty()) {
-      messageContent.append(settingProvider.getText("set_admin_command.message.current_admin") + ":").append(newLine);
+      messageContent.append(settingProvider.getText("set_admin.message.current_admin") + ":").append(newLine);
       List<User> users = discordDataReceiver.getUsersByIds(settings.getAdminUserIds());
 
       for (User user : users) {
@@ -185,11 +184,11 @@ public class SetAdminCommand extends BotCommand {
 
   private void makeModalAddAdmin(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addAdmin, settingProvider.getText("set_admin_command.modal.add_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_admin_command.modal.add_input_description")).setMinLength(16)
+        .create(addAdmin, settingProvider.getText("set_admin.modal.add_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_admin.modal.add_input_description")).setMinLength(16)
         .setMaxLength(20).build();
 
-    Modal modal = Modal.create(addAdmin, settingProvider.getText("set_admin_command.modal.add_name"))
+    Modal modal = Modal.create(addAdmin, settingProvider.getText("set_admin.modal.add_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -198,11 +197,11 @@ public class SetAdminCommand extends BotCommand {
 
   private void makeModalRemoveAdmin(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addAdmin, settingProvider.getText("set_admin_command.modal.remove_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_admin_command.modal.remove_input_description")).setMinLength(16)
+        .create(addAdmin, settingProvider.getText("set_admin.modal.remove_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_admin.modal.remove_input_description")).setMinLength(16)
         .setMaxLength(20).build();
 
-    Modal modal = Modal.create(addAdmin, settingProvider.getText("set_admin_command.modal.remove_name"))
+    Modal modal = Modal.create(addAdmin, settingProvider.getText("set_admin.modal.remove_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -228,11 +227,10 @@ public class SetAdminCommand extends BotCommand {
       if (!settings.getAdminUserIds().contains(userId)) {
         settings.getAdminUserIds().add(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_admin_command.message.add_success"))
+        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_admin.message.add_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(settingProvider.getText("set_admin_command.message.add_already_exists")).setEphemeral(true)
-            .queue();
+        modalEvent.reply(settingProvider.getText("set_admin.message.add_already_exists")).setEphemeral(true).queue();
       }
     } else {
       modalEvent.reply(settingProvider.getText("setting.message.user_not_found")).setEphemeral(true).queue();
@@ -259,16 +257,14 @@ public class SetAdminCommand extends BotCommand {
       User user = discordDataReceiver.getUserById(userId);
 
       if (user != null) {
-        modalEvent
-            .reply(user.getAsMention() + " " + settingProvider.getText("set_admin_command.message.remove_success"))
+        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_admin.message.remove_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(userId + " " + settingProvider.getText("set_admin_command.message.remove_success"))
-            .setEphemeral(true).queue();
+        modalEvent.reply(userId + " " + settingProvider.getText("set_admin.message.remove_success")).setEphemeral(true)
+            .queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_admin_command.message.remove_not_found")).setEphemeral(true)
-          .queue();
+      modalEvent.reply(settingProvider.getText("set_admin.message.remove_not_found")).setEphemeral(true).queue();
     }
   }
 

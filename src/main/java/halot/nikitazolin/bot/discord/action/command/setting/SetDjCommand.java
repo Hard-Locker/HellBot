@@ -84,7 +84,7 @@ public class SetDjCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_dj_command.description");
+    return settingProvider.getText("set_dj.description");
   }
 
   @Override
@@ -117,17 +117,17 @@ public class SetDjCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button addDjButton = Button.primary(addDj, settingProvider.getText("set_dj_command.button.add_dj"));
-    Button removeDjButton = Button.primary(removeDj, settingProvider.getText("set_dj_command.button.remove_dj"));
+    Button addDjButton = Button.primary(addDj, settingProvider.getText("set_dj.button.add_dj"));
+    Button removeDjButton = Button.primary(removeDj, settingProvider.getText("set_dj.button.remove_dj"));
     List<Button> buttons = List.of(closeButton, addDjButton, removeDjButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_dj_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_dj.message.title") + "**");
     messageContent.append(newLine);
 
     if (settings.getDjUserIds() != null && !settings.getDjUserIds().isEmpty()) {
-      messageContent.append(settingProvider.getText("set_dj_command.message.current_dj") + ":").append(newLine);
+      messageContent.append(settingProvider.getText("set_dj.message.current_dj") + ":").append(newLine);
       List<User> users = discordDataReceiver.getUsersByIds(settings.getDjUserIds());
 
       for (User user : users) {
@@ -184,11 +184,11 @@ public class SetDjCommand extends BotCommand {
 
   private void makeModalAddDj(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addDj, settingProvider.getText("set_dj_command.modal.add_dj_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_dj_command.modal.add_dj_input_description")).setMinLength(16)
+        .create(addDj, settingProvider.getText("set_dj.modal.add_dj_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_dj.modal.add_dj_input_description")).setMinLength(16)
         .setMaxLength(20).build();
 
-    Modal modal = Modal.create(addDj, settingProvider.getText("set_dj_command.modal.add_dj_name"))
+    Modal modal = Modal.create(addDj, settingProvider.getText("set_dj.modal.add_dj_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -197,11 +197,11 @@ public class SetDjCommand extends BotCommand {
 
   private void makeModalRemoveDj(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removeDj, settingProvider.getText("set_dj_command.modal.remove_dj_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_dj_command.modal.remove_dj_input_description")).setMinLength(16)
+        .create(removeDj, settingProvider.getText("set_dj.modal.remove_dj_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_dj.modal.remove_dj_input_description")).setMinLength(16)
         .setMaxLength(20).build();
 
-    Modal modal = Modal.create(removeDj, settingProvider.getText("set_dj_command.modal.remove_dj_name"))
+    Modal modal = Modal.create(removeDj, settingProvider.getText("set_dj.modal.remove_dj_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -227,11 +227,10 @@ public class SetDjCommand extends BotCommand {
       if (!settings.getDjUserIds().contains(userId)) {
         settings.getDjUserIds().add(userId);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_dj_command.message.add_dj_success"))
+        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_dj.message.add_dj_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(settingProvider.getText("set_dj_command.message.add_dj_already_exists")).setEphemeral(true)
-            .queue();
+        modalEvent.reply(settingProvider.getText("set_dj.message.add_dj_already_exists")).setEphemeral(true).queue();
       }
     } else {
       modalEvent.reply(settingProvider.getText("setting.message.user_not_found")).setEphemeral(true).queue();
@@ -258,16 +257,14 @@ public class SetDjCommand extends BotCommand {
       User user = discordDataReceiver.getUserById(userId);
 
       if (user != null) {
-        modalEvent
-            .reply(user.getAsMention() + " " + settingProvider.getText("set_dj_command.message.remove_dj_success"))
+        modalEvent.reply(user.getAsMention() + " " + settingProvider.getText("set_dj.message.remove_dj_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(userId + " " + settingProvider.getText("set_dj_command.message.remove_dj_success"))
-            .setEphemeral(true).queue();
+        modalEvent.reply(userId + " " + settingProvider.getText("set_dj.message.remove_dj_success")).setEphemeral(true)
+            .queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_dj_command.message.remove_dj_not_found")).setEphemeral(true)
-          .queue();
+      modalEvent.reply(settingProvider.getText("set_dj.message.remove_dj_not_found")).setEphemeral(true).queue();
     }
   }
 

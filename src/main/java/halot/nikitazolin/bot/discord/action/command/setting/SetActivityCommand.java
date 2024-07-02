@@ -83,7 +83,7 @@ public class SetActivityCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_activity_command.description");
+    return settingProvider.getText("set_activity.description");
   }
 
   @Override
@@ -116,19 +116,17 @@ public class SetActivityCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button playingButton = Button.primary(playing, settingProvider.getText("set_activity_command.button.playing"));
-    Button streamingButton = Button.primary(streaming,
-        settingProvider.getText("set_activity_command.button.streaming"));
-    Button listeningButton = Button.primary(listening,
-        settingProvider.getText("set_activity_command.button.listening"));
-    Button watchingButton = Button.primary(watching, settingProvider.getText("set_activity_command.button.watching"));
+    Button playingButton = Button.primary(playing, settingProvider.getText("set_activity.button.playing"));
+    Button streamingButton = Button.primary(streaming, settingProvider.getText("set_activity.button.streaming"));
+    Button listeningButton = Button.primary(listening, settingProvider.getText("set_activity.button.listening"));
+    Button watchingButton = Button.primary(watching, settingProvider.getText("set_activity.button.watching"));
     List<Button> buttons = List.of(closeButton, playingButton, streamingButton, listeningButton, watchingButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_activity_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_activity.message.title") + "**");
     messageContent.append(newLine);
-    messageContent.append(settingProvider.getText("set_activity_command.message.subtitle"));
+    messageContent.append(settingProvider.getText("set_activity.message.subtitle"));
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
@@ -181,11 +179,11 @@ public class SetActivityCommand extends BotCommand {
 
   private void makeModalPlayingActivity(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(playing, settingProvider.getText("set_activity_command.modal.playing_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_activity_command.modal.playing_input_description")).setMinLength(1)
+        .create(playing, settingProvider.getText("set_activity.modal.playing_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity.modal.playing_input_description")).setMinLength(1)
         .setMaxLength(100).build();
 
-    Modal modal = Modal.create(playing, settingProvider.getText("set_activity_command.modal.playing_name"))
+    Modal modal = Modal.create(playing, settingProvider.getText("set_activity.modal.playing_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -194,11 +192,11 @@ public class SetActivityCommand extends BotCommand {
 
   private void makeModalStreamingActivity(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(streaming, settingProvider.getText("set_activity_command.modal.streaming_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_activity_command.modal.streaming_input_description"))
-        .setMinLength(1).setMaxLength(500).build();
+        .create(streaming, settingProvider.getText("set_activity.modal.streaming_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity.modal.streaming_input_description")).setMinLength(1)
+        .setMaxLength(500).build();
 
-    Modal modal = Modal.create(streaming, settingProvider.getText("set_activity_command.modal.streaming_name"))
+    Modal modal = Modal.create(streaming, settingProvider.getText("set_activity.modal.streaming_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -207,11 +205,11 @@ public class SetActivityCommand extends BotCommand {
 
   private void makeModalListeningActivity(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(listening, settingProvider.getText("set_activity_command.modal.listening_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_activity_command.modal.listening_input_description"))
-        .setMinLength(1).setMaxLength(100).build();
+        .create(listening, settingProvider.getText("set_activity.modal.listening_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity.modal.listening_input_description")).setMinLength(1)
+        .setMaxLength(100).build();
 
-    Modal modal = Modal.create(listening, settingProvider.getText("set_activity_command.modal.listening_name"))
+    Modal modal = Modal.create(listening, settingProvider.getText("set_activity.modal.listening_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -220,11 +218,11 @@ public class SetActivityCommand extends BotCommand {
 
   private void makeModalWatchingActivity(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(watching, settingProvider.getText("set_activity_command.modal.watching_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_activity_command.modal.watching_input_description"))
-        .setMinLength(1).setMaxLength(100).build();
+        .create(watching, settingProvider.getText("set_activity.modal.watching_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity.modal.watching_input_description")).setMinLength(1)
+        .setMaxLength(100).build();
 
-    Modal modal = Modal.create(watching, settingProvider.getText("set_activity_command.modal.watching_name"))
+    Modal modal = Modal.create(watching, settingProvider.getText("set_activity.modal.watching_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -236,8 +234,7 @@ public class SetActivityCommand extends BotCommand {
     String input = modalEvent.getValue(playing).getAsString();
 
     activityManager.setPlaying(input);
-    modalEvent.reply(settingProvider.getText("set_activity_command.message.activity_update")).setEphemeral(true)
-        .queue();
+    modalEvent.reply(settingProvider.getText("set_activity.message.activity_update")).setEphemeral(true).queue();
   }
 
   private void handleModalStreamingActivity(ModalInteractionEvent modalEvent) {
@@ -245,8 +242,7 @@ public class SetActivityCommand extends BotCommand {
     String input = modalEvent.getValue(streaming).getAsString();
 
     activityManager.setStreaming(input);
-    modalEvent.reply(settingProvider.getText("set_activity_command.message.activity_update")).setEphemeral(true)
-        .queue();
+    modalEvent.reply(settingProvider.getText("set_activity.message.activity_update")).setEphemeral(true).queue();
   }
 
   private void handleModalListeningActivity(ModalInteractionEvent modalEvent) {
@@ -254,8 +250,7 @@ public class SetActivityCommand extends BotCommand {
     String input = modalEvent.getValue(listening).getAsString();
 
     activityManager.setListening(input);
-    modalEvent.reply(settingProvider.getText("set_activity_command.message.activity_update")).setEphemeral(true)
-        .queue();
+    modalEvent.reply(settingProvider.getText("set_activity.message.activity_update")).setEphemeral(true).queue();
   }
 
   private void handleModalWatchingActivity(ModalInteractionEvent modalEvent) {
@@ -263,8 +258,7 @@ public class SetActivityCommand extends BotCommand {
     String input = modalEvent.getValue(watching).getAsString();
 
     activityManager.setWatching(input);
-    modalEvent.reply(settingProvider.getText("set_activity_command.message.activity_update")).setEphemeral(true)
-        .queue();
+    modalEvent.reply(settingProvider.getText("set_activity.message.activity_update")).setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

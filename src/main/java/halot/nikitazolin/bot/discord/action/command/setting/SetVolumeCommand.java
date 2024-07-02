@@ -81,7 +81,7 @@ public class SetVolumeCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_volume_command.description");
+    return settingProvider.getText("set_volume.description");
   }
 
   @Override
@@ -163,16 +163,16 @@ public class SetVolumeCommand extends BotCommand {
 
   private void makeGui(BotCommandContext context) {
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button volumeButton = Button.primary(volume, settingProvider.getText("set_volume_command.button.set_volume"));
+    Button volumeButton = Button.primary(volume, settingProvider.getText("set_volume.button.set_volume"));
     List<Button> buttons = List.of(closeButton, volumeButton);
 
     int volumeLevel = settings.getVolume();
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_volume_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_volume.message.title") + "**");
     messageContent.append(newLine);
 
-    messageContent.append(settingProvider.getText("set_volume_command.message.current_volume") + ": " + volumeLevel);
+    messageContent.append(settingProvider.getText("set_volume.message.current_volume") + ": " + volumeLevel);
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
@@ -195,11 +195,11 @@ public class SetVolumeCommand extends BotCommand {
 
   private void makeModalVolume(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(volume, settingProvider.getText("set_volume_command.modal.set_volume_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_volume_command.modal.set_volume_input_description"))
-        .setMinLength(1).setMaxLength(3).build();
+        .create(volume, settingProvider.getText("set_volume.modal.set_volume_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_volume.modal.set_volume_input_description")).setMinLength(1)
+        .setMaxLength(3).build();
 
-    Modal modal = Modal.create(volume, settingProvider.getText("set_volume_command.modal.set_volume_name"))
+    Modal modal = Modal.create(volume, settingProvider.getText("set_volume.modal.set_volume_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -219,8 +219,8 @@ public class SetVolumeCommand extends BotCommand {
     }
 
     updateVolume(volumeLevel);
-    modalEvent.reply(settingProvider.getText("set_volume_command.message.set_volume") + ": " + volumeLevel)
-        .setEphemeral(true).queue();
+    modalEvent.reply(settingProvider.getText("set_volume.message.set_volume") + ": " + volumeLevel).setEphemeral(true)
+        .queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

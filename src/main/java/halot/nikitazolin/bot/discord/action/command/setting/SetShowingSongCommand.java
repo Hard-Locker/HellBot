@@ -78,7 +78,7 @@ public class SetShowingSongCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_showing_song_command.description");
+    return settingProvider.getText("set_showing_song.description");
   }
 
   @Override
@@ -112,29 +112,28 @@ public class SetShowingSongCommand extends BotCommand {
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
     Button songInActivityButton = Button.primary(songInActivity,
-        settingProvider.getText("set_showing_song_command.button.activity"));
-    Button songInTopicButton = Button.primary(songInTopic,
-        settingProvider.getText("set_showing_song_command.button.topic"));
+        settingProvider.getText("set_showing_song.button.activity"));
+    Button songInTopicButton = Button.primary(songInTopic, settingProvider.getText("set_showing_song.button.topic"));
     Button songInTextChannelButton = Button.primary(songInTextChannel,
-        settingProvider.getText("set_showing_song_command.button.text_channel"));
+        settingProvider.getText("set_showing_song.button.text_channel"));
     List<Button> buttons = List.of(closeButton, songInActivityButton, songInTopicButton, songInTextChannelButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_showing_song_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_showing_song.message.title") + "**");
     messageContent.append(newLine);
 
-    messageContent.append(settingProvider.getText("set_showing_song_command.message.current_activity") + ": ");
+    messageContent.append(settingProvider.getText("set_showing_song.message.current_activity") + ": ");
     messageContent.append(settings.isSongInActivity() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no"));
     messageContent.append(newLine);
 
-    messageContent.append(settingProvider.getText("set_showing_song_command.message.current_topic") + ": ");
+    messageContent.append(settingProvider.getText("set_showing_song.message.current_topic") + ": ");
     messageContent.append(settings.isSongInTopic() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no"));
     messageContent.append(newLine);
 
-    messageContent.append(settingProvider.getText("set_showing_song_command.message.current_text_channel") + ": ");
+    messageContent.append(settingProvider.getText("set_showing_song.message.current_text_channel") + ": ");
     messageContent.append(settings.isSongInTextChannel() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no"));
     messageContent.append(newLine);
@@ -185,8 +184,8 @@ public class SetShowingSongCommand extends BotCommand {
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
     String info = settings.isSongInActivity() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no");
-    buttonEvent.reply(settingProvider.getText("set_showing_song_command.message.set_activity") + ": " + info)
-        .setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("set_showing_song.message.set_activity") + ": " + info).setEphemeral(true)
+        .queue();
   }
 
   private void handleButtonSongInTopic(ButtonInteractionEvent buttonEvent) {
@@ -201,8 +200,8 @@ public class SetShowingSongCommand extends BotCommand {
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
     String info = settings.isSongInTopic() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no");
-    buttonEvent.reply(settingProvider.getText("set_showing_song_command.message.set_topic") + ": " + info)
-        .setEphemeral(true).queue();
+    buttonEvent.reply(settingProvider.getText("set_showing_song.message.set_topic") + ": " + info).setEphemeral(true)
+        .queue();
   }
 
   private void handleButtonSongInTextChannel(ButtonInteractionEvent buttonEvent) {
@@ -217,7 +216,7 @@ public class SetShowingSongCommand extends BotCommand {
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
     String info = settings.isSongInTextChannel() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no");
-    buttonEvent.reply(settingProvider.getText("set_showing_song_command.message.set_text_channel") + ": " + info)
+    buttonEvent.reply(settingProvider.getText("set_showing_song.message.set_text_channel") + ": " + info)
         .setEphemeral(true).queue();
   }
 

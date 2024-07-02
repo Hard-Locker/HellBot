@@ -82,7 +82,7 @@ public class SetPrefixCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_prefix_command.description");
+    return settingProvider.getText("set_prefix.description");
   }
 
   @Override
@@ -115,18 +115,18 @@ public class SetPrefixCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button addPrefixButton = Button.primary(addPrefix, settingProvider.getText("set_prefix_command.button.add_prefix"));
+    Button addPrefixButton = Button.primary(addPrefix, settingProvider.getText("set_prefix.button.add_prefix"));
     Button removePrefixButton = Button.primary(removePrefix,
-        settingProvider.getText("set_prefix_command.button.remove_prefix"));
+        settingProvider.getText("set_prefix.button.remove_prefix"));
     List<Button> buttons = List.of(closeButton, addPrefixButton, removePrefixButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_prefix_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_prefix.message.title") + "**");
     messageContent.append(newLine);
 
     if (settings.getPrefixes() != null && !settings.getPrefixes().isEmpty()) {
-      messageContent.append(settingProvider.getText("set_prefix_command.message.current_prefixes") + ":");
+      messageContent.append(settingProvider.getText("set_prefix.message.current_prefixes") + ":");
       messageContent.append(newLine);
 
       for (String prefix : settings.getPrefixes()) {
@@ -183,11 +183,11 @@ public class SetPrefixCommand extends BotCommand {
 
   private void makeModalAddPrefix(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addPrefix, settingProvider.getText("set_prefix_command.modal.add_prefix_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_prefix_command.modal.add_prefix_input_description"))
-        .setMinLength(1).setMaxLength(5).build();
+        .create(addPrefix, settingProvider.getText("set_prefix.modal.add_prefix_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_prefix.modal.add_prefix_input_description")).setMinLength(1)
+        .setMaxLength(5).build();
 
-    Modal modal = Modal.create(addPrefix, settingProvider.getText("set_prefix_command.modal.add_prefix_name"))
+    Modal modal = Modal.create(addPrefix, settingProvider.getText("set_prefix.modal.add_prefix_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -196,12 +196,11 @@ public class SetPrefixCommand extends BotCommand {
 
   private void makeModalRemovePrefix(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removePrefix, settingProvider.getText("set_prefix_command.modal.remove_prefix_input"),
-            TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_prefix_command.modal.remove_prefix_input_description"))
-        .setMinLength(1).setMaxLength(5).build();
+        .create(removePrefix, settingProvider.getText("set_prefix.modal.remove_prefix_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_prefix.modal.remove_prefix_input_description")).setMinLength(1)
+        .setMaxLength(5).build();
 
-    Modal modal = Modal.create(removePrefix, settingProvider.getText("set_prefix_command.modal.remove_prefix_name"))
+    Modal modal = Modal.create(removePrefix, settingProvider.getText("set_prefix.modal.remove_prefix_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -217,16 +216,14 @@ public class SetPrefixCommand extends BotCommand {
         settings.getPrefixes().add(input);
         settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-        modalEvent
-            .reply("**" + input + "**" + " " + settingProvider.getText("set_prefix_command.message.add_prefix_success"))
+        modalEvent.reply("**" + input + "**" + " " + settingProvider.getText("set_prefix.message.add_prefix_success"))
             .setEphemeral(true).queue();
       } else {
-        modalEvent.reply(settingProvider.getText("set_prefix_command.message.add_prefix_already_exists"))
-            .setEphemeral(true).queue();
+        modalEvent.reply(settingProvider.getText("set_prefix.message.add_prefix_already_exists")).setEphemeral(true)
+            .queue();
       }
     } else {
-      modalEvent.reply(settingProvider.getText("set_prefix_command.message.add_prefix_not_found")).setEphemeral(true)
-          .queue();
+      modalEvent.reply(settingProvider.getText("set_prefix.message.add_prefix_not_found")).setEphemeral(true).queue();
     }
   }
 
@@ -238,14 +235,11 @@ public class SetPrefixCommand extends BotCommand {
       settings.getPrefixes().remove(input);
       settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-      modalEvent
-          .reply(
-              "**" + input + "**" + " " + settingProvider.getText("set_prefix_command.message.remove_prefix_success"))
+      modalEvent.reply("**" + input + "**" + " " + settingProvider.getText("set_prefix.message.remove_prefix_success"))
           .setEphemeral(true).queue();
     } else {
       modalEvent
-          .reply(
-              "**" + input + "**" + " " + settingProvider.getText("set_prefix_command.message.remove_prefix_not_found"))
+          .reply("**" + input + "**" + " " + settingProvider.getText("set_prefix.message.remove_prefix_not_found"))
           .setEphemeral(true).queue();
     }
   }

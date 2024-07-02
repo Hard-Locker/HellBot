@@ -94,7 +94,7 @@ public class SetNameAliasCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_name_alias_command.description");
+    return settingProvider.getText("set_name_alias.description");
   }
 
   @Override
@@ -130,7 +130,7 @@ public class SetNameAliasCommand extends BotCommand {
     List<ActionRow> actionRows = createSelectMenu(currentPage);
 
     Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(),
-        settingProvider.getText("set_name_alias_command.message.title") + ":", actionRows);
+        settingProvider.getText("set_name_alias.message.title") + ":", actionRows);
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(next, this::nextPage);
@@ -194,7 +194,7 @@ public class SetNameAliasCommand extends BotCommand {
     List<String> pageCommands = commandNames.subList(fromIndex, toIndex);
 
     StringSelectMenu.Builder selectMenuBuilder = StringSelectMenu.create(menuName)
-        .setPlaceholder(settingProvider.getText("set_name_alias_command.message.subtitle"));
+        .setPlaceholder(settingProvider.getText("set_name_alias.message.subtitle"));
 
     List<SelectOption> selectOptions = pageCommands.stream().map(option -> SelectOption.of(option, option)).toList();
     selectMenuBuilder.addOptions(selectOptions);
@@ -234,8 +234,7 @@ public class SetNameAliasCommand extends BotCommand {
           .setEphemeral(true).queue();
       return;
     } else {
-      stringSelectEvent
-          .reply(settingProvider.getText("set_name_alias_command.message.open_setting") + ": " + selectedOption)
+      stringSelectEvent.reply(settingProvider.getText("set_name_alias.message.open_setting") + ": " + selectedOption)
           .setEphemeral(true).queue();
     }
 
@@ -245,8 +244,8 @@ public class SetNameAliasCommand extends BotCommand {
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_name_alias_command.message.current_name_alias") + ": "
-        + "**" + selectedOption);
+    messageContent.append(
+        "**" + settingProvider.getText("set_name_alias.message.current_name_alias") + ": " + "**" + selectedOption);
     messageContent.append(newLine);
 
     for (String nameAlias : nameAliases) {
@@ -255,9 +254,8 @@ public class SetNameAliasCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button addNameButton = Button.primary(addName, settingProvider.getText("set_name_alias_command.button.add_name"));
-    Button removeNameButton = Button.primary(removeName,
-        settingProvider.getText("set_name_alias_command.button.remove_name"));
+    Button addNameButton = Button.primary(addName, settingProvider.getText("set_name_alias.button.add_name"));
+    Button removeNameButton = Button.primary(removeName, settingProvider.getText("set_name_alias.button.remove_name"));
     List<Button> buttons = List.of(closeButton, addNameButton, removeNameButton);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
@@ -268,12 +266,11 @@ public class SetNameAliasCommand extends BotCommand {
 
   private void makeModalAddName(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addName, settingProvider.getText("set_name_alias_command.modal.add_name_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_name_alias_command.modal.add_name_input_description"))
-        .setMinLength(1).setMaxLength(20).build();
+        .create(addName, settingProvider.getText("set_name_alias.modal.add_name_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_name_alias.modal.add_name_input_description")).setMinLength(1)
+        .setMaxLength(20).build();
 
-    Modal modal = Modal
-        .create(addName, settingProvider.getText("set_name_alias_command.modal.add_name") + ": " + selectedName)
+    Modal modal = Modal.create(addName, settingProvider.getText("set_name_alias.modal.add_name") + ": " + selectedName)
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -282,13 +279,12 @@ public class SetNameAliasCommand extends BotCommand {
 
   private void makeModalRemoveName(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removeName, settingProvider.getText("set_name_alias_command.modal.remove_name_input"),
-            TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_name_alias_command.modal.remove_name_input_description"))
-        .setMinLength(1).setMaxLength(20).build();
+        .create(removeName, settingProvider.getText("set_name_alias.modal.remove_name_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_name_alias.modal.remove_name_input_description")).setMinLength(1)
+        .setMaxLength(20).build();
 
     Modal modal = Modal
-        .create(removeName, settingProvider.getText("set_name_alias_command.modal.remove_name") + ": " + selectedName)
+        .create(removeName, settingProvider.getText("set_name_alias.modal.remove_name") + ": " + selectedName)
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -308,15 +304,13 @@ public class SetNameAliasCommand extends BotCommand {
       synchronized (settings) {
         if (settings.getNameAliases().containsKey(selectedName)) {
           if (settings.getNameAliases().get(selectedName).contains(input)) {
-            hook.editOriginal(
-                input + " " + settingProvider.getText("set_name_alias_command.message.add_name_already_exists"))
+            hook.editOriginal(input + " " + settingProvider.getText("set_name_alias.message.add_name_already_exists"))
                 .queue();
           } else {
             settings.getNameAliases().get(selectedName).add(input);
             settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-            hook.editOriginal(input + " " + settingProvider.getText("set_name_alias_command.message.add_name_success"))
-                .queue();
+            hook.editOriginal(input + " " + settingProvider.getText("set_name_alias.message.add_name_success")).queue();
 
             log.debug("Added name alias: {}, for command: {}", input, selectedName);
           }
@@ -324,8 +318,7 @@ public class SetNameAliasCommand extends BotCommand {
           settings.getNameAliases().put(selectedName, new ArrayList<>(List.of(input)));
           settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-          hook.editOriginal(input + " " + settingProvider.getText("set_name_alias_command.message.add_name_success"))
-              .queue();
+          hook.editOriginal(input + " " + settingProvider.getText("set_name_alias.message.add_name_success")).queue();
 
           log.debug("Added name alias: {}, for command: {}", input, selectedName);
         }
@@ -353,17 +346,17 @@ public class SetNameAliasCommand extends BotCommand {
             }
 
             settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
-            hook.editOriginal(
-                input + " " + settingProvider.getText("set_name_alias_command.message.remove_name_success")).queue();
+            hook.editOriginal(input + " " + settingProvider.getText("set_name_alias.message.remove_name_success"))
+                .queue();
 
             log.debug("Removed name alias: {}, for command: {}", input, selectedName);
           } else {
-            hook.editOriginal(
-                input + " " + settingProvider.getText("set_name_alias_command.message.remove_name_not_found")).queue();
+            hook.editOriginal(input + " " + settingProvider.getText("set_name_alias.message.remove_name_not_found"))
+                .queue();
           }
         } else {
-          hook.editOriginal(
-              input + " " + settingProvider.getText("set_name_alias_command.message.remove_name_not_found")).queue();
+          hook.editOriginal(input + " " + settingProvider.getText("set_name_alias.message.remove_name_not_found"))
+              .queue();
         }
       }
     });

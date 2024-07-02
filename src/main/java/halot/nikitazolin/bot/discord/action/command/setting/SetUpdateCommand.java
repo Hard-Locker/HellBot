@@ -79,7 +79,7 @@ public class SetUpdateCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_update_command.description");
+    return settingProvider.getText("set_update.description");
   }
 
   @Override
@@ -117,24 +117,22 @@ public class SetUpdateCommand extends BotCommand {
         .orElse(settingProvider.getText("setting.text.unknown"));
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button enableButton = Button.primary(enableUpdateNotifier,
-        settingProvider.getText("set_update_command.button.enable"));
-    Button disableButton = Button.primary(disableUpdateNotifier,
-        settingProvider.getText("set_update_command.button.disable"));
+    Button enableButton = Button.primary(enableUpdateNotifier, settingProvider.getText("set_update.button.enable"));
+    Button disableButton = Button.primary(disableUpdateNotifier, settingProvider.getText("set_update.button.disable"));
     List<Button> buttons = List.of(closeButton, enableButton, disableButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_update_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_update.message.title") + "**");
     messageContent.append(newLine);
 
-    messageContent.append(
-        settingProvider.getText("set_update_command.message.current_version") + ": " + "**" + currentVersion + "**");
+    messageContent
+        .append(settingProvider.getText("set_update.message.current_version") + ": " + "**" + currentVersion + "**");
     messageContent.append(newLine);
-    messageContent.append(
-        settingProvider.getText("set_update_command.message.latest_version") + ": " + "**" + latestVersion + "**");
+    messageContent
+        .append(settingProvider.getText("set_update.message.latest_version") + ": " + "**" + latestVersion + "**");
     messageContent.append(newLine);
-    messageContent.append(settingProvider.getText("set_update_command.message.notify") + ": ");
+    messageContent.append(settingProvider.getText("set_update.message.notify") + ": ");
     messageContent
         .append(settings.isUpdateNotification() == true ? "**" + settingProvider.getText("setting.text.yes") + "**"
             : "**" + settingProvider.getText("setting.text.no") + "**");
@@ -180,8 +178,7 @@ public class SetUpdateCommand extends BotCommand {
 
     String info = settings.isUpdateNotification() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no");
-    buttonEvent.reply(settingProvider.getText("set_update_command.message.set") + ": " + info).setEphemeral(true)
-        .queue();
+    buttonEvent.reply(settingProvider.getText("set_update.message.set") + ": " + info).setEphemeral(true).queue();
   }
 
   private void handleButtonDisable(ButtonInteractionEvent buttonEvent) {
@@ -191,8 +188,7 @@ public class SetUpdateCommand extends BotCommand {
 
     String info = settings.isUpdateNotification() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no");
-    buttonEvent.reply(settingProvider.getText("set_update_command.message.set") + ": " + info).setEphemeral(true)
-        .queue();
+    buttonEvent.reply(settingProvider.getText("set_update.message.set") + ": " + info).setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {

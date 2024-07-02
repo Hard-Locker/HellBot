@@ -78,7 +78,7 @@ public class SetStatusCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_status_command.description");
+    return settingProvider.getText("set_status.description");
   }
 
   @Override
@@ -111,19 +111,18 @@ public class SetStatusCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button onlineButton = Button.success(online, settingProvider.getText("set_status_command.button.online"));
-    Button idleButton = Button.primary(idle, settingProvider.getText("set_status_command.button.idle"));
-    Button dndButton = Button.danger(dnd, settingProvider.getText("set_status_command.button.dnd"));
-    Button invisibleButton = Button.secondary(invisible,
-        settingProvider.getText("set_status_command.button.invisible"));
+    Button onlineButton = Button.success(online, settingProvider.getText("set_status.button.online"));
+    Button idleButton = Button.primary(idle, settingProvider.getText("set_status.button.idle"));
+    Button dndButton = Button.danger(dnd, settingProvider.getText("set_status.button.dnd"));
+    Button invisibleButton = Button.secondary(invisible, settingProvider.getText("set_status.button.invisible"));
     List<Button> buttons = List.of(closeButton, onlineButton, idleButton, dndButton, invisibleButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_status_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_status.message.title") + "**");
     messageContent.append(newLine);
 
-    messageContent.append(settingProvider.getText("set_status_command.message.subtitle") + "?");
+    messageContent.append(settingProvider.getText("set_status.message.subtitle") + "?");
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
@@ -165,26 +164,26 @@ public class SetStatusCommand extends BotCommand {
     switch (buttonEvent.getComponentId()) {
     case online:
       statusManager.setOnline();
-      buttonEvent.reply(settingProvider.getText("set_status_command.message.set_online")).setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status.message.set_online")).setEphemeral(true).queue();
       break;
 
     case idle:
       statusManager.setIdle();
-      buttonEvent.reply(settingProvider.getText("set_status_command.message.set_idle")).setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status.message.set_idle")).setEphemeral(true).queue();
       break;
 
     case dnd:
       statusManager.setDnd();
-      buttonEvent.reply(settingProvider.getText("set_status_command.message.set_dnd")).setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status.message.set_dnd")).setEphemeral(true).queue();
       break;
 
     case invisible:
       statusManager.setInvisible();
-      buttonEvent.reply(settingProvider.getText("set_status_command.message.set_invisible")).setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status.message.set_invisible")).setEphemeral(true).queue();
       break;
 
     default:
-      buttonEvent.reply(settingProvider.getText("set_status_command.message.unknown")).setEphemeral(true).queue();
+      buttonEvent.reply(settingProvider.getText("set_status.message.unknown")).setEphemeral(true).queue();
       break;
     }
 

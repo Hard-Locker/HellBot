@@ -82,7 +82,7 @@ public class SetAloneCommand extends BotCommand {
 
   @Override
   public String description() {
-    return settingProvider.getText("set_alone_command.description");
+    return settingProvider.getText("set_alone.description");
   }
 
   @Override
@@ -115,23 +115,21 @@ public class SetAloneCommand extends BotCommand {
     }
 
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
-    Button aloneTimeButton = Button.primary(aloneTime,
-        settingProvider.getText("set_alone_command.button.set_alone_time"));
-    Button stayInChannelButton = Button.primary(stayInChannel,
-        settingProvider.getText("set_alone_command.button.set_stay"));
+    Button aloneTimeButton = Button.primary(aloneTime, settingProvider.getText("set_alone.button.set_alone_time"));
+    Button stayInChannelButton = Button.primary(stayInChannel, settingProvider.getText("set_alone.button.set_stay"));
     List<Button> buttons = List.of(closeButton, aloneTimeButton, stayInChannelButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
-    messageContent.append("**" + settingProvider.getText("set_alone_command.message.title") + "**");
+    messageContent.append("**" + settingProvider.getText("set_alone.message.title") + "**");
     messageContent.append(newLine);
 
-    messageContent.append(settingProvider.getText("set_alone_command.message.alone_time") + ": ");
+    messageContent.append(settingProvider.getText("set_alone.message.alone_time") + ": ");
     messageContent.append(settings.getAloneTimeUntilStop() == 0 ? settingProvider.getText("setting.text.not_set")
         : settings.getAloneTimeUntilStop());
     messageContent.append(newLine);
 
-    messageContent.append(settingProvider.getText("set_alone_command.message.stay_in_channel") + ": ");
+    messageContent.append(settingProvider.getText("set_alone.message.stay_in_channel") + ": ");
     messageContent.append(settings.isStayInChannel() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no"));
     messageContent.append(newLine);
@@ -181,11 +179,11 @@ public class SetAloneCommand extends BotCommand {
 
   private void makeModalAloneTime(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(aloneTime, settingProvider.getText("set_alone_command.modal.alone_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_alone_command.modal.alone_input_description")).setMinLength(1)
+        .create(aloneTime, settingProvider.getText("set_alone.modal.alone_input"), TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_alone.modal.alone_input_description")).setMinLength(1)
         .setMaxLength(5).build();
 
-    Modal modal = Modal.create(aloneTime, settingProvider.getText("set_alone_command.modal.alone_name"))
+    Modal modal = Modal.create(aloneTime, settingProvider.getText("set_alone.modal.alone_name"))
         .addComponents(ActionRow.of(input)).build();
 
     buttonEvent.replyModal(modal).queue();
@@ -201,8 +199,8 @@ public class SetAloneCommand extends BotCommand {
       settings.setAloneTimeUntilStop(time);
       settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
 
-      modalEvent.reply(settingProvider.getText("set_admin_command.message.alone_time_result") + ": " + time)
-          .setEphemeral(true).queue();
+      modalEvent.reply(settingProvider.getText("set_alone.message.alone_time_result") + ": " + time).setEphemeral(true)
+          .queue();
       log.debug("User changed alone time to {} seconds", time);
     } catch (NumberFormatException e) {
       log.debug("Error parsing user ID from arguments", e);
@@ -223,8 +221,7 @@ public class SetAloneCommand extends BotCommand {
     settingsSaver.saveToFile(ApplicationRunnerImpl.SETTINGS_FILE_PATH);
     String info = settings.isStayInChannel() == true ? settingProvider.getText("setting.text.yes")
         : settingProvider.getText("setting.text.no");
-    buttonEvent.reply(settingProvider.getText("set_admin_command.message.stay_result") + ": " + info).setEphemeral(true)
-        .queue();
+    buttonEvent.reply(settingProvider.getText("set_alone.stay_result") + ": " + info).setEphemeral(true).queue();
   }
 
   private void selectClose(ButtonInteractionEvent buttonEvent) {
