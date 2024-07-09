@@ -76,14 +76,13 @@ public class InputLinkLoader {
       }
 
       EmbedBuilder embed = messageFormatter
-          .createSuccessEmbed(extractedUrls.size() + " " + musicProvider.getText("play_command.message.adding_success")
-              + ": " + actionMessage.getContext().getUser().getAsMention());
+          .createSuccessEmbed(extractedUrls.size() + " " + musicProvider.getText("play.message.adding_success") + ": "
+              + actionMessage.getContext().getUser().getAsMention());
       messageSender.sendMessageEmbed(actionMessage.getContext().getTextChannel(), embed);
       log.debug("Loaded additional links");
     } else {
-      EmbedBuilder embed = messageFormatter
-          .createSuccessEmbed(musicProvider.getText("play_command.message.adding_error") + ": "
-              + actionMessage.getContext().getUser().getAsMention());
+      EmbedBuilder embed = messageFormatter.createSuccessEmbed(musicProvider.getText("play.message.adding_error") + ": "
+          + actionMessage.getContext().getUser().getAsMention());
       messageSender.sendMessageEmbed(actionMessage.getContext().getTextChannel(), embed);
       log.debug("Problem with downloading additional tracks");
     }
