@@ -54,14 +54,14 @@
     <dependency>
       <groupId>dev.lavalink.youtube</groupId>
       <artifactId>v2</artifactId>
-      <version>1.4.0</version>
+      <version>1.5.1</version>
     </dependency>
 
     <!-- Web -->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>4.22.0</version>
+      <version>4.23.0</version>
     </dependency>
 
     <dependency>

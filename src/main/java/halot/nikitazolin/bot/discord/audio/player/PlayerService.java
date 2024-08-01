@@ -27,7 +27,6 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
-import dev.lavalink.youtube.clients.AndroidWithThumbnail;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
 import dev.lavalink.youtube.clients.skeleton.Client;
@@ -77,7 +76,7 @@ public class PlayerService implements AudioSendHandler {
     AudioSourceManagers.registerLocalSource(audioPlayerManager);
 
     YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true,
-        new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidWithThumbnail() });
+        new Client[] { new MusicWithThumbnail(), new WebWithThumbnail() });
     audioPlayerManager.registerSourceManager(youtube);
 
     audioPlayerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
