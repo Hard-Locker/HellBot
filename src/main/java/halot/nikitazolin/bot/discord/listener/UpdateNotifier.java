@@ -55,7 +55,7 @@ public class UpdateNotifier {
     }
 
     List<User> users = discordDataReceiver.getUsersByIds(new ArrayList<>(userIds));
-    EmbedBuilder embed = messageFormatter.createInfoEmbed(settingProvider.getText("set_update_command.message.update_available") + ": " + latestVersion);
+    EmbedBuilder embed = messageFormatter.createInfoEmbed(settingProvider.getText("set_update.message.update_available") + ": " + latestVersion);
 
     for (User user : users) {
       messageSender.sendPrivateMessage(user, embed);

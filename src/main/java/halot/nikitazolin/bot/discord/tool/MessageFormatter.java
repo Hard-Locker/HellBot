@@ -126,7 +126,7 @@ public class MessageFormatter {
     embedBuilder.addField(musicProvider.getText("info.author"), audioTrackInfo.author, false);
     embedBuilder.addField(musicProvider.getText("info.url"), audioTrackInfo.uri, false);
     embedBuilder.addField(musicProvider.getText("info.duration"),
-        timeConverter.convertLongTimeToSimpleFormat(audioTrackInfo.length), false);
+        timeConverter.convertTimeToDetailedFormat(audioTrackInfo.length), false);
     return embedBuilder;
   }
 
