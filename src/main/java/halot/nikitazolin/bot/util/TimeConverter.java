@@ -139,22 +139,23 @@ public class TimeConverter {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
     return sdf.format(date);
   }
-  
-  // Convert a time in milliseconds to detailed string "YY years MM months DD days HH:mm:ss"
+
+  // Convert a time in milliseconds to detailed string "YY years MM months DD days
+  // HH:mm:ss"
   public String convertTimeToDetailedFormat(long millis) {
-      long seconds = millis / 1000;
-      long minutes = seconds / 60;
-      long hours = minutes / 60;
-      long days = hours / 24;
-      long years = days / 365;
-      days = days % 365;
-      long months = days / 30;
-      days = days % 30;
+    long seconds = millis / 1000;
+    long minutes = seconds / 60;
+    long hours = minutes / 60;
+    long days = hours / 24;
+    long years = days / 365;
+    days = days % 365;
+    long months = days / 30;
+    days = days % 30;
 
-      hours = hours % 24;
-      minutes = minutes % 60;
-      seconds = seconds % 60;
+    hours = hours % 24;
+    minutes = minutes % 60;
+    seconds = seconds % 60;
 
-      return String.format("%d years %d months %d days %02d:%02d:%02d", years, months, days, hours, minutes, seconds);
+    return String.format("%d years %d months %d days %02d:%02d:%02d", years, months, days, hours, minutes, seconds);
   }
 }
