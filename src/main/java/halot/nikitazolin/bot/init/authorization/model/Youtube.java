@@ -12,4 +12,5 @@ public class Youtube {
   private boolean youtubeEnabled;
   private String youtubeLogin;
   private String youtubePassword;
+  private String youtubeAccessToken;
 }

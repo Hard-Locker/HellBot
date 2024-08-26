@@ -22,7 +22,7 @@ public class AuthorizationService {
 
     if (authorizationExists == false) {
       log.warn("Authorization data not exist");
-      authorizationConsoleMenu.showMenu(filePath);
+      authorizationConsoleMenu.showStartMenu(filePath);
     }
 
     authorizationLoader.load(filePath);

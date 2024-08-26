@@ -65,6 +65,7 @@ public class AuthorizationLoader {
       youtube.setYoutubeEnabled(getBoolean(youtubeConfig, "youtubeEnabled"));
       youtube.setYoutubeLogin(getString(youtubeConfig, "youtubeLogin"));
       youtube.setYoutubePassword(getString(youtubeConfig, "youtubePassword"));
+      youtube.setYoutubeAccessToken(getString(youtubeConfig, "youtubeAccessToken"));
 
       authorizationData.setYoutube(youtube);
       log.info("Authorization data (Youtube) loaded successfully");

@@ -34,7 +34,7 @@ public class YoutubeLinkManager {
   // TODO Need improve processing incorrect playlist URL. Incorrect URL have not
   // "www."
   public List<String> extractVideoLinks(String playlistUrl) {
-    WebDriverManager.chromedriver().setup();
+    WebDriverManager.chromedriver().driverVersion("127.0.6533.73").setup();
     ChromeOptions options = new ChromeOptions();
     options.addArguments("--headless");
     WebDriver webDriver = new ChromeDriver(options);

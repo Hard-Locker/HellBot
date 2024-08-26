@@ -28,11 +28,13 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
+import dev.lavalink.youtube.clients.TvHtml5Embedded;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
 import dev.lavalink.youtube.clients.skeleton.Client;
 import halot.nikitazolin.bot.ApplicationRunnerImpl;
 import halot.nikitazolin.bot.discord.DatabaseService;
 import halot.nikitazolin.bot.discord.action.BotCommandContext;
+import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
 import halot.nikitazolin.bot.init.settings.manager.SettingsSaver;
 import halot.nikitazolin.bot.init.settings.model.Settings;
 import lombok.Getter;
@@ -50,6 +52,7 @@ public class PlayerService implements AudioSendHandler {
   private final DatabaseService databaseService;
   private final Settings settings;
   private final SettingsSaver settingsSaver;
+  private final AuthorizationData authorizationData;
 
   private AudioPlayerManager audioPlayerManager = new DefaultAudioPlayerManager();
   private AudioPlayer audioPlayer;
@@ -75,10 +78,7 @@ public class PlayerService implements AudioSendHandler {
   public void createPlayer() {
     AudioSourceManagers.registerLocalSource(audioPlayerManager);
 
-    YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true,
-        new Client[] { new MusicWithThumbnail(), new WebWithThumbnail() });
-    audioPlayerManager.registerSourceManager(youtube);
-
+    audioPlayerManager.registerSourceManager(makeYouTubeSource());
     audioPlayerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
     audioPlayerManager.registerSourceManager(new BandcampAudioSourceManager());
     audioPlayerManager.registerSourceManager(new VimeoAudioSourceManager());
@@ -184,5 +184,16 @@ public class PlayerService implements AudioSendHandler {
         log.warn("Problem with adding link {} to queue", link);
       }
     }
+  }
+
+  private YoutubeAudioSourceManager makeYouTubeSource() {
+    YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true,
+        new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new TvHtml5Embedded() });
+
+    if (authorizationData.getYoutube().isYoutubeEnabled()) {
+      youtube.useOauth2(authorizationData.getYoutube().getYoutubeAccessToken(), false);
+    }
+
+    return youtube;
   }
 }

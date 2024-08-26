@@ -23,6 +23,7 @@
   <logger name="org.springframework.transaction" level="WARN"/>
   <logger name="org.springframework.transaction.interceptor" level="WARN"/>
   <logger name="org.hibernate.SQL" level="WARN"/>
+  <logger name="dev.lavalink.youtube.http.YoutubeOauth2Handler" level="INFO"/>
 
   <!-- Root Logger -->
   <root level="WARN">
