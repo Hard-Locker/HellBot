@@ -4,27 +4,41 @@ HellBot is designed to enhance music playback on your Discord server.
 
 ## Usage
 
-To use HellBot, you must install the latest 64-bit version of Java.
+To use HellBot, you must install the latest 64-bit version of Java 21 or higher.
+You can download Java/JDK here: https://www.oracle.com/cis/java/technologies/downloads
+
+## Manual Launch (for all OS)
 
 Steps:
-1. To launch HellBot, open a terminal window in the directory where the application is located.
-2. Execute the command: "java -jar filename". For example "java -jar hell-bot-0.4.1.jar".
+• To launch HellBot, open a terminal window in the directory where the application is located.
+• Execute the command: java -jar filename, for example java -jar hell-bot-0.4.1.jar.
 
 On first run, you will need to:
 • Enter your Discord API key.
 • Choose the type of database you wish to use:
   If you choose the H2 database, it will be automatically created and store the authorization data.
   If you choose PostgreSQL, ensure you have created an empty database beforehand and have the connection details ready.
+  
+## Launcher (for OS Windows)
+
+For Windows users, an easy way to launch HellBot is available through the HellBot Launcher.
+This launcher simplifies the process, allowing you to start HellBot with just a few clicks, without needing to use command-line tools.
+Simply download the launcher and click start.
+Download launcher: https://github.com/Hard-Locker/HellBot-Launcher/releases/latest
 
 ## Features
 
-• Hosts yourself
-• Fast loading of songs
-• Supports online radio/streams, including Youtube
-• Supports local files
-• Save playback history
+• Hosts yourself;
+• Fast loading of songs;
+• Supports online radio/streams, including Youtube;
+• Supports local files;
+• Supports attachment files;
+• Save playback history.
+• Localization EN/RU.
+• Setting permission to use bot.
 
 ## Supported formats powered by Lavaplayer.
+
 The set of sources where LavaPlayer can load tracks from is easily extensible, but the ones currently included by default are:
 • YouTube
 • SoundCloud
