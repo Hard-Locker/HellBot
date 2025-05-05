@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
   <artifactId>hell-bot</artifactId>
-  <version>0.6.38</version>
+  <version>0.6.39</version>
   <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
 
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>4.29.0</version>
+      <version>4.32.0</version>
     </dependency>
 
     <!--
@@ -71,7 +71,7 @@
     <dependency>
       <groupId>io.github.bonigarcia</groupId>
       <artifactId>webdrivermanager</artifactId>
-      <version>5.9.3</version>
+      <version>6.1.0</version>
     </dependency>
     <!-- /Web -->
 
