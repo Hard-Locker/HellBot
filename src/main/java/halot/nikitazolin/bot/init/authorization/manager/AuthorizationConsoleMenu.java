@@ -38,21 +38,37 @@ public class AuthorizationConsoleMenu {
   }
 
   private void youtubeMenu(AuthorizationData authorizationData, String filePath) {
-    log.info("Displaying YouTube authorization menu");
-    boolean youtubeEnabled = getTwoOptionInput("-----YouTube authorization-----",
-        "Do you want log in to YouTube profile?");
     String youtubeLogin = null;
     String youtubePassword = null;
     String youtubeAccessToken = null;
+    String youtubeProcessingServerUrl = null;
+    String youtubeProcessingServerPassword = null;
+
+    log.info("Displaying YouTube authorization menu");
+    boolean youtubeEnabled = getTwoOptionInput("-----YouTube authorization-----",
+        "Do you want log in to YouTube profile?");
 
     if (youtubeEnabled == true) {
       youtubeLogin = getStringInput("Enter YouTube login (email) in next line:");
+      youtubePassword = getStringInput("Enter YouTube password in next line:");
+      youtubeAccessToken = getStringInput("Enter YouTube access token in next line:");
+    }
+
+    boolean youtubeProcessingServerEnabled = getTwoOptionInput("-----YouTube link processing-----",
+        "Do you want processing YouTube links by external service?");
+
+    if (youtubeProcessingServerEnabled == true) {
+      youtubeProcessingServerUrl = getStringInput("Enter service URL in next line:");
+      youtubeProcessingServerPassword = getStringInput("Enter service password in next line:");
     }
 
     authorizationData.getYoutube().setYoutubeEnabled(youtubeEnabled);
     authorizationData.getYoutube().setYoutubeLogin(youtubeLogin);
     authorizationData.getYoutube().setYoutubePassword(youtubePassword);
     authorizationData.getYoutube().setYoutubeAccessToken(youtubeAccessToken);
+    authorizationData.getYoutube().setYoutubeProcessingServerEnabled(youtubeProcessingServerEnabled);
+    authorizationData.getYoutube().setYoutubeProcessingServerUrl(youtubeProcessingServerUrl);
+    authorizationData.getYoutube().setYoutubeProcessingServerPassword(youtubeProcessingServerPassword);
 
     authorizationSaver.saveToFile(filePath);
   }

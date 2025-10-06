@@ -54,6 +54,8 @@ public class AuthorizationLoader {
 
       authorizationData.setDiscordApi(discordApi);
       log.info("Authorization data (DiscordApi) loaded successfully");
+    } else {
+      log.warn("Cannot find Authorization data (DiscordApi)");
     }
   }
 
@@ -66,9 +68,14 @@ public class AuthorizationLoader {
       youtube.setYoutubeLogin(getString(youtubeConfig, "youtubeLogin"));
       youtube.setYoutubePassword(getString(youtubeConfig, "youtubePassword"));
       youtube.setYoutubeAccessToken(getString(youtubeConfig, "youtubeAccessToken"));
+      youtube.setYoutubeProcessingServerEnabled(getBoolean(youtubeConfig, "youtubeProcessingServerEnabled"));
+      youtube.setYoutubeProcessingServerUrl(getString(youtubeConfig, "youtubeProcessingServerUrl"));
+      youtube.setYoutubeProcessingServerPassword(getString(youtubeConfig, "youtubeProcessingServerPassword"));
 
       authorizationData.setYoutube(youtube);
       log.info("Authorization data (Youtube) loaded successfully");
+    } else {
+      log.warn("Cannot find Authorization data (Youtube)");
     }
   }
 
@@ -92,6 +99,8 @@ public class AuthorizationLoader {
       }, () -> {
         log.error("Unsupported database vendor: {}", dbVendorName);
       });
+    } else {
+      log.warn("Cannot find Authorization data (Database)");
     }
   }
 

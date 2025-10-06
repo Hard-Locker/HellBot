@@ -27,6 +27,7 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.YoutubeSourceOptions;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
 import dev.lavalink.youtube.clients.TvHtml5Embedded;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
@@ -187,13 +188,22 @@ public class PlayerService implements AudioSendHandler {
   }
 
   private YoutubeAudioSourceManager makeYouTubeSource() {
-    YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true,
-        new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new TvHtml5Embedded() });
+    boolean youtube = authorizationData.getYoutube().isYoutubeEnabled();
+    boolean processing = authorizationData.getYoutube().isYoutubeProcessingServerEnabled();
 
-    if (authorizationData.getYoutube().isYoutubeEnabled()) {
-      youtube.useOauth2(authorizationData.getYoutube().getYoutubeAccessToken(), false);
+    YoutubeAudioSourceManager youtubeManager = new YoutubeAudioSourceManager();
+
+    if (youtube && processing) {
+      YoutubeSourceOptions options = new YoutubeSourceOptions().setRemoteCipherUrl(
+          authorizationData.getYoutube().getYoutubeProcessingServerUrl(),
+          authorizationData.getYoutube().getYoutubeProcessingServerPassword());
+
+      youtubeManager = new YoutubeAudioSourceManager(options,
+          new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new TvHtml5Embedded() });
+
+      youtubeManager.useOauth2(authorizationData.getYoutube().getYoutubeAccessToken(), false);
     }
 
-    return youtube;
+    return youtubeManager;
   }
 }

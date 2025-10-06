@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.halot.nikitazolin</groupId>
   <artifactId>hell-bot</artifactId>
-  <version>0.6.45</version>
+  <version>0.7.0</version>
   <name>Hell Bot</name>
   <description>BOT for playing music in Discord</description>
 
@@ -54,7 +54,7 @@
     <dependency>
       <groupId>dev.lavalink.youtube</groupId>
       <artifactId>v2</artifactId>
-      <version>1.13.5</version>
+      <version>1.14.0</version>
     </dependency>
 
     <!-- Web -->

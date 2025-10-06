@@ -13,4 +13,8 @@ public class Youtube {
   private String youtubeLogin;
   private String youtubePassword;
   private String youtubeAccessToken;
+
+  private boolean youtubeProcessingServerEnabled;
+  private String youtubeProcessingServerUrl;
+  private String youtubeProcessingServerPassword;
 }
