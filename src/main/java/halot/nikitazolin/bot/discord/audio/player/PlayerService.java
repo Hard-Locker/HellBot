@@ -194,9 +194,10 @@ public class PlayerService implements AudioSendHandler {
     YoutubeAudioSourceManager youtubeManager = new YoutubeAudioSourceManager();
 
     if (youtube && processing) {
-      YoutubeSourceOptions options = new YoutubeSourceOptions().setRemoteCipherUrl(
+      YoutubeSourceOptions options = new YoutubeSourceOptions().setRemoteCipher(
           authorizationData.getYoutube().getYoutubeProcessingServerUrl(),
-          authorizationData.getYoutube().getYoutubeProcessingServerPassword());
+          authorizationData.getYoutube().getYoutubeProcessingServerPassword(),
+          "");
 
       youtubeManager = new YoutubeAudioSourceManager(options,
           new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new TvHtml5Embedded() });
