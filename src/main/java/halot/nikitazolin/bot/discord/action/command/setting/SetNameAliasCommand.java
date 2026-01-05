@@ -30,11 +30,12 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.components.selections.SelectOption;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -266,12 +267,16 @@ public class SetNameAliasCommand extends BotCommand {
 
   private void makeModalAddName(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addName, settingProvider.getText("set_name_alias.modal.add_name_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_name_alias.modal.add_name_input_description")).setMinLength(1)
-        .setMaxLength(20).build();
+        .create(addName, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_name_alias.modal.add_name_input_description"))
+        .setMinLength(1)
+        .setMaxLength(20)
+        .build();
 
-    Modal modal = Modal.create(addName, settingProvider.getText("set_name_alias.modal.add_name") + ": " + selectedName)
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(addName, settingProvider.getText("set_name_alias.modal.add_name") + ": " + selectedName)
+        .addComponents(Label.of(settingProvider.getText("set_name_alias.modal.add_name_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", addName);
@@ -279,13 +284,16 @@ public class SetNameAliasCommand extends BotCommand {
 
   private void makeModalRemoveName(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removeName, settingProvider.getText("set_name_alias.modal.remove_name_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_name_alias.modal.remove_name_input_description")).setMinLength(1)
-        .setMaxLength(20).build();
+        .create(removeName, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_name_alias.modal.remove_name_input_description"))
+        .setMinLength(1)
+        .setMaxLength(20)
+        .build();
 
     Modal modal = Modal
         .create(removeName, settingProvider.getText("set_name_alias.modal.remove_name") + ": " + selectedName)
-        .addComponents(ActionRow.of(input)).build();
+        .addComponents(Label.of(settingProvider.getText("set_name_alias.modal.remove_name_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", removeName);

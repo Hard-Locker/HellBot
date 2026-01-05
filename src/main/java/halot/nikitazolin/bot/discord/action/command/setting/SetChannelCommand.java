@@ -30,11 +30,12 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -214,13 +215,16 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalAddTextChannel(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addTextChannel, settingProvider.getText("set_channel.modal.add_text_channel_input"),
-            TextInputStyle.SHORT)
+        .create(addTextChannel, TextInputStyle.SHORT)
         .setPlaceholder(settingProvider.getText("set_channel.modal.add_text_channel_input_description"))
-        .setMinLength(16).setMaxLength(20).build();
+        .setMinLength(16)
+        .setMaxLength(20)
+        .build();
 
-    Modal modal = Modal.create(addTextChannel, settingProvider.getText("set_channel.modal.add_text_channel_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(addTextChannel, settingProvider.getText("set_channel.modal.add_text_channel_name"))
+        .addComponents(Label.of(settingProvider.getText("set_channel.modal.add_text_channel_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", addTextChannel);
@@ -228,13 +232,16 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalRemoveTextChannel(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removeTextChannel, settingProvider.getText("set_channel.modal.remove_text_channel_input"),
-            TextInputStyle.SHORT)
+        .create(removeTextChannel, TextInputStyle.SHORT)
         .setPlaceholder(settingProvider.getText("set_channel.modal.remove_text_channel_input_description"))
-        .setMinLength(16).setMaxLength(20).build();
+        .setMinLength(16)
+        .setMaxLength(20)
+        .build();
 
-    Modal modal = Modal.create(removeTextChannel, settingProvider.getText("set_channel.modal.remove_text_channel_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(removeTextChannel, settingProvider.getText("set_channel.modal.remove_text_channel_name"))
+        .addComponents(Label.of(settingProvider.getText("set_channel.modal.remove_text_channel_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", removeTextChannel);
@@ -242,13 +249,16 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalAddVoiceChannel(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addVoiceChannel, settingProvider.getText("set_channel.modal.add_voice_channel_input"),
-            TextInputStyle.SHORT)
+        .create(addVoiceChannel, TextInputStyle.SHORT)
         .setPlaceholder(settingProvider.getText("set_channel.modal.add_voice_channel_input_description"))
-        .setMinLength(16).setMaxLength(20).build();
+        .setMinLength(16)
+        .setMaxLength(20)
+        .build();
 
-    Modal modal = Modal.create(addVoiceChannel, settingProvider.getText("set_channel.modal.add_voice_channel_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(addVoiceChannel, settingProvider.getText("set_channel.modal.add_voice_channel_name"))
+        .addComponents(Label.of(settingProvider.getText("set_channel.modal.add_voice_channel_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", addVoiceChannel);
@@ -256,14 +266,16 @@ public class SetChannelCommand extends BotCommand {
 
   private void makeModalRemoveVoiceChannel(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removeVoiceChannel, settingProvider.getText("set_channel.modal.remove_voice_channel_input"),
-            TextInputStyle.SHORT)
+        .create(removeVoiceChannel, TextInputStyle.SHORT)
         .setPlaceholder(settingProvider.getText("set_channel.modal.remove_voice_channel_input_description"))
-        .setMinLength(16).setMaxLength(20).build();
+        .setMinLength(16)
+        .setMaxLength(20)
+        .build();
 
     Modal modal = Modal
         .create(removeVoiceChannel, settingProvider.getText("set_channel.modal.remove_voice_channel_name"))
-        .addComponents(ActionRow.of(input)).build();
+        .addComponents(Label.of(settingProvider.getText("set_channel.modal.remove_voice_channel_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", removeVoiceChannel);

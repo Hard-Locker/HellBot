@@ -28,11 +28,12 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -183,12 +184,17 @@ public class SetBanCommand extends BotCommand {
   }
 
   private void makeModalBanUser(ButtonInteractionEvent buttonEvent) {
-    TextInput input = TextInput.create(ban, settingProvider.getText("set_ban.modal.ban_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_ban.modal.ban_input_description")).setMinLength(16)
-        .setMaxLength(20).build();
+    TextInput input = TextInput
+        .create(ban, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_ban.modal.ban_input_description"))
+        .setMinLength(16)
+        .setMaxLength(20)
+        .build();
 
-    Modal modal = Modal.create(ban, settingProvider.getText("set_ban.modal.ban_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(ban, settingProvider.getText("set_ban.modal.ban_name"))
+        .addComponents(Label.of(settingProvider.getText("set_ban.modal.ban_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", ban);
@@ -196,12 +202,16 @@ public class SetBanCommand extends BotCommand {
 
   private void makeModalUnbanUser(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(unban, settingProvider.getText("set_ban.modal.unban_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_ban.modal.unban_input_description")).setMinLength(16)
-        .setMaxLength(20).build();
+        .create(unban, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_ban.modal.unban_input_description"))
+        .setMinLength(16)
+        .setMaxLength(20)
+        .build();
 
-    Modal modal = Modal.create(unban, settingProvider.getText("set_ban.modal.unban_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(unban, settingProvider.getText("set_ban.modal.unban_name"))
+        .addComponents(Label.of(settingProvider.getText("set_ban.modal.unban_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", unban);

@@ -24,8 +24,10 @@ import halot.nikitazolin.bot.localization.action.command.setting.SettingProvider
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -33,7 +35,6 @@ import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionE
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -188,27 +189,34 @@ public class PlaylistCommand extends BotCommand {
 
   private void makeModalAddPlaylist(ButtonInteractionEvent buttonEvent) {
     TextInput nameInput = TextInput
-        .create("name", musicProvider.getText("playlist.modal.add_playlist_name"), TextInputStyle.SHORT)
-        .setPlaceholder(musicProvider.getText("playlist.modal.add_playlist_name_input")).setMinLength(1)
-        .setMaxLength(50).build();
+        .create("name", TextInputStyle.SHORT)
+        .setPlaceholder(musicProvider.getText("playlist.modal.add_playlist_name_input"))
+        .setMinLength(1)
+        .setMaxLength(50)
+        .build();
 
     TextInput pathInput = TextInput
-        .create("path", musicProvider.getText("playlist.modal.add_playlist_path"), TextInputStyle.SHORT)
-        .setPlaceholder(musicProvider.getText("playlist.modal.add_playlist_path_input")).setMinLength(1)
-        .setMaxLength(2000).build();
+        .create("path", TextInputStyle.SHORT)
+        .setPlaceholder(musicProvider.getText("playlist.modal.add_playlist_path_input"))
+        .setMinLength(1)
+        .setMaxLength(2000)
+        .build();
 
-    Modal modal = Modal.create(addPlaylist, musicProvider.getText("playlist.modal.add_name"))
-        .addComponents(ActionRow.of(nameInput), ActionRow.of(pathInput)).build();
+    Modal modal = Modal
+        .create(addPlaylist, musicProvider.getText("playlist.modal.add_name"))
+        .addComponents(Label.of(musicProvider.getText("playlist.modal.add_playlist_name"), nameInput),
+            Label.of(musicProvider.getText("playlist.modal.add_playlist_path"), pathInput))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", addPlaylist);
   }
 
   private void makeModalRemovePlaylist(ButtonInteractionEvent buttonEvent) {
-    Modal modal = Modal.create(removePlaylist, musicProvider.getText("playlist.modal.remove_name"))
-        .addActionRow(
-            TextInput.create(removePlaylist, musicProvider.getText("playlist.modal.remove_input"), TextInputStyle.SHORT)
-                .setRequiredRange(0, 50).build())
+    Modal modal = Modal
+        .create(removePlaylist, musicProvider.getText("playlist.modal.remove_name"))
+        .addComponents(Label.of(musicProvider.getText("playlist.modal.remove_input"),
+            TextInput.create(removePlaylist, TextInputStyle.SHORT).setRequiredRange(0, 50).build()))
         .build();
 
     buttonEvent.replyModal(modal).queue();

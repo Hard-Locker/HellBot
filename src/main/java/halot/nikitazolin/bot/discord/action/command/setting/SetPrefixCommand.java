@@ -27,11 +27,12 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -183,12 +184,16 @@ public class SetPrefixCommand extends BotCommand {
 
   private void makeModalAddPrefix(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(addPrefix, settingProvider.getText("set_prefix.modal.add_prefix_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_prefix.modal.add_prefix_input_description")).setMinLength(1)
-        .setMaxLength(5).build();
+        .create(addPrefix, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_prefix.modal.add_prefix_input_description"))
+        .setMinLength(1)
+        .setMaxLength(5)
+        .build();
 
-    Modal modal = Modal.create(addPrefix, settingProvider.getText("set_prefix.modal.add_prefix_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(addPrefix, settingProvider.getText("set_prefix.modal.add_prefix_name"))
+        .addComponents(Label.of(settingProvider.getText("set_prefix.modal.add_prefix_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", addPrefix);
@@ -196,12 +201,16 @@ public class SetPrefixCommand extends BotCommand {
 
   private void makeModalRemovePrefix(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(removePrefix, settingProvider.getText("set_prefix.modal.remove_prefix_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_prefix.modal.remove_prefix_input_description")).setMinLength(1)
-        .setMaxLength(5).build();
+        .create(removePrefix, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_prefix.modal.remove_prefix_input_description"))
+        .setMinLength(1)
+        .setMaxLength(5)
+        .build();
 
-    Modal modal = Modal.create(removePrefix, settingProvider.getText("set_prefix.modal.remove_prefix_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(removePrefix, settingProvider.getText("set_prefix.modal.remove_prefix_name"))
+        .addComponents(Label.of(settingProvider.getText("set_prefix.modal.remove_prefix_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", removePrefix);

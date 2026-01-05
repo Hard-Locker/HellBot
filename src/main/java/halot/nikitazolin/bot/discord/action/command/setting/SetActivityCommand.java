@@ -26,11 +26,12 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.modals.Modal;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -179,12 +180,16 @@ public class SetActivityCommand extends BotCommand {
 
   private void makeModalPlayingActivity(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(playing, settingProvider.getText("set_activity.modal.playing_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_activity.modal.playing_input_description")).setMinLength(1)
-        .setMaxLength(100).build();
+        .create(playing, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity.modal.playing_input_description"))
+        .setMinLength(1)
+        .setMaxLength(100)
+        .build();
 
-    Modal modal = Modal.create(playing, settingProvider.getText("set_activity.modal.playing_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(playing, settingProvider.getText("set_activity.modal.playing_name"))
+        .addComponents(Label.of(settingProvider.getText("set_activity.modal.playing_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", playing);
@@ -192,12 +197,16 @@ public class SetActivityCommand extends BotCommand {
 
   private void makeModalStreamingActivity(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(streaming, settingProvider.getText("set_activity.modal.streaming_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_activity.modal.streaming_input_description")).setMinLength(1)
-        .setMaxLength(500).build();
+        .create(streaming, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity.modal.streaming_input_description"))
+        .setMinLength(1)
+        .setMaxLength(500)
+        .build();
 
-    Modal modal = Modal.create(streaming, settingProvider.getText("set_activity.modal.streaming_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(streaming, settingProvider.getText("set_activity.modal.streaming_name"))
+        .addComponents(Label.of(settingProvider.getText("set_activity.modal.streaming_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", streaming);
@@ -205,12 +214,16 @@ public class SetActivityCommand extends BotCommand {
 
   private void makeModalListeningActivity(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(listening, settingProvider.getText("set_activity.modal.listening_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_activity.modal.listening_input_description")).setMinLength(1)
-        .setMaxLength(100).build();
+        .create(listening, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity.modal.listening_input_description"))
+        .setMinLength(1)
+        .setMaxLength(100)
+        .build();
 
-    Modal modal = Modal.create(listening, settingProvider.getText("set_activity.modal.listening_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(listening, settingProvider.getText("set_activity.modal.listening_name"))
+        .addComponents(Label.of(settingProvider.getText("set_activity.modal.listening_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", listening);
@@ -218,12 +231,16 @@ public class SetActivityCommand extends BotCommand {
 
   private void makeModalWatchingActivity(ButtonInteractionEvent buttonEvent) {
     TextInput input = TextInput
-        .create(watching, settingProvider.getText("set_activity.modal.watching_input"), TextInputStyle.SHORT)
-        .setPlaceholder(settingProvider.getText("set_activity.modal.watching_input_description")).setMinLength(1)
-        .setMaxLength(100).build();
+        .create(watching, TextInputStyle.SHORT)
+        .setPlaceholder(settingProvider.getText("set_activity.modal.watching_input_description"))
+        .setMinLength(1)
+        .setMaxLength(100)
+        .build();
 
-    Modal modal = Modal.create(watching, settingProvider.getText("set_activity.modal.watching_name"))
-        .addComponents(ActionRow.of(input)).build();
+    Modal modal = Modal
+        .create(watching, settingProvider.getText("set_activity.modal.watching_name"))
+        .addComponents(Label.of(settingProvider.getText("set_activity.modal.watching_input"), input))
+        .build();
 
     buttonEvent.replyModal(modal).queue();
     log.debug("Opened {} modal", watching);
