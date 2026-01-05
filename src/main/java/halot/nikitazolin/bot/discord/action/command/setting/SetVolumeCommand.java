@@ -27,10 +27,10 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
@@ -164,7 +164,7 @@ public class SetVolumeCommand extends BotCommand {
   private void makeGui(BotCommandContext context) {
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
     Button volumeButton = Button.primary(volume, settingProvider.getText("set_volume.button.set_volume"));
-    List<Button> buttons = List.of(closeButton, volumeButton);
+    ActionRow rowButtons = ActionRow.of(closeButton, volumeButton);
 
     int volumeLevel = settings.getVolume();
     String newLine = System.lineSeparator();
@@ -176,7 +176,7 @@ public class SetVolumeCommand extends BotCommand {
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, List.of(rowButtons));
 
     buttonHandlers = new HashMap<>();
     buttonHandlers.put(close, this::selectClose);

@@ -27,10 +27,10 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
@@ -118,7 +118,7 @@ public class SetPrefixCommand extends BotCommand {
     Button addPrefixButton = Button.primary(addPrefix, settingProvider.getText("set_prefix.button.add_prefix"));
     Button removePrefixButton = Button.primary(removePrefix,
         settingProvider.getText("set_prefix.button.remove_prefix"));
-    List<Button> buttons = List.of(closeButton, addPrefixButton, removePrefixButton);
+    ActionRow rowButtons = ActionRow.of(closeButton, addPrefixButton, removePrefixButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
@@ -138,7 +138,7 @@ public class SetPrefixCommand extends BotCommand {
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, List.of(rowButtons));
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(addPrefix, this::makeModalAddPrefix);

@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 
@@ -64,11 +65,11 @@ public class CommandRegistrationService {
     if (botCommand.options().length > 0) {
       log.info("Registering command " + botCommand.name() + " with " + botCommand.options().length + " options!");
 
-      return Commands.slash(botCommand.name(), botCommand.description()).addOptions(botCommand.options()).setGuildOnly(botCommand.guildOnly());
+      return Commands.slash(botCommand.name(), botCommand.description()).addOptions(botCommand.options()).setContexts(InteractionContextType.GUILD);
     } else {
       log.info("Registering command " + botCommand.name() + " with no options!");
 
-      return Commands.slash(botCommand.name(), botCommand.description()).setGuildOnly(botCommand.guildOnly());
+      return Commands.slash(botCommand.name(), botCommand.description()).setContexts(InteractionContextType.GUILD);
     }
   }
 }

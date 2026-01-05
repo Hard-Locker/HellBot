@@ -28,12 +28,12 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.components.selections.SelectOption;
+import net.dv8tion.jda.api.components.selections.StringSelectMenu;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
@@ -256,11 +256,11 @@ public class SetNameAliasCommand extends BotCommand {
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
     Button addNameButton = Button.primary(addName, settingProvider.getText("set_name_alias.button.add_name"));
     Button removeNameButton = Button.primary(removeName, settingProvider.getText("set_name_alias.button.remove_name"));
-    List<Button> buttons = List.of(closeButton, addNameButton, removeNameButton);
+    ActionRow rowButtons = ActionRow.of(closeButton, addNameButton, removeNameButton);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
     Long messageId = messageSender.sendMessageWithActionRow(stringSelectEvent.getChannel().asTextChannel(),
-        messageCreateData, buttons);
+        messageCreateData, List.of(rowButtons));
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 300000));
   }
 

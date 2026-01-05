@@ -33,7 +33,8 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 
 @Component
 @Scope("prototype")
@@ -204,9 +205,9 @@ public class PlayCommand extends BotCommand {
 
     Button yesButton = Button.primary(idYes, settingProvider.getText("setting.text.yes"));
     Button noButton = Button.danger(idNo, settingProvider.getText("setting.text.no"));
-    List<Button> buttons = List.of(yesButton, noButton);
-
-    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), title, buttons);
+    ActionRow rowButtons = ActionRow.of(yesButton, noButton);
+    
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), title, List.of(rowButtons));
     actionMessageCollector.addMessage(messageId, new ActionMessage(messageId, commandName, 60000, context, additional));
 
     buttonHandlers.put(idYes, this::selectYes);

@@ -28,7 +28,8 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -119,7 +120,7 @@ public class SetUpdateCommand extends BotCommand {
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
     Button enableButton = Button.primary(enableUpdateNotifier, settingProvider.getText("set_update.button.enable"));
     Button disableButton = Button.primary(disableUpdateNotifier, settingProvider.getText("set_update.button.disable"));
-    List<Button> buttons = List.of(closeButton, enableButton, disableButton);
+    ActionRow rowButtons = ActionRow.of(closeButton, enableButton, disableButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
@@ -139,7 +140,7 @@ public class SetUpdateCommand extends BotCommand {
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, List.of(rowButtons));
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(enableUpdateNotifier, this::handleButtonEnable);

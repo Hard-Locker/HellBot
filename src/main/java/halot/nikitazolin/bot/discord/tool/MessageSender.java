@@ -13,8 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -70,10 +69,10 @@ public class MessageSender {
   }
 
   public Long sendMessageWithActionRow(TextChannel textChannel, MessageCreateData messageCreateData,
-      Collection<? extends ItemComponent> components) {
+      Collection<ActionRow> components) {
     CompletableFuture<Long> futureMessageId = new CompletableFuture<>();
     MessageCreateData fullMessageCreateData = new MessageCreateBuilder().setContent(messageCreateData.getContent())
-        .setActionRow(components).build();
+        .setComponents(components).build();
 
     textChannel.sendMessage(fullMessageCreateData).queue(messageSent -> {
       Long messageId = messageSent.getIdLong();
@@ -94,10 +93,9 @@ public class MessageSender {
     }
   }
 
-  public Long sendMessageWithActionRow(TextChannel textChannel, String message,
-      Collection<? extends ItemComponent> components) {
+  public Long sendMessageWithActionRow(TextChannel textChannel, String message, Collection<ActionRow> components) {
     CompletableFuture<Long> futureMessageId = new CompletableFuture<>();
-    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(message).setActionRow(components)
+    MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(message).setComponents(components)
         .build();
 
     textChannel.sendMessage(messageCreateData).queue(messageSent -> {

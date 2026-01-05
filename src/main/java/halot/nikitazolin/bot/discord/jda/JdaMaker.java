@@ -34,7 +34,7 @@ public class JdaMaker {
       GatewayIntent.GUILD_MESSAGE_REACTIONS,
       GatewayIntent.DIRECT_MESSAGE_REACTIONS,
       GatewayIntent.GUILD_VOICE_STATES,
-      GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
+      GatewayIntent.GUILD_EXPRESSIONS,
       GatewayIntent.SCHEDULED_EVENTS
       );
   private final List<CacheFlag> cacheFlags = List.of(

@@ -26,7 +26,8 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
@@ -115,7 +116,7 @@ public class SetStatusCommand extends BotCommand {
     Button idleButton = Button.primary(idle, settingProvider.getText("set_status.button.idle"));
     Button dndButton = Button.danger(dnd, settingProvider.getText("set_status.button.dnd"));
     Button invisibleButton = Button.secondary(invisible, settingProvider.getText("set_status.button.invisible"));
-    List<Button> buttons = List.of(closeButton, onlineButton, idleButton, dndButton, invisibleButton);
+    ActionRow rowButtons = ActionRow.of(closeButton, onlineButton, idleButton, dndButton, invisibleButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
@@ -126,7 +127,7 @@ public class SetStatusCommand extends BotCommand {
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, List.of(rowButtons));
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(online, this::setStatus);

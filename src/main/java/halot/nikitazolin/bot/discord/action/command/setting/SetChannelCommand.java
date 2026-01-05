@@ -30,10 +30,10 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
@@ -129,7 +129,7 @@ public class SetChannelCommand extends BotCommand {
         settingProvider.getText("set_channel.button.add_voice_channel"));
     Button removeVoiceChannelButton = Button.primary(removeVoiceChannel,
         settingProvider.getText("set_channel.button.remove_voice_cahnnel"));
-    List<Button> buttons = List.of(closeButton, addTextChannelButton, removeTextChannelButton, addVoiceChannelButton,
+    ActionRow rowButtons = ActionRow.of(closeButton, addTextChannelButton, removeTextChannelButton, addVoiceChannelButton,
         removeVoiceChannelButton);
 
     String newLine = System.lineSeparator();
@@ -165,7 +165,7 @@ public class SetChannelCommand extends BotCommand {
     }
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, List.of(rowButtons));
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(addTextChannel, this::makeModalAddTextChannel);

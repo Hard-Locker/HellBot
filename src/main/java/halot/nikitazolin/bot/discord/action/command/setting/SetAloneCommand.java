@@ -27,10 +27,10 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
 import net.dv8tion.jda.api.interactions.modals.Modal;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
@@ -117,7 +117,7 @@ public class SetAloneCommand extends BotCommand {
     Button closeButton = Button.danger(close, settingProvider.getText("setting.button.close"));
     Button aloneTimeButton = Button.primary(aloneTime, settingProvider.getText("set_alone.button.set_alone_time"));
     Button stayInChannelButton = Button.primary(stayInChannel, settingProvider.getText("set_alone.button.set_stay"));
-    List<Button> buttons = List.of(closeButton, aloneTimeButton, stayInChannelButton);
+    ActionRow rowButtons = ActionRow.of(closeButton, aloneTimeButton, stayInChannelButton);
 
     String newLine = System.lineSeparator();
     StringBuilder messageContent = new StringBuilder();
@@ -135,7 +135,7 @@ public class SetAloneCommand extends BotCommand {
     messageContent.append(newLine);
 
     MessageCreateData messageCreateData = new MessageCreateBuilder().setContent(messageContent.toString()).build();
-    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, buttons);
+    Long messageId = messageSender.sendMessageWithActionRow(context.getTextChannel(), messageCreateData, List.of(rowButtons));
 
     buttonHandlers.put(close, this::selectClose);
     buttonHandlers.put(aloneTime, this::makeModalAloneTime);
