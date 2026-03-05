@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import halot.nikitazolin.bot.discord.listener.ReadyListener;
 import halot.nikitazolin.bot.init.authorization.model.AuthorizationData;
 import halot.nikitazolin.bot.localization.action.command.common.CommonProvider;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -54,9 +56,12 @@ public class JdaMaker {
   private void createJda() {
     String defaultActivity = commonProvider.getText("about_command.description") + " /about";
 
+    AudioModuleConfig audioConfig = new AudioModuleConfig().withDaveSessionFactory(new JDaveSessionFactory());
+    
     try {
       jda = JDABuilder.createDefault(token, gatewayIntents)
           .setActivity(Activity.customStatus(defaultActivity))
+          .setAudioModuleConfig(audioConfig)
           .enableIntents(gatewayIntents)
           .addEventListeners(new ReadyListener())
           .enableCache(cacheFlags)
