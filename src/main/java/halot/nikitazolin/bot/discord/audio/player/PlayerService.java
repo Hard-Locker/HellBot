@@ -28,8 +28,9 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.YoutubeSourceOptions;
+import dev.lavalink.youtube.clients.AndroidVr;
 import dev.lavalink.youtube.clients.MusicWithThumbnail;
-import dev.lavalink.youtube.clients.TvHtml5Embedded;
+import dev.lavalink.youtube.clients.Tv;
 import dev.lavalink.youtube.clients.WebWithThumbnail;
 import dev.lavalink.youtube.clients.skeleton.Client;
 import halot.nikitazolin.bot.ApplicationRunnerImpl;
@@ -200,7 +201,7 @@ public class PlayerService implements AudioSendHandler {
           "");
 
       youtubeManager = new YoutubeAudioSourceManager(options,
-          new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new TvHtml5Embedded() });
+          new Client[] { new MusicWithThumbnail(), new WebWithThumbnail(), new AndroidVr(), new Tv() });
 
       youtubeManager.useOauth2(authorizationData.getYoutube().getYoutubeAccessToken(), false);
     }
